@@ -674,7 +674,21 @@ game.food = 0;
 if(game.population > 1){
 game.population -= 0.1;
 }
+game.marketCap =
 
+Math.floor(
+
+game.treasury +
+
+(game.holders * 10) +
+
+(game.engagement * 5) +
+
+(game.utility * 100) +
+
+(game.lp * 20)
+
+);
 }
   
 ui();
