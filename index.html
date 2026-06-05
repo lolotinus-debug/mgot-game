@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+e<!DOCTYPE html>
 <html lang="sk">
 <head>
 <meta charset="UTF-8">
@@ -275,14 +275,33 @@ font-size:9px;
 <body>
 
 <div id="topbar">
-<div class="resource">💰 Gold: <span id="gold">500</span></div>
-<div class="resource">🌾 Food: <span id="food">100</span></div>
-<div class="resource">⚡ Energy: <span id="energy">100</span></div>
-<div class="resource">👥 Population: <span id="population">10</span></div>
-<div class="resource">🧠 Knowledge: <span id="knowledge">0</span></div>
-<div class="resource">🔬 Tech: <span id="tech">1</span></div>
-<div class="resource">🪖 Soldiers: <span id="soldiers">0</span></div>
-<div class="resource">🌍 Continent: Map</div>
+
+<div class="resource">💎 Treasury:
+<span id="treasury">500</span></div>
+
+<div class="resource">👥 Holders:
+<span id="holders">10</span></div>
+
+<div class="resource">⚡ Engagement:
+<span id="engagement">100</span></div>
+
+<div class="resource">🧠 Education:
+<span id="education">0</span></div>
+
+<div class="resource">🔷 Utility:
+<span id="utility">1</span></div>
+
+<div class="resource">🚀 Promoters:
+<span id="promoters">0</span></div>
+
+<div class="resource">🏦 LP:
+<span id="lp">100</span></div>
+
+<div class="resource">📈 Price:
+<span id="price">0.001</span></div>
+
+<div class="resource">💰 MC:
+<span id="marketCap">1000</span></div>
 
 </div>
 
@@ -372,13 +391,17 @@ let selectedBuild = null;
 let particles = [];
 
 let game = {
-gold:500,
-food:100,
-energy:100,
-knowledge:0,
-soldiers:0,
-population:10,
-technologyLevel:1
+
+treasury:500,
+holders:10,
+engagement:100,
+education:0,
+utility:1,
+promoters:0,
+lp:100,
+price:0.001,
+marketCap:1000
+
 };
 
 let buildings = [];
