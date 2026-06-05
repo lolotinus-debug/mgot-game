@@ -409,20 +409,29 @@ let buildings = [];
 buildings.push({
 x:10,
 y:10,
-type:"townhall",
+type:"hq",
 level:1
 });
 
 // ================= BUILD COSTS =================
 const B = {
+
 townhall:{cost:0,color:"#ffffff"},
-house:{cost:100,color:"#22c55e"},
-farm:{cost:120,color:"#84cc16"},
-mine:{cost:150,color:"#f59e0b"},
-lab:{cost:200,color:"#a855f7"},
-plant:{cost:200,color:"#00d4ff"},
-armory:{cost:300,color:"#ef4444"},
-forge:{cost:300,color:"#eab308"}
+
+community:{cost:100,color:"#22c55e"},
+
+marketing:{cost:120,color:"#3b82f6"},
+
+treasury:{cost:150,color:"#f59e0b"},
+
+academy:{cost:200,color:"#a855f7"},
+
+utility:{cost:250,color:"#00d4ff"},
+
+influencer:{cost:300,color:"#ef4444"},
+
+burn:{cost:350,color:"#eab308"}
+
 };
 
 // ================= LOG =================
@@ -606,44 +615,47 @@ setInterval(()=>{
 
 for(let b of buildings){
 
-if(b.type==="house"){
-game.population += 0.05 * b.level;
+if(b.type==="community"){
+
+game.holders += 0.05 * b.level;
+
 }
 
-if(b.type==="farm"){
-game.food += 2 * b.level;
-}
-  
-if(b.type==="mine"){
-let workers = b.level*2;
-if(game.population >= workers){
-game.gold += b.level;
-}
+if(b.type==="marketing"){
+
+game.engagement += 2 * b.level;
+
 }
 
-if(b.type==="lab"){
-if(game.energy > 0){
-game.knowledge += b.level;
-game.energy -= 0.5*b.level;
-}
+if(b.type==="treasury"){
+
+game.treasury += b.level;
+
 }
 
-if(b.type==="plant"){
-game.energy += 3*b.level;
+if(b.type==="academy"){
+
+game.education += b.level;
+
 }
 
-if(b.type==="armory"){
-b.cooldown++;
-if(b.cooldown>=5){
-game.soldiers+=b.level;
-b.cooldown=0;
-}
+if(b.type==="utility"){
+
+game.utility += 0.5 * b.level;
+
 }
 
-if(b.type==="forge"){
-game.soldiers+=Math.floor(b.level/2);
+if(b.type==="influencer"){
+
+game.promoters += 0.2 * b.level;
+
 }
 
+if(b.type==="burn"){
+
+game.price += 0.00001 * b.level;
+
+}
 }
 
 game.gold -= game.soldiers * 0.02;
@@ -993,7 +1005,7 @@ if(!hasTownHall){
 buildings.push({
 x:10,
 y:10,
-type:"townhall",
+type:"hq",
 level:1
 });
 
@@ -1075,7 +1087,7 @@ technologyLevel:1
 buildings = [{
 x:10,
 y:10,
-type:"townhall",
+type:"hq",
 level:1
 }];
   
