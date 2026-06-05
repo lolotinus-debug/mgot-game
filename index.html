@@ -456,14 +456,33 @@ color
 
 // ================= UPDATE UI =================
 function ui(){
-document.getElementById("gold").innerText=Math.floor(game.gold);
-document.getElementById("food").innerText=Math.floor(game.food);
-document.getElementById("energy").innerText=Math.floor(game.energy);
-document.getElementById("knowledge").innerText=Math.floor(game.knowledge);
-document.getElementById("tech").innerText=game.technologyLevel;
-document.getElementById("soldiers").innerText=Math.floor(game.soldiers);
-document.getElementById("population").innerText=Math.floor(game.population);
-}
+document.getElementById("treasury").innerText =
+Math.floor(game.treasury);
+
+document.getElementById("holders").innerText =
+Math.floor(game.holders);
+
+document.getElementById("engagement").innerText =
+Math.floor(game.engagement);
+
+document.getElementById("education").innerText =
+Math.floor(game.education);
+
+document.getElementById("utility").innerText =
+Math.floor(game.utility);
+
+document.getElementById("promoters").innerText =
+Math.floor(game.promoters);
+
+document.getElementById("lp").innerText =
+Math.floor(game.lp);
+
+document.getElementById("price").innerText =
+game.price;
+
+document.getElementById("marketCap").innerText =
+Math.floor(game.marketCap);
+} 
 
 // ================= INFO =================
 function updateInfo(){
