@@ -496,8 +496,8 @@ document.getElementById("supply").innerText =
 Math.floor(game.supply);
 
 document.getElementById("price").innerText =
-game.price;
-
+game.price.toPrecision(4);
+  
 document.getElementById("marketCap").innerText =
 Math.floor(game.marketCap);
 } 
