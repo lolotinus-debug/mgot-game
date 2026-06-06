@@ -834,9 +834,15 @@ for(let x=0;x<MAP_SIZE;x++){
         let tile = "grass";
 
         // WATER (nízka výška)
-        if(h < 0.28){
-            tile = "water";
-        }
+        if(h < 0.22){
+    tile = "water";   // deep water
+}
+else if(h < 0.28){
+    tile = "water";   // shallow water
+}
+else if(h < 0.32){
+    tile = "grass";   // beach
+}
 
         // BEACH
         else if(h < 0.32){
