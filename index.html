@@ -698,7 +698,7 @@ setInterval(()=>{
     game.lp += (game.engagement * 0.0003);
 
     // LP tlak (supply dump efekt)
-    game.lp -= (game.supply * 0.000001);
+    game.lp -= (game.supply / 1000000000);
 
     // prirodzená stabilizácia
     game.lp *= 0.9995;
