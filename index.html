@@ -547,6 +547,16 @@ function upgrade(){
         return;
     }
 
+  if(buildings.some(b => b.x === x && b.y === y)){
+    log("❌ Tile occupied");
+    return;
+}
+
+if(mapData[x][y] === "water"){
+    log("❌ Cannot build on water");
+    return;
+}
+
     game.treasury -= cost;
 
     selected.level++;
