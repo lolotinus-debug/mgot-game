@@ -877,60 +877,52 @@ mapData[x][y] = "grass";
 // ================= MAP ZONES =================
 function drawMap(){
 
-console.log("MAP DRAW");
+    console.log("MAP DRAW");
 
-for(let x=0;x<MAP_SIZE;x++){
+    for(let x=0; x<MAP_SIZE; x++){
 
-for(let x=0;x<MAP_SIZE;x++){
+        for(let y=0; y<MAP_SIZE; y++){
 
-for(let y=0;y<MAP_SIZE;y++){
+            let tile = mapData[x][y];
 
-let tile = mapData[x][y];
+            if(tile==="grass"){
+                ctx.fillStyle="#22c55e";
+            }
+            else if(tile==="forest"){
+                ctx.fillStyle="#166534";
+            }
+            else if(tile==="mountain"){
+                ctx.fillStyle="#6b7280";
+            }
+            else{
+                ctx.fillStyle="#2563eb";
+            }
 
-if(tile==="grass"){
-ctx.fillStyle="#22c55e";
-}
+            let px = x * TILE - cameraX;
+            let py = y * TILE - cameraY;
 
-if(tile==="forest"){
-ctx.fillStyle="#166534";
-}
+            let baseColor = ctx.fillStyle;
 
-if(tile==="mountain"){
-ctx.fillStyle="#6b7280";
-}
+            let grad = ctx.createLinearGradient(
+                px,
+                py,
+                px + TILE,
+                py + TILE
+            );
 
-if(tile==="water"){
-ctx.fillStyle="#2563eb";
-}
+            grad.addColorStop(0, baseColor);
+            grad.addColorStop(1, "#00000022");
 
-let px = x * TILE - cameraX;
-let py = y * TILE - cameraY;
+            ctx.fillStyle = grad;
 
-let baseColor = ctx.fillStyle;
-
-let grad = ctx.createLinearGradient(
-px,
-py,
-px + TILE,
-py + TILE
-);
-
-grad.addColorStop(0, baseColor);
-grad.addColorStop(1, "#00000022");
-
-ctx.fillStyle = grad;
-
-ctx.fillRect(
-px,
-py,
-TILE,
-TILE
-);
-
-}
-
-}
-
+            ctx.fillRect(
+                px,
+                py,
+                TILE,
+                TILE
+            );
+        }
+    }
 }
 
 // ================= BUILDINGS =================
