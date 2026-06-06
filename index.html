@@ -825,14 +825,12 @@ function generateMap(){
 
     for(let x=0; x<MAP_SIZE; x++){
 
-        mapData[x] = [];
+    for(let y=0; y<MAP_SIZE; y++){
 
-        for(let y=0; y<MAP_SIZE; y++){
+        let px = x * TILE - cameraX;
+        let py = y * TILE - cameraY;
 
-            let h = noise(x * 0.08, y * 0.08);
-            let m = noise(x * 0.05 + 100, y * 0.05 + 100);
-
-            let tile;
+        let tile = mapData[x][y];
 
             if(h < 0.22){
                 tile = "water";
@@ -1003,29 +1001,27 @@ else if(tile==="road"){
     );
 }
 
-            let px = x * TILE - cameraX;
-            let py = y * TILE - cameraY;
-
+          
             let baseColor = ctx.fillStyle;
 
-            let grad = ctx.createLinearGradient(
-                px,
-                py,
-                px + TILE,
-                py + TILE
-            );
+let grad = ctx.createLinearGradient(
+    px,
+    py,
+    px + TILE,
+    py + TILE
+);
 
-            grad.addColorStop(0, baseColor);
-            grad.addColorStop(1, "#00000022");
+grad.addColorStop(0, baseColor);
+grad.addColorStop(1, "#00000022");
 
-            ctx.fillStyle = grad;
+ctx.fillStyle = grad;
 
-            ctx.fillRect(
-                px,
-                py,
-                TILE,
-                TILE
-            );
+ctx.fillRect(
+    px,
+    py,
+    TILE,
+    TILE
+);
         }
     }
 }
