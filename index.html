@@ -816,6 +816,7 @@ const MAP_SIZE = 50;
 const mapData = [];
 
 function noise(x, y){
+    // jednoduchý pseudo-noise (stabilný, smooth)
     let n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
     return n - Math.floor(n);
 }
@@ -827,27 +828,27 @@ for(let x=0;x<MAP_SIZE;x++){
 
     for(let y=0;y<MAP_SIZE;y++){
 
-        let h = noise(x * 0.08, y * 0.08);
-        let m = noise(x * 0.05 + 100, y * 0.05 + 100);
+        let h = noise(x * 0.08, y * 0.08);   // height
+        let m = noise(x * 0.05 + 100, y * 0.05 + 100); // moisture
 
         let tile = "grass";
 
-        // voda
+        // WATER (nízka výška)
         if(h < 0.28){
             tile = "water";
         }
 
-        // pobrežie
+        // BEACH
         else if(h < 0.32){
             tile = "grass";
         }
 
-        // hory
-        else if(h > 0.75){
+        // MOUNTAIN (vysoká výška)
+        else if(h > 0.78){
             tile = "mountain";
         }
 
-        // les
+        // FOREST (vlhko + stredná výška)
         else if(m > 0.6){
             tile = "forest";
         }
