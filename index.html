@@ -823,53 +823,48 @@ function noise(x, y){
 
 function generateMap(){
 
-for(let x=0;x<MAP_SIZE;x++){
-    mapData[x] = [];
+    for(let x=0; x<MAP_SIZE; x++){
 
-    for(let y=0;y<MAP_SIZE;y++){
+        mapData[x] = [];
 
-        let h = noise(x * 0.08, y * 0.08);   // height
-        let m = noise(x * 0.05 + 100, y * 0.05 + 100); // moisture
+        for(let y=0; y<MAP_SIZE; y++){
 
-        let tile = "grass";
+            let h = noise(x * 0.08, y * 0.08);
+            let m = noise(x * 0.05 + 100, y * 0.05 + 100);
 
-        // WATER (nízka výška)
-        if(h < 0.22){
-    tile = "water";   // deep water
-}
-else if(h < 0.28){
-    tile = "water";   // shallow water
-}
-else if(h < 0.32){
-    tile = "grass";   // beach
-}
+            let tile;
 
-        // BEACH
-        else if(h < 0.32){
-            tile = "grass";
+            // Water
+            if(h < 0.22){
+                tile = "water";
+            }
+
+            // Beach
+            else if(h < 0.32){
+                tile = "grass";
+            }
+
+            // Mountains
+            else if(h > 0.78){
+                tile = "mountain";
+            }
+
+            // Forest
+            else if(m > 0.60){
+                tile = "forest";
+            }
+
+            // Plains
+            else{
+                tile = "grass";
+            }
+
+            mapData[x][y] = tile;
         }
-
-        // MOUNTAIN (vysoká výška)
-        else if(h > 0.78){
-            tile = "mountain";
-        }
-
-        // FOREST (vlhko + stredná výška)
-        else if(m > 0.6){
-            tile = "forest";
-        }
-
-        else{
-            tile = "grass";
-        }
-
-        mapData[x][y] = tile;
     }
-}
 }
 
 generateMap();
-
 // ================= ROADS =================
 
 ctx.strokeStyle = "#8b7355";
