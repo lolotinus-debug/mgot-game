@@ -846,7 +846,7 @@ function generateMap(){
             }
         }
     }
-}
+
     // ROADS
     for(let y=5; y<MAP_SIZE; y+=8){
 
@@ -855,9 +855,9 @@ function generateMap(){
             if(mapData[x][y] !== "water"){
                 mapData[x][y] = "road";
             }
-
         }
     }
+}
 
 generateMap();
 // ================= ROADS =================
@@ -941,8 +941,7 @@ function drawMap(){
                 ctx.fillStyle="#2563eb";
             }
             else if(tile==="grass"){
-
-                let shades = [
+                let shades=[
                     "#65a30d",
                     "#4d7c0f",
                     "#3f6212",
@@ -953,49 +952,39 @@ function drawMap(){
                     shades[(x+y)%shades.length];
             }
             else if(tile==="forest"){
-
                 ctx.fillStyle="#166534";
-                ctx.fillRect(px,py,TILE,TILE);
-
-                ctx.fillStyle="#14532d";
-
-                ctx.beginPath();
-                ctx.arc(px+20,py+20,8,0,Math.PI*2);
-                ctx.fill();
-
-                ctx.beginPath();
-                ctx.arc(px+42,py+34,10,0,Math.PI*2);
-                ctx.fill();
             }
             else if(tile==="mountain"){
-
                 ctx.fillStyle="#6b7280";
-                ctx.fillRect(px,py,TILE,TILE);
-
-                ctx.fillStyle="#9ca3af";
-
-                ctx.beginPath();
-                ctx.moveTo(px+15,py+45);
-                ctx.lineTo(px+32,py+12);
-                ctx.lineTo(px+50,py+45);
-                ctx.fill();
             }
             else if(tile==="road"){
-
-                ctx.fillStyle="#4ade80";
-                ctx.fillRect(px,py,TILE,TILE);
-
                 ctx.fillStyle="#8b7355";
-
-                ctx.fillRect(
-                    px,
-                    py + TILE/2 - 6,
-                    TILE,
-                    12
-                );
             }
 
-           
+            ctx.fillRect(px,py,TILE,TILE);
+
+            let baseColor = ctx.fillStyle;
+
+            let grad = ctx.createLinearGradient(
+                px,
+                py,
+                px + TILE,
+                py + TILE
+            );
+
+            grad.addColorStop(0, baseColor);
+            grad.addColorStop(1, "#00000022");
+
+            ctx.fillStyle = grad;
+
+            ctx.fillRect(
+                px,
+                py,
+                TILE,
+                TILE
+            );
+        }
+    }
 }
 
           
