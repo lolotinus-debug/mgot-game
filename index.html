@@ -834,39 +834,35 @@ function generateMap(){
 
             let tile;
 
-            // Water
             if(h < 0.22){
                 tile = "water";
             }
-
-            // Beach
             else if(h < 0.32){
                 tile = "grass";
             }
-
-            // Mountains
             else if(h > 0.78){
                 tile = "mountain";
             }
-
-            // Forest
             else if(m > 0.60){
                 tile = "forest";
             }
-
-            // Plains
             else{
                 tile = "grass";
             }
 
             mapData[x][y] = tile;
-           // generate roads
-    for(let y=5;y<MAP_SIZE;y+=8){
+        }
+    }
 
-        for(let x=0;x<MAP_SIZE;x++){
+    // ROADS
+    for(let y=5; y<MAP_SIZE; y+=8){
+
+        for(let x=0; x<MAP_SIZE; x++){
 
             if(mapData[x][y] !== "water"){
                 mapData[x][y] = "road";
+            }
+
         }
     }
 }
@@ -946,11 +942,13 @@ function drawMap(){
 
         for(let y=0; y<MAP_SIZE; y++){
 
-            let tile = mapData[x][y];
 
 let tile = mapData[x][y];
 
-if(tile==="grass"){
+if(tile==="water"){
+    ctx.fillStyle="#2563eb";
+}
+else if(tile==="grass"){
     ctx.fillStyle="#22c55e";
 }
 else if(tile==="forest"){
@@ -961,9 +959,6 @@ else if(tile==="mountain"){
 }
 else if(tile==="road"){
     ctx.fillStyle="#8b7355";
-}
-else{
-    ctx.fillStyle="#2563eb";
 }
 
             let px = x * TILE - cameraX;
@@ -1407,11 +1402,8 @@ ui();
 document.getElementById("upgradeBtn").style.display = "none";
 document.getElementById("demolishBtn").style.display = "none";
 
-document.getElementById("info").innerHTML =
-"Nothing selected";
-
 render();
-console.log("SCRIPT END");
+
 </script>
 
 </body>
