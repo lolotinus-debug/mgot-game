@@ -818,14 +818,14 @@ for(let b of buildings){
 let px=b.x*TILE-cameraX;
 let py=b.y*TILE-cameraY;
 
-ctx.fillStyle=B[b.type].color;
+ctx.fillStyle = B[b.type]?.color || "#ffffff";
 
 if(b.type==="townhall"){
 ctx.fillRect(px+4,py+4,56,56);
 }
 
 // SHAPES
-if(b.type==="house"){
+if(b.type==="community"){
 
 ctx.fillStyle="#22c55e";
 ctx.fillRect(px+12,py+24,40,28);
@@ -843,7 +843,7 @@ ctx.fillRect(px+26,py+34,12,18);
 
 }
 
-if(b.type==="mine"){
+if(b.type==="treasury"){
 
 ctx.fillStyle="#6b7280";
 ctx.fillRect(px+12,py+16,40,36);
@@ -865,7 +865,7 @@ ctx.stroke();
 
 }
 
-if(b.type==="farm"){
+if(b.type==="marketing"){
 
 ctx.fillStyle="#84cc16";
 ctx.fillRect(px+10,py+10,44,44);
@@ -881,7 +881,7 @@ ctx.stroke();
 
 }
   
-if(b.type==="lab"){
+if(b.type==="academy"){
 
 ctx.fillStyle="#a855f7";
 ctx.fillRect(px+12,py+12,40,40);
@@ -896,7 +896,7 @@ ctx.fillRect(px+28,py+6,8,12);
 
 }
 
-if(b.type==="plant"){
+if(b.type==="utility"){
 
 ctx.fillStyle="#00d4ff";
 ctx.fillRect(px+10,py+24,44,28);
@@ -907,7 +907,7 @@ ctx.fillRect(px+36,py+8,10,20);
 
 }
 
-if(b.type==="armory"){
+if(b.type==="influencer"){
 
 ctx.fillStyle="#ef4444";
 ctx.fillRect(px+10,py+14,44,38);
@@ -920,7 +920,7 @@ ctx.strokeRect(px+10,py+14,44,38);
 
 }
 
-if(b.type==="forge"){
+if(b.type==="burn"){
 
 ctx.fillStyle="#eab308";
 ctx.fillRect(px+12,py+16,40,36);
@@ -1085,51 +1085,49 @@ if(e.key==="ArrowDown") cameraY+=32;
 });
 function newGame(){
 
-if(!confirm("Start a new game?")){
-return;
+    if(!confirm("Start a new game?")){
+        return;
+    }
+
+    localStorage.removeItem("mgot_save");
+
+    game = {
+        treasury:500,
+        holders:10,
+        engagement:100,
+        education:0,
+        utility:1,
+        promoters:0,
+        lp:100,
+        price:0.001,
+        marketCap:1000
+    };
+
+    buildings = [{
+        x:10,
+        y:10,
+        type:"townhall",
+        level:1
+    }];
+
+    particles = [];
+    selected = null;
+    selectedBuild = null;
+
+    cameraX = 0;
+    cameraY = 0;
+
+    ui();
+
+    document.getElementById("upgradeBtn").style.display = "none";
+    document.getElementById("demolishBtn").style.display = "none";
+
+    document.getElementById("info").innerHTML =
+    "Nothing selected";
+
+    log("🆕 New Game Started");
+
 }
-
-localStorage.removeItem("mgot_save");
-
-game = {
-treasury:500,
-holders:10,
-engagement:100,
-education:0,
-utility:1,
-promoters:0,
-lp:100,
-price:0.001,
-marketCap:1000
-
-};
-};
-
-buildings = [{
-x:10,
-y:10,
-type:"TownHall",
-level:1
-}];
-  
-particles = [];
-selected = null;
-selectedBuild = null;
-
-cameraX = 0;
-cameraY = 0;
-
-ui();
-  
-if(!selected){
-
-document.getElementById("upgradeBtn").style.display="none";
-document.getElementById("demolishBtn").style.display="none";
-
-document.getElementById("info").innerHTML="Nothing selected";
-
-return;
-  }
 
 // START
 ui();
