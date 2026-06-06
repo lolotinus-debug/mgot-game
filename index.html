@@ -647,31 +647,31 @@ setInterval(()=>{
 
     for(let b of buildings){
 
-       if(b.type==="community"){
-    game.holders += 0.05 * b.level;
-    game.communityPower += 0.1 * b.level;
-}
+        if(b.type==="community"){
+            game.holders += 0.05 * b.level;
+            game.communityPower += 0.1 * b.level;
+        }
 
-       if(b.type==="marketing"){
-    game.engagement += 2 * b.level;
+        if(b.type==="marketing"){
+            game.engagement += 2 * b.level;
 
-    game.holders +=
-    game.engagement * 0.0002 * b.level;
-}
+            game.holders +=
+            game.engagement * 0.0002 * b.level;
+        }
 
         if(b.type==="treasury"){
             game.treasury += b.level;
         }
 
-       if(b.type==="academy"){
-    game.education += b.level;
-    game.reputation += 0.05 * b.level;
-}
+        if(b.type==="academy"){
+            game.education += b.level;
+            game.reputation += 0.05 * b.level;
+        }
 
         if(b.type==="utility"){
-    game.utility += 0.2 * b.level;
-    game.reputation += 0.1 * b.level;
-}
+            game.utility += 0.2 * b.level;
+            game.reputation += 0.1 * b.level;
+        }
 
         if(b.type==="influencer"){
             game.promoters += 0.2 * b.level;
@@ -679,45 +679,59 @@ setInterval(()=>{
 
         game.supply -= 5 * b.level;
 
-if(game.supply < 1000){
-    game.supply = 1000;
-}
-
+        if(game.supply < 1000){
+            game.supply = 1000;
+        }
     }
 
     if(game.education >= 100){
-
         game.utility++;
-
         game.education = 0;
-
         log("🔷 New Utility Released");
-
     }
 
-   // ================= MARKET CAP =================
-game.marketCap = Math.floor(
-  game.treasury +
-  (game.holders * 25) +
-  (game.engagement * 2) +
-  (game.utility * 500) +
-  (game.reputation * 50) +
-  Math.sqrt(game.lp) * 100
-);
+    // ================= LP DYNAMICS (OPRAVENÉ) =================
 
-// ================= LP → PRICE LOGIC =================
-const stability = game.lp / (game.lp + 500);
-const volatility = 1 - (stability * 0.6);
+    // LP rast (ekonomická aktivita)
+    game.lp += (game.treasury * 0.0005);
+    game.lp += (game.holders * 0.002);
+    game.lp += (game.engagement * 0.0003);
 
-game.price = Number(
-  (
-    (game.marketCap / Math.max(game.supply, 1)) *
-    volatility
-  ).toFixed(6)
-);
+    // LP tlak (supply dump efekt)
+    game.lp -= (game.supply * 0.000001);
+
+    // prirodzená stabilizácia
+    game.lp *= 0.9995;
+
+    // minimum / maximum
+    if(game.lp < 10) game.lp = 10;
+    if(game.lp > 5000) game.lp = 5000;
+
+    // ================= MARKET CAP =================
+    game.marketCap = Math.floor(
+        game.treasury +
+        (game.holders * 25) +
+        (game.engagement * 2) +
+        (game.utility * 500) +
+        (game.reputation * 50) +
+        Math.sqrt(game.lp) * 100
+    );
+
+    // ================= PRICE LOGIC =================
+
+    const stability = game.lp / (game.lp + 500);
+    const volatility = 1 - (stability * 0.6);
+
+    game.price = Number(
+        (
+            (game.marketCap / Math.max(game.supply, 1)) *
+            volatility
+        ).toFixed(6)
+    );
+
     ui();
 
-},1000);
+}, 1000);
 
 // ================= MAP DATA =================
 
