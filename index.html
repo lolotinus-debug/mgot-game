@@ -711,33 +711,29 @@ setInterval(()=>{
 // uložíme starú cenu
 game.lastPrice = game.price;
 
-// ================= REAL MARKET MODEL =================
-
-// BUY PRESSURE (dopyt)
-let buyPressure =
+// BUYERS
+let buyers =
     game.holders * 0.02 +
     game.promoters * 0.5 +
     game.engagement * 0.001;
 
-// SELL PRESSURE (ponuka + noise)
-let sellPressure =
-    game.volume * 0.3 +
-    (Math.random() * 5);
-  game.volume = buyPressure + sellPressure;
+// SELLERS
+let sellers =
+    (game.holders * 0.01) *
+    (Math.random() * 2);
 
-// LIQUIDITY EFFECT (LP tlmí pohyb)
-let liquidityFactor = Math.sqrt(game.lp);
+// VOLUME
+let volume = buyers + sellers;
 
-// NET PRESSURE
-let pressure = buyPressure - sellPressure;
+game.volume = volume;
 
-// PRICE MOVE (REALISTIC)
-game.price *= (1 + (pressure / liquidityFactor) * 0.0005);
+// PRESSURE
+let pressure = buyers - sellers;
 
-// MIN PRICE SAFETY
-if(game.price < 0.000001){
-    game.price = 0.000001;
-}
+// PRICE MOVEMENT
+game.price *= (
+    1 + pressure * 0.0005
+);
 
 // ochrana
 if(game.price < 0.000001){
