@@ -695,7 +695,8 @@ if(game.supply < 1000){
 
     }
 
-   game.marketCap = Math.floor(
+   // ================= MARKET CAP =================
+game.marketCap = Math.floor(
   game.treasury +
   (game.holders * 25) +
   (game.engagement * 2) +
@@ -704,15 +705,16 @@ if(game.supply < 1000){
   Math.sqrt(game.lp) * 100
 );
 
-  game.price =
+// ================= LP → PRICE LOGIC =================
 const stability = game.lp / (game.lp + 500);
 const volatility = 1 - (stability * 0.6);
 
 game.price = Number(
-  ((game.marketCap / game.supply) * volatility).toFixed(6)
+  (
+    (game.marketCap / Math.max(game.supply, 1)) *
+    volatility
+  ).toFixed(6)
 );
-Number((game.marketCap / Math.max(game.supply, 1)).toFixed(6));
-  
     ui();
 
 },1000);
