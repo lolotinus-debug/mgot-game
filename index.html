@@ -409,8 +409,8 @@ let game = {
   communityPower: 0,
   price: 0.001,
   marketCap: 1000,
-volume: 0,
-lastPrice: 0.001
+  volume: 0,
+  lastPrice: 0.001
 };
 
 let buildings = [];
@@ -805,30 +805,7 @@ Math.floor(
 if(isNaN(game.price)){
     game.price = 0.001;
 }
-    // ================= MARKET CAP =================
-
-    game.marketCap = Math.floor(
-        game.treasury +
-        (game.holders * 25) +
-        (game.engagement * 2) +
-        (game.utility * 500) +
-        (game.reputation * 50) +
-        (game.lp * 20)
-    );
-
-    // ================= PRICE =================
-
-    game.price = Number(
-        (
-            (game.marketCap * game.lp) /
-            (game.supply * 100000)
-        ).toFixed(6)
-    );
-
-    // ochrana proti NaN
-    if(isNaN(game.price)){
-        game.price = 0;
-    }
+}
 
     ui();
 
@@ -1215,6 +1192,8 @@ game = {
   communityPower: 0,
   price: 0.001,
   marketCap: 1000,
+  volume: 0,
+  lastPrice: 0.001
   ...data.game
 };
 }
@@ -1321,6 +1300,8 @@ function newGame(){
   communityPower: 0,
   price: 0.001,
   marketCap: 1000
+  volume: 0,
+  lastPrice: 0.001
 };
 
     buildings = [{
