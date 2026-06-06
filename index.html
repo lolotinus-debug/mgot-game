@@ -825,33 +825,36 @@ function generateMap(){
 
     for(let x=0; x<MAP_SIZE; x++){
 
-    for(let y=0; y<MAP_SIZE; y++){
+        mapData[x] = [];
 
-        let px = x * TILE - cameraX;
-        let py = y * TILE - cameraY;
+        for(let y=0; y<MAP_SIZE; y++){
 
-        let tile = mapData[x][y];
+            let h = noise(x * 0.15, y * 0.15);
+            let m = noise(x * 0.25 + 100, y * 0.25 + 100);
 
             if(h < 0.22){
-                tile = "water";
-            }
-            else if(h < 0.32){
-                tile = "grass";
+                mapData[x][y] = "water";
             }
             else if(h > 0.78){
-                tile = "mountain";
+                mapData[x][y] = "mountain";
             }
             else if(m > 0.60){
-                tile = "forest";
+                mapData[x][y] = "forest";
             }
             else{
-                tile = "grass";
+                mapData[x][y] = "grass";
             }
-
-            mapData[x][y] = tile;
         }
     }
 
+    for(let y=5; y<MAP_SIZE; y+=8){
+        for(let x=0; x<MAP_SIZE; x++){
+            if(mapData[x][y] !== "water"){
+                mapData[x][y] = "road";
+            }
+        }
+    }
+}
     // ROADS
     for(let y=5; y<MAP_SIZE; y+=8){
 
@@ -934,71 +937,95 @@ for(let y=5;y<MAP_SIZE;y+=8){
 // ================= MAP ZONES =================
 function drawMap(){
 
-    console.log("MAP DRAW");
-
     for(let x=0; x<MAP_SIZE; x++){
 
         for(let y=0; y<MAP_SIZE; y++){
 
+            let px = x * TILE - cameraX;
+            let py = y * TILE - cameraY;
 
-let tile = mapData[x][y];
+            let tile = mapData[x][y];
 
-if(tile==="water"){
-    ctx.fillStyle="#2563eb";
-}
-else if(tile==="grass"){
+            if(tile==="water"){
+                ctx.fillStyle="#2563eb";
+            }
+            else if(tile==="grass"){
 
-    let shades = [
-        "#65a30d",
-        "#4d7c0f",
-        "#3f6212",
-        "#4ade80"
-    ];
+                let shades = [
+                    "#65a30d",
+                    "#4d7c0f",
+                    "#3f6212",
+                    "#4ade80"
+                ];
 
-    ctx.fillStyle =
-        shades[(x+y)%shades.length];
-}
-else if(tile==="forest"){
+                ctx.fillStyle =
+                    shades[(x+y)%shades.length];
+            }
+            else if(tile==="forest"){
 
-    ctx.fillStyle="#166534";
-    ctx.fillRect(px,py,TILE,TILE);
+                ctx.fillStyle="#166534";
+                ctx.fillRect(px,py,TILE,TILE);
 
-    ctx.fillStyle="#14532d";
+                ctx.fillStyle="#14532d";
 
-    ctx.beginPath();
-    ctx.arc(px+20,py+20,8,0,Math.PI*2);
-    ctx.fill();
+                ctx.beginPath();
+                ctx.arc(px+20,py+20,8,0,Math.PI*2);
+                ctx.fill();
 
-    ctx.beginPath();
-    ctx.arc(px+42,py+34,10,0,Math.PI*2);
-    ctx.fill();
-}
-else if(tile==="mountain"){
+                ctx.beginPath();
+                ctx.arc(px+42,py+34,10,0,Math.PI*2);
+                ctx.fill();
+            }
+            else if(tile==="mountain"){
 
-    ctx.fillStyle="#6b7280";
-    ctx.fillRect(px,py,TILE,TILE);
+                ctx.fillStyle="#6b7280";
+                ctx.fillRect(px,py,TILE,TILE);
 
-    ctx.fillStyle="#9ca3af";
+                ctx.fillStyle="#9ca3af";
 
-    ctx.beginPath();
-    ctx.moveTo(px+15,py+45);
-    ctx.lineTo(px+32,py+12);
-    ctx.lineTo(px+50,py+45);
-    ctx.fill();
-}
-else if(tile==="road"){
+                ctx.beginPath();
+                ctx.moveTo(px+15,py+45);
+                ctx.lineTo(px+32,py+12);
+                ctx.lineTo(px+50,py+45);
+                ctx.fill();
+            }
+            else if(tile==="road"){
 
-    ctx.fillStyle="#4ade80";
-    ctx.fillRect(px,py,TILE,TILE);
+                ctx.fillStyle="#4ade80";
+                ctx.fillRect(px,py,TILE,TILE);
 
-    ctx.fillStyle="#8b7355";
+                ctx.fillStyle="#8b7355";
 
-    ctx.fillRect(
-        px,
-        py + TILE/2 - 6,
-        TILE,
-        12
-    );
+                ctx.fillRect(
+                    px,
+                    py + TILE/2 - 6,
+                    TILE,
+                    12
+                );
+            }
+
+            let baseColor = ctx.fillStyle;
+
+            let grad = ctx.createLinearGradient(
+                px,
+                py,
+                px + TILE,
+                py + TILE
+            );
+
+            grad.addColorStop(0, baseColor);
+            grad.addColorStop(1, "#00000022");
+
+            ctx.fillStyle = grad;
+
+            ctx.fillRect(
+                px,
+                py,
+                TILE,
+                TILE
+            );
+        }
+    }
 }
 
           
@@ -1276,20 +1303,20 @@ const data = JSON.parse(save);
 // safe merge (aby sa ti nezmazali nové hodnoty pri update kódu)
 if(data.game){
 game = {
-  treasury: 500,
-  holders: 10,
-  engagement: 100,
-  education: 0,
-  utility: 1,
-  promoters: 0,
-  lp: 100,
-  supply: 1000000,
-  reputation: 0,
-  communityPower: 0,
-  price: 0.001,
-  marketCap: 1000,
-  volume: 0,
-  lastPrice: 0.001,
+  treasury:500,
+  holders:10,
+  engagement:100,
+  education:0,
+  utility:1,
+  promoters:0,
+  lp:100,
+  supply:1000000,
+  reputation:0,
+  communityPower:0,
+  price:0.001,
+  marketCap:1000,
+  volume:0,
+  lastPrice:0.001,
   ...data.game
 };
 }
@@ -1342,17 +1369,7 @@ drawParticles();
 
     requestAnimationFrame(render);
 }
-// START
 
-ui();
-
-document.getElementById("upgradeBtn").style.display = "none";
-document.getElementById("demolishBtn").style.display = "none";
-
-document.getElementById("info").innerHTML =
-"Nothing selected";
-
-render();
 // ================= CAMERA =================
 let touchStartX = 0;
 let touchStartY = 0;
