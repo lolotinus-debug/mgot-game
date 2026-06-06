@@ -394,22 +394,18 @@ let selectedBuild = null;
 let particles = [];
 
 let game = {
-
-treasury:500,
-holders:10,
-engagement:100,
-education:0,
-utility:1,
-promoters:0,
-lp:100,
-
-supply:1000000,
-reputation:0,
-communityPower:0,
-
-price:0.001,
-marketCap:1000
-
+  treasury: 500,
+  holders: 10,
+  engagement: 100,
+  education: 0,
+  utility: 1,
+  promoters: 0,
+  lp: 100,
+  supply: 1000000,
+  reputation: 0,
+  communityPower: 0,
+  price: 0.001,
+  marketCap: 1000
 };
 
 let buildings = [];
@@ -713,10 +709,8 @@ if(game.supply < 1000){
 
 );
 
-    game.price =
-(
-game.marketCap / game.supply
-).toFixed(6);
+  game.price =
+Number((game.marketCap / game.supply).toFixed(6));
   
     ui();
 
