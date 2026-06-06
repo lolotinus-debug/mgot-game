@@ -297,6 +297,12 @@ font-size:9px;
 <div class="resource">🏦 LP:
 <span id="lp">100</span></div>
 
+<div class="resource">⭐ Reputation:
+<span id="reputation">0</span></div>
+
+<div class="resource">🪙 Supply:
+<span id="supply">1000000</span></div>
+
 <div class="resource">📈 Price:
 <span id="price">0.001</span></div>
 
@@ -396,6 +402,11 @@ education:0,
 utility:1,
 promoters:0,
 lp:100,
+
+supply:1000000,
+reputation:0,
+communityPower:0,
+
 price:0.001,
 marketCap:1000
 
@@ -473,6 +484,12 @@ Math.floor(game.promoters);
 
 document.getElementById("lp").innerText =
 Math.floor(game.lp);
+
+document.getElementById("reputation").innerText =
+Math.floor(game.reputation);
+
+document.getElementById("supply").innerText =
+Math.floor(game.supply);
 
 document.getElementById("price").innerText =
 game.price;
@@ -634,33 +651,41 @@ setInterval(()=>{
 
     for(let b of buildings){
 
-        if(b.type==="community"){
-            game.holders += 0.05 * b.level;
-        }
+       if(b.type==="community"){
+    game.holders += 0.05 * b.level;
+    game.communityPower += 0.1 * b.level;
+}
 
-        if(b.type==="marketing"){
-            game.engagement += 2 * b.level;
-        }
+       if(b.type==="marketing"){
+    game.engagement += 2 * b.level;
+
+    game.holders +=
+    game.engagement * 0.0002 * b.level;
+}
 
         if(b.type==="treasury"){
             game.treasury += b.level;
         }
 
-        if(b.type==="academy"){
-            game.education += b.level;
-        }
+       if(b.type==="academy"){
+    game.education += b.level;
+    game.reputation += 0.05 * b.level;
+}
 
         if(b.type==="utility"){
-            game.utility += 0.5 * b.level;
-        }
+    game.utility += 0.2 * b.level;
+    game.reputation += 0.1 * b.level;
+}
 
         if(b.type==="influencer"){
             game.promoters += 0.2 * b.level;
         }
 
-        if(b.type==="burn"){
-            game.lp += 0.1 * b.level;
-        }
+        game.supply -= 5 * b.level;
+
+if(game.supply < 1000){
+    game.supply = 1000;
+}
 
     }
 
@@ -674,20 +699,25 @@ setInterval(()=>{
 
     }
 
-    game.marketCap = Math.floor(
+   game.marketCap = Math.floor(
 
-        game.treasury +
-        (game.holders * 10) +
-        (game.engagement * 5) +
-        (game.utility * 100) +
-        (game.lp * 20)
+    game.treasury +
 
-    );
+    (game.holders * 25) +
 
-    game.price = (
-        game.marketCap / 1000000
-    ).toFixed(6);
+    (game.engagement * 2) +
 
+    (game.utility * 500) +
+
+    (game.reputation * 50)
+
+);
+
+    game.price =
+(
+game.marketCap / game.supply
+).toFixed(6);
+  
     ui();
 
 },1000);
