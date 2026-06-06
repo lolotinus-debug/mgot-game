@@ -1033,13 +1033,13 @@ console.log("Save corrupted");
 // ================= RENDER =================
 function render(){
 
-    ctx.fillStyle="#07131f";
+    ctx.fillStyle = "#07131f";
 
     ctx.fillRect(
         0,
         0,
-        window.innerWidth,
-        window.innerHeight
+        canvas.width,
+        canvas.height
     );
 
     drawMap();
@@ -1049,20 +1049,17 @@ function render(){
     requestAnimationFrame(render);
 
 }
-ctx.fillRect(
-0,
-0,
-window.innerWidth,
-window.innerHeight
-);
+// START
 
-drawMap();
-drawBuildings();
-drawParticles();
+ui();
 
-requestAnimationFrame(render);
-}
+document.getElementById("upgradeBtn").style.display = "none";
+document.getElementById("demolishBtn").style.display = "none";
 
+document.getElementById("info").innerHTML =
+"Nothing selected";
+
+render();
 // ================= CAMERA =================
 let touchStartX = 0;
 let touchStartY = 0;
