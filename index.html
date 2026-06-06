@@ -1,4 +1,4 @@
-e<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="sk">
 <head>
 <meta charset="UTF-8">
@@ -1016,7 +1016,7 @@ if(!hasTownHall){
 buildings.push({
 x:10,
 y:10,
-type:"TownHall",
+type:"townHall",
 level:1
 });
 
@@ -1032,14 +1032,23 @@ console.log("Save corrupted");
 
 // ================= RENDER =================
 function render(){
-community
-marketing
-treasury
-academy
-utility
-influencer
-burn
-ctx.fillStyle="#07131f";
+
+    ctx.fillStyle="#07131f";
+
+    ctx.fillRect(
+        0,
+        0,
+        window.innerWidth,
+        window.innerHeight
+    );
+
+    drawMap();
+    drawBuildings();
+    drawParticles();
+
+    requestAnimationFrame(render);
+
+}
 ctx.fillRect(
 0,
 0,
@@ -1130,16 +1139,15 @@ function newGame(){
 }
 
 // START
+
 ui();
-document.getElementById("upgradeBtn").style.display="none";
-document.getElementById("demolishBtn").style.display="none";
+
+document.getElementById("upgradeBtn").style.display = "none";
+document.getElementById("demolishBtn").style.display = "none";
 
 document.getElementById("info").innerHTML =
 "Nothing selected";
 
-}
-document.getElementById("upgradeBtn").style.display="none";
-document.getElementById("demolishBtn").style.display="none";
 render();
 
 </script>
