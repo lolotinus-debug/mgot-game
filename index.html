@@ -711,6 +711,7 @@ if(game.supply < 1000){
 
   game.price =
 Number((game.marketCap / game.supply).toFixed(6));
+Number((game.marketCap / Math.max(game.supply, 1)).toFixed(6));
   
     ui();
 
@@ -1079,7 +1080,23 @@ try{
 
 const data = JSON.parse(save);
 
-if(data.game) game = data.game;
+if(data.game){
+  game = {
+    treasury: 500,
+    holders: 10,
+    engagement: 100,
+    education: 0,
+    utility: 1,
+    promoters: 0,
+    lp: 100,
+    supply: 1000000,
+    reputation: 0,
+    communityPower: 0,
+    price: 0.001,
+    marketCap: 1000,
+    ...data.game
+  };
+}
 if(data.buildings) buildings = data.buildings;
 
 let hasTownHall = buildings.some(
@@ -1172,7 +1189,7 @@ function newGame(){
 
     localStorage.removeItem("mgot_save");
 
-    game = {
+  game = {
   treasury: 500,
   holders: 10,
   engagement: 100,
@@ -1184,8 +1201,7 @@ function newGame(){
   reputation: 0,
   communityPower: 0,
   price: 0.001,
-  marketCap: 1000,
-  ...data.game
+  marketCap: 1000
 };
 
     buildings = [{
