@@ -867,48 +867,53 @@ function generateMap(){
 generateMap();
 // ================= ROADS =================
 
-ctx.strokeStyle = "#8b7355";
-ctx.lineWidth = 12;
-ctx.lineCap = "round";
+function drawRoads(){
 
-for(let i=0;i<buildings.length;i++){
+    ctx.strokeStyle = "#8b7355";
+    ctx.lineWidth = 12;
+    ctx.lineCap = "round";
 
-    let a = buildings[i];
+    for(let i=0;i<buildings.length;i++){
 
-    let ax = a.x * TILE + TILE/2 - cameraX;
-    let ay = a.y * TILE + TILE/2 - cameraY;
+        let a = buildings[i];
 
-    let nearest = null;
-    let dist = 999999;
+        let ax = a.x * TILE + TILE/2 - cameraX;
+        let ay = a.y * TILE + TILE/2 - cameraY;
 
-    for(let j=0;j<buildings.length;j++){
+        let nearest = null;
+        let dist = Infinity;
 
-        if(i===j) continue;
+        for(let j=0;j<buildings.length;j++){
 
-        let b = buildings[j];
+            if(i === j) continue;
 
-        let d =
-        Math.abs(a.x-b.x)+
-        Math.abs(a.y-b.y);
+            let b = buildings[j];
 
-        if(d < dist){
-            dist = d;
-            nearest = b;
+            let d =
+                Math.abs(a.x - b.x) +
+                Math.abs(a.y - b.y);
+
+            if(d < dist){
+                dist = d;
+                nearest = b;
+            }
         }
-    }
 
-    if(nearest){
+        if(nearest){
 
-        let bx =
-        nearest.x*TILE+TILE/2-cameraX;
+            let bx =
+                nearest.x * TILE +
+                TILE/2 - cameraX;
 
-        let by =
-        nearest.y*TILE+TILE/2-cameraY;
+            let by =
+                nearest.y * TILE +
+                TILE/2 - cameraY;
 
-        ctx.beginPath();
-        ctx.moveTo(ax,ay);
-        ctx.lineTo(bx,by);
-        ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(bx, by);
+            ctx.stroke();
+        }
     }
 }
 
@@ -1287,8 +1292,9 @@ function render(){
     );
 
     drawMap();
-    drawBuildings();
-    drawParticles();
+drawRoads();
+drawBuildings();
+drawParticles();
 
     requestAnimationFrame(render);
 }
