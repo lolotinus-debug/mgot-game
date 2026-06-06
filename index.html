@@ -677,61 +677,83 @@ setInterval(()=>{
             game.promoters += 0.2 * b.level;
         }
 
-        game.supply -= 5 * b.level;
+        if(b.type==="burn"){
+            game.supply -= (10 * b.level);
 
-        if(game.supply < 1000){
-            game.supply = 1000;
+            if(game.supply < 1000){
+                game.supply = 1000;
+            }
         }
+
     }
 
+    // ================= EDUCATION =================
+
     if(game.education >= 100){
+
         game.utility++;
+
         game.education = 0;
+
         log("🔷 New Utility Released");
     }
 
-    // ================= LP DYNAMICS (OPRAVENÉ) =================
+    // ================= TRADING SIMULATION =================
 
-    // LP rast (ekonomická aktivita)
-    game.lp += (game.treasury * 0.0005);
-    game.lp += (game.holders * 0.002);
-    game.lp += (game.engagement * 0.0003);
+    let buys =
+        (game.holders * 0.005) +
+        (game.engagement * 0.0005) +
+        (game.promoters * 0.05) +
+        (game.reputation * 0.002);
 
-    // LP tlak (supply dump efekt)
-    game.lp -= (game.supply / 1000000000);
+    let sells =
+        (game.supply / 10000000) *
+        (Math.random() * 1.5);
 
-    // prirodzená stabilizácia
-    game.lp *= 0.9995;
+    let netFlow = buys - sells;
 
-    // minimum / maximum
-    if(game.lp < 10) game.lp = 10;
-    if(game.lp > 5000) game.lp = 5000;
+    game.lp += netFlow;
+
+    // market sentiment
+    game.lp += (Math.random() - 0.5) * 2;
+
+    // LP limity
+    if(game.lp < 10){
+        game.lp = 10;
+    }
+
+    if(game.lp > 5000){
+        game.lp = 5000;
+    }
 
     // ================= MARKET CAP =================
+
     game.marketCap = Math.floor(
         game.treasury +
         (game.holders * 25) +
         (game.engagement * 2) +
         (game.utility * 500) +
         (game.reputation * 50) +
-        Math.sqrt(game.lp) * 100
+        (game.lp * 20)
     );
 
-    // ================= PRICE LOGIC =================
-
-    const stability = game.lp / (game.lp + 500);
-    const volatility = 1 - (stability * 0.6);
+    // ================= PRICE =================
 
     game.price = Number(
         (
-            (game.marketCap / Math.max(game.supply, 1)) *
-            volatility
+            (game.marketCap * game.lp) /
+            (game.supply * 100000)
         ).toFixed(6)
     );
 
+    // ochrana proti NaN
+    if(isNaN(game.price)){
+        game.price = 0;
+    }
+
     ui();
 
-}, 1000);
+},1000);
 
 // ================= MAP DATA =================
 
