@@ -520,12 +520,12 @@ return;
 
 let cost = selected.level * 120;
 
-if(game.gold < cost){
+if(game.treasury < cost)
 log("❌ Not enough gold");
 return;
 }
 
-game.gold -= cost;
+game.treasury -= cost;
 selected.level++;
 
 explosion(
@@ -674,10 +674,7 @@ game.price += 0.00001 * b.level;
 }
 }
 
-game.gold -= game.soldiers * 0.02;
-if(game.gold < 0) game.gold = 0;
-
-if(game.knowledge >= 100){
+if(game.education >= 100)
 game.technologyLevel++;
 game.knowledge = 0;
 log("🧠 New Technology Level: " + game.technologyLevel);
@@ -1051,7 +1048,13 @@ console.log("Save corrupted");
 
 // ================= RENDER =================
 function render(){
-
+community
+marketing
+treasury
+academy
+utility
+influencer
+burn
 ctx.fillStyle="#07131f";
 ctx.fillRect(
 0,
@@ -1105,13 +1108,17 @@ return;
 localStorage.removeItem("mgot_save");
 
 game = {
-gold:500,
-food:100,
-energy:100,
-knowledge:0,
-soldiers:0,
-population:10,
-technologyLevel:1
+treasury:500,
+holders:10,
+engagement:100,
+education:0,
+utility:1,
+promoters:0,
+lp:100,
+price:0.001,
+marketCap:1000
+
+};
 };
 
 buildings = [{
