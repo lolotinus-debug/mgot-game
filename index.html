@@ -878,6 +878,10 @@ mapData[x][y] = "grass";
 // ================= MAP ZONES =================
 function drawMap(){
 
+console.log("MAP DRAW");
+
+for(let x=0;x<MAP_SIZE;x++){
+
 for(let x=0;x<MAP_SIZE;x++){
 
 for(let y=0;y<MAP_SIZE;y++){
@@ -1223,13 +1227,20 @@ console.log("Save corrupted", err);
 // ================= RENDER =================
 function render(){
 
+    ctx.clearRect(
+        0,
+        0,
+        window.innerWidth,
+        window.innerHeight
+    );
+
     ctx.fillStyle = "#07131f";
 
     ctx.fillRect(
         0,
         0,
-        canvas.width,
-        canvas.height
+        window.innerWidth,
+        window.innerHeight
     );
 
     drawMap();
@@ -1237,7 +1248,6 @@ function render(){
     drawParticles();
 
     requestAnimationFrame(render);
-
 }
 // START
 
