@@ -741,8 +741,8 @@ if(game.price < 0.000001){
 }
 
 // LP REACTION
-game.lp += buyers * 0.05;
-game.lp -= sellers * 0.04;
+game.lp += buyers * 0.01;
+game.lp -= sellers * 0.008;
 
 // sentiment noise
 game.lp +=
@@ -753,8 +753,8 @@ if(game.lp < 10){
     game.lp = 10;
 }
 
-if(game.lp > 5000){
-    game.lp = 5000;
+if(game.lp > 50000000){
+    game.lp = 50000000;
 }
 
 // WHALES
