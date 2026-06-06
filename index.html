@@ -912,18 +912,6 @@ function drawRoads(){
     }
 }
 
-for(let y=5;y<MAP_SIZE;y+=8){
-
-    for(let x=0;x<MAP_SIZE;x++){
-
-        if(mapData[x][y] !== "water"){
-            mapData[x][y] = "road";
-        }
-
-    }
-
-}
-
 
 // ================= MAP ZONES =================
 function drawMap(){
@@ -963,29 +951,7 @@ function drawMap(){
 
             ctx.fillRect(px,py,TILE,TILE);
 
-            let baseColor = ctx.fillStyle;
-
-            let grad = ctx.createLinearGradient(
-                px,
-                py,
-                px + TILE,
-                py + TILE
-            );
-
-            grad.addColorStop(0, baseColor);
-            grad.addColorStop(1, "#00000022");
-
-            ctx.fillStyle = grad;
-
-            ctx.fillRect(
-                px,
-                py,
-                TILE,
-                TILE
-            );
-        }
-    }
-}
+            
 
           
             let baseColor = ctx.fillStyle;
