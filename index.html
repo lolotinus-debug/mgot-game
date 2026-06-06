@@ -869,6 +869,54 @@ else if(h < 0.32){
 }
 
 generateMap();
+
+// ================= ROADS =================
+
+function generateRoads(){
+
+// hlavná horizontálna cesta
+let mainY = Math.floor(MAP_SIZE/2);
+
+for(let x=0;x<MAP_SIZE;x++){
+    mapData[x][mainY] = "road";
+}
+
+// hlavná vertikálna cesta
+let mainX = Math.floor(MAP_SIZE/2);
+
+for(let y=0;y<MAP_SIZE;y++){
+    mapData[mainX][y] = "road";
+}
+
+// vedľajšie ulice
+for(let x=5;x<MAP_SIZE;x+=8){
+
+    for(let y=0;y<MAP_SIZE;y++){
+
+        if(mapData[x][y] !== "water"){
+            mapData[x][y] = "road";
+        }
+
+    }
+
+}
+
+for(let y=5;y<MAP_SIZE;y+=8){
+
+    for(let x=0;x<MAP_SIZE;x++){
+
+        if(mapData[x][y] !== "water"){
+            mapData[x][y] = "road";
+        }
+
+    }
+
+}
+
+}
+
+generateRoads();
+
 // ================= MAP ZONES =================
 function drawMap(){
 
@@ -880,18 +928,21 @@ function drawMap(){
 
             let tile = mapData[x][y];
 
-            if(tile==="grass"){
-                ctx.fillStyle="#22c55e";
-            }
-            else if(tile==="forest"){
-                ctx.fillStyle="#166534";
-            }
-            else if(tile==="mountain"){
-                ctx.fillStyle="#6b7280";
-            }
-            else{
-                ctx.fillStyle="#2563eb";
-            }
+            if(tile==="road"){
+    ctx.fillStyle="#374151";
+}
+else if(tile==="grass"){
+    ctx.fillStyle="#22c55e";
+}
+else if(tile==="forest"){
+    ctx.fillStyle="#166534";
+}
+else if(tile==="mountain"){
+    ctx.fillStyle="#6b7280";
+}
+else{
+    ctx.fillStyle="#2563eb";
+}
 
             let px = x * TILE - cameraX;
             let py = y * TILE - cameraY;
