@@ -1173,16 +1173,20 @@ function newGame(){
     localStorage.removeItem("mgot_save");
 
     game = {
-        treasury:500,
-        holders:10,
-        engagement:100,
-        education:0,
-        utility:1,
-        promoters:0,
-        lp:100,
-        price:0.001,
-        marketCap:1000
-    };
+  treasury: 500,
+  holders: 10,
+  engagement: 100,
+  education: 0,
+  utility: 1,
+  promoters: 0,
+  lp: 100,
+  supply: 1000000,
+  reputation: 0,
+  communityPower: 0,
+  price: 0.001,
+  marketCap: 1000,
+  ...data.game
+};
 
     buildings = [{
         x:10,
