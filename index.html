@@ -297,6 +297,9 @@ font-size:9px;
 <div class="resource">🏦 LP:
 <span id="lp">100</span></div>
 
+<div class="resource">📊 Volume:
+<span id="volume">0</span></div>  
+
 <div class="resource">⭐ Reputation:
 <span id="reputation">0</span></div>
 
@@ -405,7 +408,9 @@ let game = {
   reputation: 0,
   communityPower: 0,
   price: 0.001,
-  marketCap: 1000
+  marketCap: 1000,
+volume: 0,
+lastPrice: 0.001
 };
 
 let buildings = [];
@@ -480,6 +485,9 @@ Math.floor(game.promoters);
 
 document.getElementById("lp").innerText =
 Math.floor(game.lp);
+
+document.getElementById("volume").innerText =
+Math.floor(game.volume);  
 
 document.getElementById("reputation").innerText =
 Math.floor(game.reputation);
@@ -698,34 +706,105 @@ setInterval(()=>{
         log("🔷 New Utility Released");
     }
 
-    // ================= TRADING SIMULATION =================
+   // ================= TRADING SIMULATION =================
 
-    let buys =
-        (game.holders * 0.005) +
-        (game.engagement * 0.0005) +
-        (game.promoters * 0.05) +
-        (game.reputation * 0.002);
+// uložíme starú cenu
+game.lastPrice = game.price;
 
-    let sells =
-        (game.supply / 10000000) *
-        (Math.random() * 1.5);
+// BUYERS
+let buyers =
+    game.holders * 0.02 +
+    game.promoters * 0.5 +
+    game.engagement * 0.001;
 
-    let netFlow = buys - sells;
+// SELLERS
+let sellers =
+    (game.holders * 0.01) *
+    (Math.random() * 2);
 
-    game.lp += netFlow;
+// VOLUME
+let volume = buyers + sellers;
 
-    // market sentiment
-    game.lp += (Math.random() - 0.5) * 2;
+game.volume = volume;
 
-    // LP limity
-    if(game.lp < 10){
-        game.lp = 10;
+// PRESSURE
+let pressure = buyers - sellers;
+
+// PRICE MOVEMENT
+game.price *= (
+    1 + pressure * 0.0005
+);
+
+// ochrana
+if(game.price < 0.000001){
+    game.price = 0.000001;
+}
+
+// LP REACTION
+game.lp += buyers * 0.05;
+game.lp -= sellers * 0.04;
+
+// sentiment noise
+game.lp +=
+    (Math.random() - 0.5) * 0.5;
+
+// LP limits
+if(game.lp < 10){
+    game.lp = 10;
+}
+
+if(game.lp > 5000){
+    game.lp = 5000;
+}
+
+// WHALES
+if(Math.random() < 0.01){
+
+    let whale =
+        (Math.random() - 0.5) * 0.25;
+
+    game.price *=
+        (1 + whale);
+
+    log(
+        whale > 0
+        ? "🐋 Whale Buy"
+        : "🐋 Whale Sell"
+    );
+}
+
+// FOMO
+if(game.price > game.lastPrice){
+
+    game.holders +=
+        game.holders * 0.002;
+}
+
+// PANIC SELL
+if(
+    game.price <
+    game.lastPrice * 0.95
+){
+
+    game.holders -=
+        game.holders * 0.01;
+
+    if(game.holders < 1){
+        game.holders = 1;
     }
+}
 
-    if(game.lp > 5000){
-        game.lp = 5000;
-    }
+// MARKET CAP
+game.marketCap =
+Math.floor(
+    game.price *
+    game.supply
+);
 
+// bezpečnosť
+if(isNaN(game.price)){
+    game.price = 0.001;
+}
     // ================= MARKET CAP =================
 
     game.marketCap = Math.floor(
