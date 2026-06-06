@@ -1050,21 +1050,20 @@ py+4,
 // ================= PARTICLES =================
 function drawParticles(){
 for(let p of particles){
-ctx.fillStyle=p.color;
-ctx.fillRect(p.x-cameraX,p.y-cameraY,3,3);
+ctx.fillStyle = p.color;
+ctx.fillRect(p.x - cameraX, p.y - cameraY, 3, 3);
 
-p.x+=p.vx;
-p.y+=p.vy;
+p.x += p.vx;
+p.y += p.vy;
 p.life--;
-
-}
-particles=particles.filter(p=>p.life>0);
 }
 
+particles = particles.filter(p => p.life > 0);
+}
+
+
+// ================= AUTOSAVE =================
 setInterval(()=>{
-
-// LP stabilita (0 až 1)
-const lpStability = game.lp / (game.lp + 500);
 
 localStorage.setItem(
 "mgot_save",
@@ -1074,10 +1073,11 @@ buildings
 })
 );
 
-},5000);
+}, 5000);
 
-const save =
-localStorage.getItem("mgot_save");
+
+// ================= LOAD SAVE =================
+const save = localStorage.getItem("mgot_save");
 
 if(save){
 
@@ -1085,44 +1085,43 @@ try{
 
 const data = JSON.parse(save);
 
+// safe merge (aby sa ti nezmazali nové hodnoty pri update kódu)
 if(data.game){
-  game = {
-    treasury: 500,
-    holders: 10,
-    engagement: 100,
-    education: 0,
-    utility: 1,
-    promoters: 0,
-    lp: 100,
-    supply: 1000000,
-    reputation: 0,
-    communityPower: 0,
-    price: 0.001,
-    marketCap: 1000,
-    ...data.game
-  };
+game = {
+  treasury: 500,
+  holders: 10,
+  engagement: 100,
+  education: 0,
+  utility: 1,
+  promoters: 0,
+  lp: 100,
+  supply: 1000000,
+  reputation: 0,
+  communityPower: 0,
+  price: 0.001,
+  marketCap: 1000,
+  ...data.game
+};
 }
-if(data.buildings) buildings = data.buildings;
 
-let hasTownHall = buildings.some(
-b => b.type === "townhall"
-);
+if(data.buildings){
+buildings = data.buildings;
+}
+
+// guarantee townhall exists
+let hasTownHall = buildings.some(b => b.type === "townhall");
 
 if(!hasTownHall){
-
 buildings.push({
 x:10,
 y:10,
 type:"townhall",
 level:1
 });
-
 }
 
 }catch(err){
-
-console.log("Save corrupted");
-
+console.log("Save corrupted", err);
 }
 
 }
