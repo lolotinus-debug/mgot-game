@@ -574,55 +574,58 @@ Upgrade cost: ${selected.level * 120}<br>
 
 function upgrade(){
 
-if(!selected) return;
+    if(!selected) return;
 
-if(selected.type === "townhall"){
+    if(selected.type === "townhall"){
+        let roll = Math.random();
 
-    let roll = Math.random();
+        if(roll < 0.6){
+            game.price *= 0.85;
+            log("📉 HQ upgrade failed → price -15%");
+        } else {
+            let pump = 1 + (Math.random() * 0.25 + 0.05);
+            game.price *= pump;
+            game.lp *= 1 + (pump - 1) * 0.8;
+            log("🚀 HQ upgrade success → pump event");
+        }
 
-    if(roll < 0.6){
-        game.price *= 0.85;
-        log("📉 HQ upgrade failed → price -15%");
-    } else {
-        let pump = 1 + (Math.random() * 0.25 + 0.05);
-        game.price *= pump;
-        game.lp *= 1 + (pump - 1) * 0.8;
-        log("🚀 HQ upgrade success → pump event");
+        game.marketCap = game.price * game.supply;
+        ui();
+        return;
     }
 
-    game.marketCap = game.price * game.supply;
+    // ================= NORMAL BUILDINGS =================
+
+    let cost = selected.level * 120;
+
+    // ================= CLUSTER BONUS =================
+    let clusterBonus = 0;
+
+    for(let b of buildings){
+
+        let dx = Math.abs(b.x - selected.x);
+        let dy = Math.abs(b.y - selected.y);
+
+        let dist = dx + dy;
+
+        if(dist <= 3){
+            clusterBonus++;
+        }
+    }
+
+    let clusterMultiplier = Math.min(clusterBonus * 0.08, 0.35);
+    let finalCost = Math.floor(cost * (1 - clusterMultiplier));
+
+    if(game.treasury < finalCost){
+        log("❌ Not enough Treasury");
+        return;
+    }
+
+    game.treasury -= finalCost;
+    selected.level++;
+
+    log("⬆ Upgraded " + selected.type);
     ui();
-    return;
-}
-
-// normal building upgrade cost
-let cost = selected.level * 120;
-
-// cluster bonus
-let clusterBonus = 0;
-
-for(let b of buildings){
-    let dx = Math.abs(b.x - selected.x);
-    let dy = Math.abs(b.y - selected.y);
-    let dist = dx + dy;
-
-    if(dist <= 3) clusterBonus++;
-}
-
-let clusterMultiplier = Math.min(clusterBonus * 0.08, 0.35);
-let finalCost = Math.floor(cost * (1 - clusterMultiplier));
-
-if(game.treasury < finalCost){
-    log("❌ Not enough Treasury");
-    return;
-}
-
-game.treasury -= finalCost;
-selected.level++;
-
-log("⬆ Upgraded " + selected.type);
-ui();
-
 }
 // ================= CLUSTER BONUS =================
 let clusterBonus = 0;
