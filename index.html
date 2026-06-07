@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Token Creator Simulator</title>
+<title>Token Founder Simulator</title>
 
 <style>
 body{
@@ -14,37 +14,31 @@ color:white;
 overflow:hidden;
 }
 
-#top{
-position:fixed;
-top:0;left:0;
+#center{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:360px;
+background:#0f172a;
+padding:20px;
+border-radius:12px;
+border:1px solid #00d4ff;
+}
+
+input,select{
 width:100%;
-height:60px;
-background:#0f172a;
-display:flex;
-align-items:center;
-gap:20px;
-padding:0 15px;
-border-bottom:2px solid #00d4ff;
-}
-
-.stat{
-color:#00d4ff;
-font-weight:bold;
-}
-
-#panel{
-position:fixed;
-left:10px;
-top:80px;
-width:260px;
-background:#0f172a;
-padding:12px;
-border-radius:10px;
+padding:10px;
+margin-top:8px;
+border:none;
+border-radius:6px;
+background:#111827;
+color:white;
 }
 
 button{
 width:100%;
-margin-top:8px;
+margin-top:12px;
 padding:10px;
 background:#00d4ff;
 border:none;
@@ -57,12 +51,22 @@ button:hover{
 transform:scale(1.03);
 }
 
+#game{
+display:none;
+padding:20px;
+}
+
+.stat{
+color:#00d4ff;
+margin:6px 0;
+}
+
 #log{
 position:fixed;
 right:10px;
-top:80px;
+top:10px;
 width:300px;
-height:400px;
+height:90%;
 background:#000;
 padding:10px;
 overflow:auto;
@@ -73,20 +77,36 @@ font-size:12px;
 
 <body>
 
-<div id="top">
-  <div class="stat">💰 Cash: <span id="cash">1000</span></div>
-  <div class="stat">👥 Users: <span id="users">1</span></div>
-  <div class="stat">📈 Price: <span id="price">0.01</span></div>
-  <div class="stat">💎 MarketCap: <span id="mc">10</span></div>
+<div id="center">
+<h2>🧠 Create Your Token</h2>
+
+<input id="name" placeholder="Token name (e.g. MGOT)">
+<select id="chain">
+  <option>Solana</option>
+  <option>Ethereum</option>
+  <option>Base</option>
+  <option>BNB Chain</option>
+</select>
+
+<input id="budget" type="number" placeholder="Starting budget (USD)">
+
+<button onclick="start()">🚀 Launch Token</button>
 </div>
 
-<div id="panel">
-<h3>Actions</h3>
+<div id="game">
+  <h2>📊 Token Dashboard</h2>
 
-<button onclick="dev()">👨‍💻 Develop Token (-200)</button>
-<button onclick="marketing()">📢 Marketing (-150)</button>
-<button onclick="buyInfluencer()">🚀 Influencer (-300)</button>
-<button onclick="rugCheck()">⚠ Risk Event</button>
+  <div class="stat">💰 Cash: <span id="cash">0</span></div>
+  <div class="stat">👥 Users: <span id="users">0</span></div>
+  <div class="stat">📈 Price: <span id="price">0</span></div>
+  <div class="stat">💎 MarketCap: <span id="mc">0</span></div>
+
+  <hr>
+
+  <button onclick="marketing()">📢 Marketing (-100)</button>
+  <button onclick="dev()">👨‍💻 Improve Token (-150)</button>
+  <button onclick="influencer()">🚀 Influencer (-300)</button>
+  <button onclick="risk()">⚠ Event</button>
 </div>
 
 <div id="log"></div>
@@ -94,10 +114,12 @@ font-size:12px;
 <script>
 
 let state = {
-cash:1000,
+name:"",
+chain:"",
+cash:0,
 users:1,
 price:0.01,
-risk:0
+quality:0
 };
 
 function log(t){
@@ -109,75 +131,102 @@ document.getElementById("log").prepend(d);
 function ui(){
 document.getElementById("cash").innerText = Math.floor(state.cash);
 document.getElementById("users").innerText = Math.floor(state.users);
-document.getElementById("price").innerText = state.price.toFixed(4);
+document.getElementById("price").innerText = state.price.toFixed(5);
 document.getElementById("mc").innerText = Math.floor(state.price * state.users);
 }
 
-// ===== ACTIONS =====
+// ================= START =================
+function start(){
 
-function dev(){
-if(state.cash < 200) return log("❌ Not enough cash");
-state.cash -= 200;
-state.price += 0.005;
-log("🧠 Token improved");
+let name = document.getElementById("name").value;
+let chain = document.getElementById("chain").value;
+let budget = parseFloat(document.getElementById("budget").value);
+
+if(!name || !budget){
+alert("Fill name + budget");
+return;
+}
+
+state.name = name;
+state.chain = chain;
+state.cash = budget;
+
+document.getElementById("center").style.display="none";
+document.getElementById("game").style.display="block";
+
+log("🚀 Token launched: " + name + " on " + chain);
+ui();
+
+// passive economy
+setInterval(tick,1000);
+}
+
+// ================= ECONOMY =================
+function tick(){
+
+let growth = state.users * 0.002;
+state.price += growth;
+
+state.cash += state.users * 0.1;
+
+if(state.price < 0.0001) state.price = 0.0001;
+
 ui();
 }
+
+// ================= ACTIONS =================
 
 function marketing(){
-if(state.cash < 150) return log("❌ Not enough cash");
-state.cash -= 150;
+if(state.cash < 100) return log("❌ Not enough cash");
 
-let gain = Math.random()*3 + 1;
+state.cash -= 100;
+
+let gain = Math.random()*5 + 1;
 state.users += gain;
 
-log("📢 Marketing boosted users +" + gain.toFixed(1));
+log("📢 Marketing +" + gain.toFixed(1) + " users");
 ui();
 }
 
-function buyInfluencer(){
+function dev(){
+if(state.cash < 150) return log("❌ Not enough cash");
+
+state.cash -= 150;
+state.price += 0.002;
+
+log("🧠 Token improved (utility +)");
+ui();
+}
+
+function influencer(){
 if(state.cash < 300) return log("❌ Not enough cash");
+
 state.cash -= 300;
 
 let pump = Math.random()*0.05;
 state.price += pump;
+state.users += Math.random()*8;
 
-state.users += Math.random()*5;
-
-log("🚀 Influencer pumped token");
+log("🚀 Influencer pump event");
 ui();
 }
 
-function rugCheck(){
-let crash = Math.random();
+function risk(){
 
-if(crash < 0.4){
-state.price *= 0.5;
+let r = Math.random();
+
+if(r < 0.5){
+state.price *= 0.6;
 state.users *= 0.7;
-log("💀 RUG EVENT! Market crashed");
-} else {
-state.price *= 1.2;
-log("🛡 Safe event, trust increased");
+log("💀 BAD EVENT: trust lost");
+}else{
+state.price *= 1.3;
+state.users *= 1.2;
+log("🛡 GOOD EVENT: hype increased");
 }
 
 ui();
 }
-
-// ===== PASSIVE ECONOMY =====
-
-setInterval(()=>{
-
-let growth = state.users * 0.001;
-state.price += growth;
-
-state.cash += state.users * 0.2;
-
-if(state.price < 0.001) state.price = 0.001;
-
-ui();
-
-},1000);
-
-ui();
 
 </script>
 
