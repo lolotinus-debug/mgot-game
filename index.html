@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ultimate Token Simulator</title>
+<title>Tokenomics Simulator</title>
 
 <style>
 body{
@@ -14,133 +14,84 @@ color:white;
 overflow:hidden;
 }
 
-#start{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-width:360px;
+#top{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:60px;
 background:#0f172a;
-padding:20px;
-border-radius:12px;
-border:1px solid #00d4ff;
-}
-
-input,select{
-width:100%;
-padding:10px;
-margin-top:8px;
-background:#111827;
-border:none;
-color:white;
-border-radius:6px;
-}
-
-button{
-width:100%;
-margin-top:10px;
-padding:10px;
-background:#00d4ff;
-border:none;
-font-weight:bold;
-cursor:pointer;
-border-radius:6px;
-}
-
-#game{
-display:none;
-padding:15px;
-}
-
-.panel{
 display:flex;
-gap:10px;
-}
-
-.box{
-flex:1;
-background:#0f172a;
-padding:10px;
-border-radius:10px;
-border:1px solid #1e293b;
+align-items:center;
+gap:15px;
+padding:0 10px;
+border-bottom:2px solid #00d4ff;
 }
 
 .stat{
 color:#00d4ff;
-margin:4px 0;
+font-weight:bold;
+font-size:13px;
+}
+
+#panel{
+position:fixed;
+left:10px;
+top:80px;
+width:280px;
+background:#0f172a;
+padding:12px;
+border-radius:10px;
+}
+
+button{
+width:100%;
+margin-top:8px;
+padding:10px;
+border:none;
+border-radius:6px;
+background:#00d4ff;
+font-weight:bold;
+cursor:pointer;
+}
+
+button:hover{
+transform:scale(1.03);
 }
 
 #log{
 position:fixed;
 right:10px;
-top:10px;
-width:300px;
-height:90%;
+top:80px;
+width:320px;
+height:85%;
 background:#000;
 padding:10px;
 overflow:auto;
 font-size:12px;
-}
-
-.small{
-font-size:12px;
-color:#94a3b8;
 }
 </style>
 </head>
 
 <body>
 
-<div id="start">
-<h2>🧠 Create Token</h2>
-
-<input id="name" placeholder="Token name">
-<select id="chain">
-<option>Solana</option>
-<option>Ethereum</option>
-<option>Base</option>
-<option>BNB</option>
-</select>
-
-<input id="budget" type="number" placeholder="Budget USD">
-
-<button onclick="start()">🚀 Launch</button>
+<div id="top">
+  <div class="stat">🪙 Price: <span id="price">0</span></div>
+  <div class="stat">💎 MC: <span id="mc">0</span></div>
+  <div class="stat">🏦 LP: <span id="lp">0</span></div>
+  <div class="stat">📦 Supply: <span id="supply">0</span></div>
+  <div class="stat">🔥 Burned: <span id="burned">0</span></div>
 </div>
 
-<div id="game">
+<div id="panel">
+<h3>Token Controls</h3>
 
-<div class="panel">
-
-<div class="box">
-<h3>📊 Market</h3>
-<div class="stat">💰 Cash: <span id="cash"></span></div>
-<div class="stat">👥 Users: <span id="users"></span></div>
-<div class="stat">📈 Price: <span id="price"></span></div>
-<div class="stat">💎 MC: <span id="mc"></span></div>
-<div class="stat">🏦 LP: <span id="lp"></span></div>
-</div>
-
-<div class="box">
-<h3>🧠 Reputation</h3>
-<div class="stat">⭐ Trust: <span id="trust"></span></div>
-<div class="stat">⚠ Risk: <span id="risk"></span></div>
-<div class="stat">🧪 Dev Quality: <span id="quality"></span></div>
-<div class="stat">🔍 KYC Score: <span id="kyc"></span></div>
-</div>
-
-<div class="box">
-<h3>📍 Actions</h3>
-<button onclick="marketing()">📢 Marketing (-120)</button>
-<button onclick="dev()">👨‍💻 Dev (-150)</button>
-<button onclick="lpAdd()">🏦 Add LP (-200)</button>
-<button onclick="rugAI()">🤖 Rug AI Scan</button>
-<button onclick="eventRoll()">⚡ Event</button>
-</div>
-
-</div>
-
-<div class="small">Roadmap: <span id="roadmap"></span></div>
-
+<button onclick="buy()">🟢 Buy pressure</button>
+<button onclick="sell()">🔴 Sell pressure</button>
+<button onclick="burn()">🔥 Burn supply</button>
+<button onclick="mint()">➕ Mint supply</button>
+<button onclick="addLP()">🏦 Add liquidity</button>
+<button onclick="removeLP()">💧 Remove liquidity</button>
 </div>
 
 <div id="log"></div>
@@ -148,18 +99,13 @@ color:#94a3b8;
 <script>
 
 let state = {
-name:"",
-chain:"",
-cash:0,
-users:1,
-price:0.01,
-lp:100,
-trust:50,
-risk:10,
-quality:10,
-kyc:50,
-roadmap:1,
-competitors:3
+lp: 10000,
+totalSupply: 1000000,
+circulating: 800000,
+burned: 0,
+price: 0.01,
+buys: 0,
+sells: 0
 };
 
 function log(t){
@@ -168,162 +114,96 @@ d.innerText=t;
 document.getElementById("log").prepend(d);
 }
 
-function ui(){
-document.getElementById("cash").innerText = state.cash.toFixed(0);
-document.getElementById("users").innerText = state.users.toFixed(1);
-document.getElementById("price").innerText = state.price.toFixed(5);
-document.getElementById("mc").innerText = (state.price*state.users).toFixed(0);
+// ================= PRICE ENGINE =================
+function updatePrice(){
+
+// AMM-style simplified formula
+state.price = state.lp / state.circulating;
+
+if(state.price < 0.000001) state.price = 0.000001;
+
+let mc = state.price * state.circulating;
+
+// UI
+document.getElementById("price").innerText = state.price.toFixed(6);
+document.getElementById("mc").innerText = mc.toFixed(0);
 document.getElementById("lp").innerText = state.lp.toFixed(0);
-
-document.getElementById("trust").innerText = state.trust.toFixed(0);
-document.getElementById("risk").innerText = state.risk.toFixed(0);
-document.getElementById("quality").innerText = state.quality.toFixed(0);
-document.getElementById("kyc").innerText = state.kyc.toFixed(0);
-
-document.getElementById("roadmap").innerText = "Phase " + state.roadmap;
-}
-
-// ================= START =================
-function start(){
-
-state.name = document.getElementById("name").value;
-state.chain = document.getElementById("chain").value;
-state.cash = parseFloat(document.getElementById("budget").value);
-
-if(!state.name || !state.cash){
-alert("Fill inputs");
-return;
-}
-
-document.getElementById("start").style.display="none";
-document.getElementById("game").style.display="block";
-
-log("🚀 Token launched: " + state.name + " on " + state.chain);
-
-setInterval(tick,1000);
-ui();
-}
-
-// ================= ECONOMY =================
-function tick(){
-
-// demand vs trust
-let demand = state.users * (state.trust/100);
-state.price += demand * 0.001;
-
-// LP pressure
-state.lp += state.cash * 0.01;
-state.lp -= state.users * 0.02;
-
-// competition
-state.users -= state.competitors * 0.05;
-
-// decay
-state.trust -= state.risk * 0.01;
-
-if(state.trust < 0) state.trust = 0;
-if(state.lp < 10) state.lp = 10;
-if(state.price < 0.00001) state.price = 0.00001;
-
-// cash flow
-state.cash += state.users * 0.1;
-
-// roadmap progression
-if(state.cash > 500 && state.roadmap === 1){
-state.roadmap = 2;
-state.trust += 10;
-log("📍 Roadmap Phase 2 unlocked");
-}
-
-if(state.cash > 1500 && state.roadmap === 2){
-state.roadmap = 3;
-state.kyc += 20;
-log("📍 Roadmap Phase 3 unlocked");
-}
-
-ui();
+document.getElementById("supply").innerText = state.circulating;
+document.getElementById("burned").innerText = state.burned;
 }
 
 // ================= ACTIONS =================
 
-function marketing(){
-if(state.cash < 120) return log("❌ No cash");
-state.cash -= 120;
-
-let gain = Math.random()*6 + 2;
-state.users += gain;
-state.trust += 2;
-
-log("📢 Marketing +" + gain.toFixed(1));
-}
-
-function dev(){
-if(state.cash < 150) return log("❌ No cash");
-state.cash -= 150;
-
-state.quality += 5;
-state.price += 0.003;
-state.trust += 3;
-
-log("👨‍💻 Dev improved token");
-}
-
-function lpAdd(){
-if(state.cash < 200) return log("❌ No cash");
-state.cash -= 200;
-
-state.lp += 100;
-state.trust += 5;
-
-log("🏦 LP added");
-}
-
-function rugAI(){
-
-// simulated AI check
-let score =
-(state.quality +
-state.trust +
-state.kyc) / 3;
-
-if(score < 40){
-state.risk += 20;
-log("🤖 AI: HIGH RISK detected");
-}
-
-else{
-state.trust += 10;
-log("🤖 AI: Token looks safe");
-}
-
-ui();
-}
-
-function eventRoll(){
-
-let r = Math.random();
-
-if(r < 0.3){
-state.price *= 0.6;
-state.users *= 0.8;
-state.trust -= 10;
-log("💀 Crash event");
-}
-
-else if(r < 0.6){
-state.price *= 1.2;
-state.users += 5;
-state.trust += 5;
-log("📈 Pump event");
-}
-
-else{
+function buy(){
 state.lp += 50;
-log("🛡 Neutral market");
+state.buys++;
+
+log("🟢 Buy pressure added");
+updatePrice();
 }
 
-ui();
+function sell(){
+state.lp -= 40;
+state.sells++;
+
+if(state.lp < 1000) state.lp = 1000;
+
+log("🔴 Sell pressure added");
+updatePrice();
 }
+
+function burn(){
+let amount = Math.floor(state.circulating * 0.01);
+
+state.circulating -= amount;
+state.burned += amount;
+
+log("🔥 Burned " + amount + " tokens");
+updatePrice();
+}
+
+function mint(){
+let amount = Math.floor(state.circulating * 0.02);
+
+state.circulating += amount;
+
+log("➕ Minted " + amount + " tokens");
+updatePrice();
+}
+
+function addLP(){
+state.lp += 500;
+log("🏦 Liquidity added");
+updatePrice();
+}
+
+function removeLP(){
+state.lp -= 500;
+if(state.lp < 1000) state.lp = 1000;
+
+log("💧 Liquidity removed");
+updatePrice();
+}
+
+// ================= AUTO MARKET =================
+setInterval(()=>{
+
+// natural drift
+state.lp += (Math.random()-0.5)*20;
+
+// pressure effect
+state.lp += state.buys*2;
+state.lp -= state.sells*2;
+
+// reset flow
+state.buys *= 0.95;
+state.sells *= 0.95;
+
+updatePrice();
+
+},1000);
+
+updatePrice();
 
 </script>
 
