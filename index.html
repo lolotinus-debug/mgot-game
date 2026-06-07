@@ -696,85 +696,58 @@ function demolish(){
 // ================= CLICK =================
 canvas.addEventListener("click",(e)=>{
 
-    const rect = canvas.getBoundingClientRect();
+    const pos = screenToWorld(e);
 
-    const mx = e.clientX - rect.left;
-    const my = e.clientY - rect.top;
+    const x = Math.floor(pos.x / TILE);
+    const y = Math.floor(pos.y / TILE);
 
-    const x = Math.floor((mx + cameraX) / TILE);
-    const y = Math.floor((my + cameraY) / TILE);
+    // selection
+    for(let b of buildings){
 
-    // výber budovy
-for(let b of buildings){
+        if(b.x === x && b.y === y){
+            selected = b;
+            updateInfo();
+            return;
+        }
+    }
 
-    if(b.x===x && b.y===y){
+    selected = null;
+    updateInfo();
 
-        selected = b;
+    if(!selectedBuild) return;
 
-        updateInfo();
-
+    if(x < 0 || y < 0 || x >= MAP_SIZE || y >= MAP_SIZE){
         return;
     }
-}
 
-// nič nie je vybrané
-selected = null;
-updateInfo();
+    if(mapData[x][y] === "water"){
+        log("❌ Cannot build on water");
+        return;
+    }
 
-// musí byť zvolená budova
-if(!selectedBuild){
-    return;
-}
+    if(buildings.some(b => b.x === x && b.y === y)){
+        log("❌ Tile occupied");
+        return;
+    }
 
-// mapa mimo rozsahu
-if(
-    x < 0 ||
-    y < 0 ||
-    x >= MAP_SIZE ||
-    y >= MAP_SIZE
-){
-    return;
-}
+    const cost = B[selectedBuild].cost;
 
-// voda
-if(mapData[x][y] === "water"){
-    log("❌ Cannot build on water");
-    return;
-}
+    if(game.treasury < cost){
+        log("❌ Not enough Treasury");
+        return;
+    }
 
-// obsadené políčko
-if(buildings.some(b => b.x===x && b.y===y)){
-    log("❌ Tile occupied");
-    return;
-}
+    game.treasury -= cost;
 
-let cost = B[selectedBuild].cost;
+    buildings.push({
+        x, y,
+        type: selectedBuild,
+        level: 1
+    });
 
-if(game.treasury < cost){
-    log("❌ Not enough Treasury");
-    return;
-}
+    explosion(x * TILE, y * TILE, B[selectedBuild].color);
 
-game.treasury -= cost;
-
-buildings.push({
-    x:x,
-    y:y,
-    type:selectedBuild,
-    level:1,
-    cooldown:0
-});
-
-explosion(
-    x*TILE,
-    y*TILE,
-    B[selectedBuild].color
-);
-
-log("🏗 " + selectedBuild + " built");
-
-ui();
-
+    ui();
 });
 
 // ================= ECONOMY =================
@@ -1968,30 +1941,29 @@ let touchStartY = 0;
 
 canvas.addEventListener("touchstart",(e)=>{
 
-touchStartX = e.touches[0].clientX;
-touchStartY = e.touches[0].clientY;
+    const touch = e.touches[0];
 
+    const rect = canvas.getBoundingClientRect();
+
+    const sx = touch.clientX - rect.left;
+    const sy = touch.clientY - rect.top;
+
+    const pos = {
+        x: sx / zoom + cameraX,
+        y: sy / zoom + cameraY
+    };
+
+    const x = Math.floor(pos.x / TILE);
+    const y = Math.floor(pos.y / TILE);
+
+    for(let b of buildings){
+        if(b.x === x && b.y === y){
+            selected = b;
+            updateInfo();
+            return;
+        }
+    }
 });
-
-canvas.addEventListener("touchmove",(e)=>{
-
-let dx = e.touches[0].clientX - touchStartX;
-let dy = e.touches[0].clientY - touchStartY;
-
-cameraX -= dx;
-cameraY -= dy;
-
-touchStartX = e.touches[0].clientX;
-touchStartY = e.touches[0].clientY;
-
-});
-window.addEventListener("keydown",(e)=>{
-if(e.key==="ArrowLeft") cameraX-=32;
-if(e.key==="ArrowRight") cameraX+=32;
-if(e.key==="ArrowUp") cameraY-=32;
-if(e.key==="ArrowDown") cameraY+=32;
-});
-
 function centerOnTownHall(){
 
     let th = buildings.find(b => b.type === "townhall");
