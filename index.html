@@ -1,3 +1,4 @@
+uprav to podla tohto
 <!DOCTYPE html>
 <html lang="sk">
 <head>
@@ -691,20 +692,15 @@ setInterval(()=>{
 
         if(b.type==="community"){
 
-    if(b.type==="marketing"){
-
-    let maxEngagement =
-        game.holders * 3 * b.level;
-
-    if(game.engagement < maxEngagement){
-
-        game.engagement += b.level;
-
-        if(game.engagement > maxEngagement){
-            game.engagement = maxEngagement;
+    // malé zvýšenie engagementu
+    game.engagement += 0.2 * b.level;
         }
-    }
-}
+
+        if(b.type==="marketing"){
+
+    game.engagement +=
+        3 * b.level;
+        }
 
         if(b.type==="treasury"){
             game.treasury += b.level;
