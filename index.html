@@ -406,7 +406,7 @@ canvas.style.height = "100vh";
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
-const TILE = 32;
+const TILE = 48;
 
 let cameraX = 0;
 let cameraY = 0;
@@ -1017,18 +1017,9 @@ function drawMap(){
 
             let tile = mapData[x][y];
 
-            if(tile==="water"){
+            // GRASS
+            if(tile==="grass"){
 
-let shades=[
-"#1d4ed8",
-"#2563eb",
-"#3b82f6",
-"#60a5fa"
-];
-
-ctx.fillStyle=shades[(x+y)%4];
-}
-            else if(tile==="grass"){
                 let shades=[
                     "#65a30d",
                     "#4d7c0f",
@@ -1038,66 +1029,103 @@ ctx.fillStyle=shades[(x+y)%4];
 
                 ctx.fillStyle =
                     shades[(x+y)%shades.length];
+
+                ctx.fillRect(px,py,TILE,TILE);
             }
-            if(tile==="forest"){
 
-ctx.fillStyle="#166534";
-ctx.fillRect(px,py,TILE,TILE);
+            // WATER
+            else if(tile==="water"){
 
-ctx.fillStyle="#14532d";
+                let shades=[
+                    "#1d4ed8",
+                    "#2563eb",
+                    "#3b82f6",
+                    "#60a5fa"
+                ];
 
-ctx.beginPath();
-ctx.arc(
-px+TILE/2,
-py+TILE/2,
-10,
-0,
-Math.PI*2
-);
-ctx.fill();
-}
+                ctx.fillStyle =
+                    shades[(x+y)%4];
+
+                ctx.beginPath();
+                ctx.arc(
+                    px + TILE/2,
+                    py + TILE/2,
+                    TILE*0.65,
+                    0,
+                    Math.PI*2
+                );
+                ctx.fill();
+            }
+
+            // FOREST
+            else if(tile==="forest"){
+
+                ctx.fillStyle="#166534";
+
+                ctx.beginPath();
+                ctx.arc(
+                    px + TILE/2,
+                    py + TILE/2,
+                    TILE*0.65,
+                    0,
+                    Math.PI*2
+                );
+                ctx.fill();
+
+                ctx.fillStyle="#22c55e";
+
+                ctx.beginPath();
+                ctx.arc(
+                    px + TILE/2,
+                    py + TILE/2,
+                    TILE*0.25,
+                    0,
+                    Math.PI*2
+                );
+                ctx.fill();
+            }
+
+            // MOUNTAIN
             else if(tile==="mountain"){
+
                 ctx.fillStyle="#6b7280";
 
-ctx.beginPath();
+                ctx.beginPath();
 
-ctx.moveTo(px+TILE/2,py+4);
-ctx.lineTo(px+4,py+TILE-4);
-ctx.lineTo(px+TILE-4,py+TILE-4);
+                ctx.moveTo(px+TILE/2, py+4);
+                ctx.lineTo(px+4, py+TILE-4);
+                ctx.lineTo(px+TILE-4, py+TILE-4);
 
-ctx.closePath();
-ctx.fill();
-}
-            else if(tile==="road"){
-                ctx.fillStyle="#8b7355";
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.fillStyle="#d1d5db";
+
+                ctx.beginPath();
+
+                ctx.moveTo(px+TILE/2, py+8);
+                ctx.lineTo(px+12, py+TILE-8);
+                ctx.lineTo(px+TILE-12, py+TILE-8);
+
+                ctx.closePath();
+                ctx.fill();
             }
 
-            ctx.fillRect(px,py,TILE,TILE);
+            // ROAD
+            else if(tile==="road"){
 
-            let baseColor = ctx.fillStyle;
+                ctx.fillStyle="#8b7355";
 
-            let grad = ctx.createLinearGradient(
-                px,
-                py,
-                px + TILE,
-                py + TILE
-            );
-
-            grad.addColorStop(0, baseColor);
-            grad.addColorStop(1, "#00000022");
-
-            ctx.fillStyle = grad;
-
-            ctx.fillRect(
-                px,
-                py,
-                TILE,
-                TILE
-            );
+                ctx.fillRect(
+                    px + TILE*0.2,
+                    py + TILE*0.2,
+                    TILE*0.6,
+                    TILE*0.6
+                );
+            }
         }
     }
 }
-
 // ================= BUILDINGS =================
 function drawBuildings(){
 
@@ -1108,8 +1136,20 @@ let py = b.y * TILE - cameraY;
 
 // tieň
 ctx.fillStyle = "rgba(0,0,0,0.3)";
-ctx.fillRect(px+8, py+50, 48, 8);
+ctx.beginPath();
 
+ctx.ellipse(
+    px+24,
+    py+38,
+    18,
+    8,
+    0,
+    0,
+    Math.PI*2
+);
+
+ctx.fillStyle="rgba(0,0,0,0.25)";
+ctx.fill();
 // ================= TOWN HALL =================
 if(b.type==="townhall"){
 
