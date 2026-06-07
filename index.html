@@ -1008,64 +1008,106 @@ function drawRoads(){
 // ================= MAP ZONES =================
 function drawMap(){
 
-    // základná tráva cez celú mapu
-    ctx.fillStyle = "#4d7c0f";
-    ctx.fillRect(
-        -cameraX,
-        -cameraY,
-        MAP_SIZE*TILE,
-        MAP_SIZE*TILE
-    );
-
     for(let x=0; x<MAP_SIZE; x++){
 
         for(let y=0; y<MAP_SIZE; y++){
 
-            let px = x*TILE - cameraX;
-            let py = y*TILE - cameraY;
+            let px = x * TILE - cameraX;
+            let py = y * TILE - cameraY;
 
             let tile = mapData[x][y];
 
             // ===== WATER =====
             if(tile==="water"){
 
-                ctx.fillStyle =
-                    ["#2563eb","#3b82f6","#60a5fa"]
-                    [(x+y)%3];
+                const shades = [
+                    "#1e40af",
+                    "#2563eb",
+                    "#3b82f6",
+                    "#60a5fa"
+                ];
 
-                ctx.beginPath();
-                ctx.arc(
-                    px + TILE/2,
-                    py + TILE/2,
-                    TILE*0.85,
-                    0,
-                    Math.PI*2
+                ctx.fillStyle =
+                    shades[(x+y)%shades.length];
+
+                ctx.fillRect(
+                    px,
+                    py,
+                    TILE,
+                    TILE
                 );
-                ctx.fill();
+
+                // lesk vody
+                ctx.fillStyle =
+                    "rgba(255,255,255,0.08)";
+
+                ctx.fillRect(
+                    px + TILE*0.1,
+                    py + TILE*0.1,
+                    TILE*0.8,
+                    TILE*0.15
+                );
+            }
+
+            // ===== GRASS =====
+            else if(tile==="grass"){
+
+                const shades = [
+                    "#65a30d",
+                    "#4d7c0f",
+                    "#3f6212",
+                    "#4ade80"
+                ];
+
+                ctx.fillStyle =
+                    shades[(x+y)%shades.length];
+
+                ctx.fillRect(
+                    px,
+                    py,
+                    TILE,
+                    TILE
+                );
             }
 
             // ===== FOREST =====
             else if(tile==="forest"){
 
+                ctx.fillStyle="#166534";
+                ctx.fillRect(
+                    px,
+                    py,
+                    TILE,
+                    TILE
+                );
+
                 ctx.fillStyle="#14532d";
 
                 ctx.beginPath();
                 ctx.arc(
-                    px+TILE/2,
-                    py+TILE/2,
-                    TILE*0.75,
+                    px + TILE/2,
+                    py + TILE/2,
+                    TILE*0.30,
                     0,
                     Math.PI*2
                 );
                 ctx.fill();
 
-                ctx.fillStyle="#22c55e";
+                ctx.beginPath();
+                ctx.arc(
+                    px + TILE*0.30,
+                    py + TILE*0.40,
+                    TILE*0.20,
+                    0,
+                    Math.PI*2
+                );
+                ctx.fill();
 
                 ctx.beginPath();
                 ctx.arc(
-                    px+TILE/2,
-                    py+TILE/2,
-                    TILE*0.35,
+                    px + TILE*0.70,
+                    py + TILE*0.40,
+                    TILE*0.20,
                     0,
                     Math.PI*2
                 );
@@ -1078,18 +1120,18 @@ function drawMap(){
                 ctx.fillStyle="#6b7280";
 
                 ctx.beginPath();
-                ctx.moveTo(px+TILE/2, py);
-                ctx.lineTo(px+2, py+TILE);
-                ctx.lineTo(px+TILE-2, py+TILE);
+                ctx.moveTo(px+TILE/2,py+4);
+                ctx.lineTo(px+4,py+TILE-4);
+                ctx.lineTo(px+TILE-4,py+TILE-4);
                 ctx.closePath();
                 ctx.fill();
 
                 ctx.fillStyle="#d1d5db";
 
                 ctx.beginPath();
-                ctx.moveTo(px+TILE/2, py+8);
-                ctx.lineTo(px+14, py+TILE-6);
-                ctx.lineTo(px+TILE-14, py+TILE-6);
+                ctx.moveTo(px+TILE/2,py+10);
+                ctx.lineTo(px+14,py+TILE-8);
+                ctx.lineTo(px+TILE-14,py+TILE-8);
                 ctx.closePath();
                 ctx.fill();
             }
@@ -1097,14 +1139,54 @@ function drawMap(){
             // ===== ROAD =====
             else if(tile==="road"){
 
-                ctx.strokeStyle="#8b7355";
-                ctx.lineWidth=10;
-                ctx.lineCap="round";
+                ctx.fillStyle="#8b7355";
 
-                ctx.beginPath();
-                ctx.moveTo(px, py+TILE/2);
-                ctx.lineTo(px+TILE, py+TILE/2);
-                ctx.stroke();
+                ctx.fillRect(
+                    px,
+                    py,
+                    TILE,
+                    TILE
+                );
+
+                ctx.fillStyle="#a68b6a";
+
+                ctx.fillRect(
+                    px + TILE*0.15,
+                    py + TILE*0.15,
+                    TILE*0.7,
+                    TILE*0.7
+                );
+            }
+
+            // ===== GLOBAL SHADING =====
+            if(tile==="grass" || tile==="water"){
+
+                let grad =
+                    ctx.createLinearGradient(
+                        px,
+                        py,
+                        px,
+                        py + TILE
+                    );
+
+                grad.addColorStop(
+                    0,
+                    "rgba(255,255,255,0.04)"
+                );
+
+                grad.addColorStop(
+                    1,
+                    "rgba(0,0,0,0.15)"
+                );
+
+                ctx.fillStyle = grad;
+
+                ctx.fillRect(
+                    px,
+                    py,
+                    TILE,
+                    TILE
+                );
             }
         }
     }
