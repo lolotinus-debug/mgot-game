@@ -1048,46 +1048,46 @@ function expandForest(){
 
 function generateMap(){
 
-    // vyčisti mapu
     mapData.length = 0;
 
-    for(let x=0; x<MAP_SIZE; x++){
+    for(let x=0;x<MAP_SIZE;x++){
 
-        mapData[x] = [];
+        mapData[x]=[];
 
-        for(let y=0; y<MAP_SIZE; y++){
+        for(let y=0;y<MAP_SIZE;y++){
 
-            let h =
-                noise(x*0.025,y*0.025)*0.55 +
-                noise(x*0.06,y*0.06)*0.30 +
+            let h=
+                noise(x*0.025,y*0.025)*0.55+
+                noise(x*0.06,y*0.06)*0.30+
                 noise(x*0.12,y*0.12)*0.15;
 
-            let m =
+            let m=
                 noise(x*0.035+100,y*0.035+100);
 
-            if(h < 0.18){
-                mapData[x][y] = "water";
-            }
-            else if(h > 0.86){
-                mapData[x][y] = "mountain";
-            }
-            else if(m > 0.60){
-                mapData[x][y] = "forest";
-            }
-            else{
-                mapData[x][y] = "grass";
+            if(h<0.15){
+
+                mapData[x][y]="water";
+
+            }else if(h>0.88){
+
+                mapData[x][y]="mountain";
+
+            }else if(m>0.62){
+
+                mapData[x][y]="forest";
+
+            }else{
+
+                mapData[x][y]="grass";
             }
         }
     }
 
-    // väčšie jazerá
-    expandWater(4);
+    expandWater(5);
 
-    // hustejšie lesy
     expandForest();
 
-    // vyhladenie terénu
-    smoothTerrain(2);
+    smoothTerrain(3);
 }
 
 generateMap();
@@ -1095,205 +1095,101 @@ generateMap();
 
 function drawRoads(){
 
-    ctx.strokeStyle = "#8b7355";
-    ctx.lineWidth = 12;
+    if(buildings.length < 2){
+        return;
+    }
+
+    ctx.lineWidth = 10;
     ctx.lineCap = "round";
+    ctx.strokeStyle = "#8b7355";
 
-    for(let i=0;i<buildings.length;i++){
+    const townHall =
+        buildings.find(
+            b=>b.type==="townhall"
+        );
 
-        let a = buildings[i];
+    if(!townHall){
+        return;
+    }
 
-        let ax = a.x * TILE + TILE/2 - cameraX;
-        let ay = a.y * TILE + TILE/2 - cameraY;
+    for(let b of buildings){
 
-        let nearest = null;
-        let dist = Infinity;
-
-        for(let j=0;j<buildings.length;j++){
-
-            if(i === j) continue;
-
-            let b = buildings[j];
-
-            let d =
-                Math.abs(a.x - b.x) +
-                Math.abs(a.y - b.y);
-
-            if(d < dist){
-                dist = d;
-                nearest = b;
-            }
+        if(b===townHall){
+            continue;
         }
 
-        if(nearest){
+        let x1=
+            townHall.x*TILE+
+            TILE/2-
+            cameraX;
 
-            let bx =
-                nearest.x * TILE +
-                TILE/2 - cameraX;
+        let y1=
+            townHall.y*TILE+
+            TILE/2-
+            cameraY;
 
-            let by =
-                nearest.y * TILE +
-                TILE/2 - cameraY;
+        let x2=
+            b.x*TILE+
+            TILE/2-
+            cameraX;
 
-            ctx.beginPath();
-            ctx.moveTo(ax, ay);
-            ctx.lineTo(bx, by);
-            ctx.stroke();
-        }
+        let y2=
+            b.y*TILE+
+            TILE/2-
+            cameraY;
+
+        ctx.beginPath();
+
+        ctx.moveTo(x1,y1);
+
+        ctx.lineTo(x2,y2);
+
+        ctx.stroke();
+
+        ctx.strokeStyle="#b08968";
+        ctx.lineWidth=4;
+
+        ctx.beginPath();
+
+        ctx.moveTo(x1,y1);
+
+        ctx.lineTo(x2,y2);
+
+        ctx.stroke();
+
+        ctx.strokeStyle="#8b7355";
+        ctx.lineWidth=10;
     }
 }
-
 
 // ================= MAP ZONES =================
 function drawMap(){
 
-    for(let x=0; x<MAP_SIZE; x++){
+    for(let x=0;x<MAP_SIZE;x++){
 
-        for(let y=0; y<MAP_SIZE; y++){
+        for(let y=0;y<MAP_SIZE;y++){
 
-            let px = x * TILE - cameraX;
-            let py = y * TILE - cameraY;
+            let px=
+                x*TILE-cameraX;
 
-            let tile = mapData[x][y];
-          let top =
-    y > 0 &&
-    mapData[x][y-1] === tile;
+            let py=
+                y*TILE-cameraY;
 
-let bottom =
-    y < MAP_SIZE-1 &&
-    mapData[x][y+1] === tile;
+            let tile=
+                mapData[x][y];
 
-let left =
-    x > 0 &&
-    mapData[x-1][y] === tile;
+            // GRASS
 
-let right =
-    x < MAP_SIZE-1 &&
-    mapData[x+1][y] === tile;
-          let topLeft =
-    x > 0 &&
-    y > 0 &&
-    mapData[x-1][y-1] === tile;
+            if(tile==="grass"){
 
-let topRight =
-    x < MAP_SIZE-1 &&
-    y > 0 &&
-    mapData[x+1][y-1] === tile;
-
-let bottomLeft =
-    x > 0 &&
-    y < MAP_SIZE-1 &&
-    mapData[x-1][y+1] === tile;
-
-let bottomRight =
-    x < MAP_SIZE-1 &&
-    y < MAP_SIZE-1 &&
-    mapData[x+1][y+1] === tile;
-
-  // ===== WATER =====
-if(tile==="water"){
-
-    const shades = [
-        "#1e40af",
-        "#2563eb",
-        "#3b82f6",
-        "#60a5fa"
-    ];
-
-    ctx.fillStyle =
-        shades[(x+y)%shades.length];
-
-    ctx.beginPath();
-
-    // začiatok
-    ctx.moveTo(
-        px + (left ? 0 : 10),
-        py
-    );
-
-    // horná hrana
-    ctx.lineTo(
-        px + TILE - (right ? 0 : 10),
-        py
-    );
-
-    // horný pravý roh
-    if(!right || !top){
-        ctx.quadraticCurveTo(
-            px + TILE,
-            py,
-            px + TILE,
-            py + (top ? 0 : 10)
-        );
-    }
-
-    // pravá hrana
-    ctx.lineTo(
-        px + TILE,
-        py + TILE - (bottom ? 0 : 10)
-    );
-
-    // dolný pravý roh
-    if(!right || !bottom){
-        ctx.quadraticCurveTo(
-            px + TILE,
-            py + TILE,
-            px + TILE - (right ? 0 : 10),
-            py + TILE
-        );
-    }
-
-    // dolná hrana
-    ctx.lineTo(
-        px + (left ? 0 : 10),
-        py + TILE
-    );
-
-    // dolný ľavý roh
-    if(!left || !bottom){
-        ctx.quadraticCurveTo(
-            px,
-            py + TILE,
-            px,
-            py + TILE - (bottom ? 0 : 10)
-        );
-    }
-
-    // ľavá hrana
-    ctx.lineTo(
-        px,
-        py + (top ? 0 : 10)
-    );
-
-    // horný ľavý roh
-    if(!left || !top){
-        ctx.quadraticCurveTo(
-            px,
-            py,
-            px + (left ? 0 : 10),
-            py
-        );
-    }
-
-    ctx.closePath();
-    ctx.fill();
-
-    // brehy
-    ctx.strokeStyle = "#93c5fd";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-}
-            // ===== GRASS =====
-            else if(tile==="grass"){
-
-                const shades = [
-                    "#5f8f3a",
-    "#669940",
-    "#6ea347"
+                const grass=[
+                    "#5b8c3a",
+                    "#6a9f44",
+                    "#7ab34d"
                 ];
 
-                ctx.fillStyle =
-                    shades[(x+y)%shades.length];
+                ctx.fillStyle=
+                    grass[(x+y)%3];
 
                 ctx.fillRect(
                     px,
@@ -1302,73 +1198,44 @@ if(tile==="water"){
                     TILE
                 );
             }
-// zaoblené rohy jazera
 
-ctx.fillStyle = "#93c5fd";
+            // WATER
 
-if(!top && !left){
+            else if(tile==="water"){
 
-    ctx.beginPath();
+                const water=[
+                    "#2563eb",
+                    "#3b82f6",
+                    "#60a5fa"
+                ];
 
-    ctx.arc(
-        px,
-        py,
-        8,
-        0,
-        Math.PI/2
-    );
+                ctx.fillStyle=
+                    water[(x+y)%3];
 
-    ctx.fill();
-}
+                ctx.fillRect(
+                    px,
+                    py,
+                    TILE,
+                    TILE
+                );
 
-if(!top && !right){
+                ctx.fillStyle=
+                    "rgba(255,255,255,0.12)";
 
-    ctx.beginPath();
+                ctx.fillRect(
+                    px,
+                    py,
+                    TILE,
+                    3
+                );
+            }
 
-    ctx.arc(
-        px + TILE,
-        py,
-        8,
-        Math.PI/2,
-        Math.PI
-    );
+            // FOREST
 
-    ctx.fill();
-}
-
-if(!bottom && !left){
-
-    ctx.beginPath();
-
-    ctx.arc(
-        px,
-        py + TILE,
-        8,
-        -Math.PI/2,
-        0
-    );
-
-    ctx.fill();
-}
-
-if(!bottom && !right){
-
-    ctx.beginPath();
-
-    ctx.arc(
-        px + TILE,
-        py + TILE,
-        8,
-        Math.PI,
-        Math.PI * 1.5
-    );
-
-    ctx.fill();
-}
-            // ===== FOREST =====
             else if(tile==="forest"){
 
-                ctx.fillStyle="#166534";
+                ctx.fillStyle="#5f8f3a";
+
                 ctx.fillRect(
                     px,
                     py,
@@ -1380,9 +1247,9 @@ if(!bottom && !right){
 
                 ctx.beginPath();
                 ctx.arc(
-                    px + TILE/2,
-                    py + TILE/2,
-                    TILE*0.30,
+                    px+18,
+                    py+26,
+                    10,
                     0,
                     Math.PI*2
                 );
@@ -1390,9 +1257,9 @@ if(!bottom && !right){
 
                 ctx.beginPath();
                 ctx.arc(
-                    px + TILE*0.30,
-                    py + TILE*0.40,
-                    TILE*0.20,
+                    px+30,
+                    py+18,
+                    12,
                     0,
                     Math.PI*2
                 );
@@ -1400,89 +1267,94 @@ if(!bottom && !right){
 
                 ctx.beginPath();
                 ctx.arc(
-                    px + TILE*0.70,
-                    py + TILE*0.40,
-                    TILE*0.20,
+                    px+38,
+                    py+28,
+                    10,
                     0,
                     Math.PI*2
                 );
                 ctx.fill();
             }
 
-            // ===== MOUNTAIN =====
+            // MOUNTAIN
+
             else if(tile==="mountain"){
 
-                ctx.fillStyle="#6b7280";
+                ctx.fillStyle="#64748b";
 
                 ctx.beginPath();
-                ctx.moveTo(px+TILE/2,py+4);
-                ctx.lineTo(px+4,py+TILE-4);
-                ctx.lineTo(px+TILE-4,py+TILE-4);
+
+                ctx.moveTo(
+                    px+24,
+                    py+4
+                );
+
+                ctx.lineTo(
+                    px+4,
+                    py+44
+                );
+
+                ctx.lineTo(
+                    px+44,
+                    py+44
+                );
+
                 ctx.closePath();
+
                 ctx.fill();
 
-                ctx.fillStyle="#d1d5db";
+                ctx.fillStyle="#cbd5e1";
 
                 ctx.beginPath();
-                ctx.moveTo(px+TILE/2,py+10);
-                ctx.lineTo(px+14,py+TILE-8);
-                ctx.lineTo(px+TILE-14,py+TILE-8);
+
+                ctx.moveTo(
+                    px+24,
+                    py+8
+                );
+
+                ctx.lineTo(
+                    px+14,
+                    py+28
+                );
+
+                ctx.lineTo(
+                    px+34,
+                    py+28
+                );
+
                 ctx.closePath();
+
                 ctx.fill();
             }
 
-            // ===== ROAD =====
-            else if(tile==="road"){
+            // AOE SHADING
 
-                ctx.fillStyle="#8b7355";
-
-                ctx.fillRect(
+            let grad=
+                ctx.createLinearGradient(
                     px,
                     py,
-                    TILE,
-                    TILE
-                );
-
-                ctx.fillStyle="#a68b6a";
-
-                ctx.fillRect(
-                    px + TILE*0.15,
-                    py + TILE*0.15,
-                    TILE*0.7,
-                    TILE*0.7
-                );
-            }
-
-            // ===== GLOBAL SHADING =====
-            if(tile==="grass" || tile==="water"){
-
-                let grad =
-                    ctx.createLinearGradient(
-                        px,
-                        py,
-                        px,
-                        py + TILE
-                    );
-
-                grad.addColorStop(
-                    0,
-                    "rgba(255,255,255,0.04)"
-                );
-
-                grad.addColorStop(
-                    1,
-                    "rgba(0,0,0,0.15)"
-                );
-
-                ctx.fillStyle = grad;
-
-                ctx.fillRect(
                     px,
-                    py,
-                    TILE,
-                    TILE
+                    py+TILE
                 );
-            }
+
+            grad.addColorStop(
+                0,
+                "rgba(255,255,255,0.03)"
+            );
+
+            grad.addColorStop(
+                1,
+                "rgba(0,0,0,0.18)"
+            );
+
+            ctx.fillStyle=grad;
+
+            ctx.fillRect(
+                px,
+                py,
+                TILE,
+                TILE
+            );
         }
     }
 }
