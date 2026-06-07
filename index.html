@@ -393,6 +393,20 @@ font-size:9px;
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+// MUSÍ BYŤ NA ZAČIATKU (fix crash)
+let scaleX = 1;
+let scaleY = 1;
+
+let cameraX = 0;
+let cameraY = 0;
+
+let zoom = 1;
+
+const TILE = 48;
+
+let hubTimer = 0;
+let hubLevel = 0;
+
 function resizeCanvas(){
 
     canvas.width = window.innerWidth;
@@ -401,24 +415,13 @@ function resizeCanvas(){
     canvas.style.width = "100vw";
     canvas.style.height = "100vh";
 
-    scaleX = canvas.width / canvas.getBoundingClientRect().width;
-    scaleY = canvas.height / canvas.getBoundingClientRect().height;
+    // bezpečný fallback
+    scaleX = canvas.width / (canvas.getBoundingClientRect().width || window.innerWidth);
+    scaleY = canvas.height / (canvas.getBoundingClientRect().height || window.innerHeight);
 }
+
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
-
-const TILE = 48;
-
-let cameraX = 0;
-let cameraY = 0;
-
-let zoom = 1;
-
-let scaleX = 1;
-let scaleY = 1;
-
-let hubTimer = 0;
-let hubLevel = 0;
 
 function selectBuild(t){
   selectedBuild = t;
