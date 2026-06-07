@@ -1035,22 +1035,57 @@ let right =
             // ===== WATER =====
             if(tile==="water"){
 
-                const shades = [
-                    "#1e40af",
-                    "#2563eb",
-                    "#3b82f6",
-                    "#60a5fa"
-                ];
+    const shades = [
+        "#1e40af",
+        "#2563eb",
+        "#3b82f6",
+        "#60a5fa"
+    ];
 
-                ctx.fillStyle =
-                    shades[(x+y)%shades.length];
+    ctx.fillStyle =
+        shades[(x+y)%shades.length];
 
-                ctx.fillRect(
-                    px,
-                    py,
-                    TILE,
-                    TILE
-                );
+    ctx.fillRect(
+        px,
+        py,
+        TILE,
+        TILE
+    );
+
+    // svetlejší breh
+    ctx.fillStyle = "#93c5fd";
+
+    if(!top){
+        ctx.fillRect(px, py, TILE, 4);
+    }
+
+    if(!bottom){
+        ctx.fillRect(
+            px,
+            py + TILE - 4,
+            TILE,
+            4
+        );
+    }
+
+    if(!left){
+        ctx.fillRect(
+            px,
+            py,
+            4,
+            TILE
+        );
+    }
+
+    if(!right){
+        ctx.fillRect(
+            px + TILE - 4,
+            py,
+            4,
+            TILE
+        );
+    }
+}
 
                 // lesk vody
                 ctx.fillStyle =
