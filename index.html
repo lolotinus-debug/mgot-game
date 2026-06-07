@@ -2,52 +2,57 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>MGOT RTS Rework</title>
+<title>MGOT MMO Economy RTS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body{
 margin:0;
-overflow:hidden;
-background:#06101f;
-font-family:Arial;
+background:#050b18;
 color:white;
+font-family:Arial;
+overflow:hidden;
 }
 
+/* TOPBAR */
 #topbar{
 position:fixed;
 top:0;
 left:0;
 width:100%;
-height:50px;
+height:60px;
 background:#0f172a;
 display:flex;
 align-items:center;
-gap:20px;
+gap:12px;
 padding:0 10px;
 border-bottom:2px solid #00d4ff;
-font-size:13px;
+font-size:12px;
+z-index:10;
 }
 
-.resource{color:#00d4ff;font-weight:bold}
+.resource{color:#00d4ff;font-weight:bold;}
 
+/* PANEL */
 #panel{
 position:fixed;
 left:10px;
-top:70px;
-width:200px;
+top:80px;
+width:240px;
 background:#0f172a;
 padding:10px;
 border-radius:10px;
+z-index:10;
 }
 
 button{
 width:100%;
-margin-top:5px;
-padding:8px;
-background:#00d4ff;
+margin:5px 0;
+padding:10px;
 border:none;
-font-weight:bold;
 cursor:pointer;
+background:#00d4ff;
+font-weight:bold;
 }
 
 canvas{
@@ -61,20 +66,22 @@ left:0;
 <body>
 
 <div id="topbar">
-<div class="resource">💎 Treasury: <span id="treasury">0</span></div>
-<div class="resource">👥 Population: <span id="pop">0</span></div>
-<div class="resource">📈 Price: <span id="price">0</span></div>
-<div class="resource">💰 MC: <span id="mc">0</span></div>
+<div class="resource">💎 Treasury: <span id="t">0</span></div>
+<div class="resource">👥 Players: <span id="p">1</span></div>
+<div class="resource">📈 Price: <span id="pr">0</span></div>
+<div class="resource">🪙 Supply: <span id="s">0</span></div>
+<div class="resource">💰 MC: <span id="m">0</span></div>
 </div>
 
 <div id="panel">
-<h3>MGOT RTS</h3>
+<h3>MGOT MMO</h3>
 
-<button onclick="select('farm')">Farm</button>
-<button onclick="select('treasury')">Treasury</button>
-<button onclick="select('market')">Marketing</button>
-<button onclick="select('defense')">Defense</button>
-<button onclick="upgrade()">Upgrade selected</button>
+<button onclick="build('hub')">🏘 Hub</button>
+<button onclick="build('farm')">⚙ Economy Farm</button>
+<button onclick="build('market')">📈 Market Node</button>
+<button onclick="build('raid')">⚔ Defense Tower</button>
+
+<button onclick="raid()">🔥 RAID PLAYER</button>
 </div>
 
 <canvas id="c"></canvas>
@@ -88,94 +95,99 @@ function resize(){
 c.width=innerWidth;
 c.height=innerHeight;
 }
-window.addEventListener("resize",resize);
 resize();
+window.addEventListener("resize",resize);
 
-/* ================= GAME ================= */
-let game={
+/* ================= WORLD STATE ================= */
+
+let state = {
 treasury:500,
-pop:1,
+players:1,
 price:0.001,
-mc:0
+supply:1000000,
+mc:1000,
+lp:100,
+raidPower:0
 };
 
-let gridSize=10;
-let cell=60;
+let buildings = [];
 
-let selectedType="farm";
-
-let buildings=[];
+/* fake MMO players */
+let worldPlayers = [
+{ id:"AI1", power:10, treasury:200 },
+{ id:"AI2", power:15, treasury:300 },
+{ id:"AI3", power:20, treasury:500 }
+];
 
 /* ================= BUILD ================= */
-function select(t){
-selectedType=t;
-}
+function build(type){
 
-/* click to place */
-c.addEventListener("click",(e)=>{
+if(state.treasury < 100) return;
 
-let x=Math.floor(e.clientX/cell);
-let y=Math.floor(e.clientY/cell);
-
-let existing=buildings.find(b=>b.x==x && b.y==y);
-
-if(existing){
-selected=existing;
-return;
-}
-
-if(game.treasury<100) return;
-
-game.treasury-=100;
+state.treasury -= 100;
 
 buildings.push({
-x,y,
-type:selectedType,
+x:Math.random()*20|0,
+y:Math.random()*15|0,
+type:type,
 level:1
 });
-
-});
-
-/* ================= UPGRADE ================= */
-let selected=null;
-
-function upgrade(){
-if(!selected) return;
-if(game.treasury<selected.level*80) return;
-
-game.treasury-=selected.level*80;
-selected.level++;
 }
 
-/* ================= ECONOMY ================= */
+/* ================= RAID SYSTEM ================= */
+function raid(){
+
+let target = worldPlayers[Math.random()*worldPlayers.length|0];
+
+let myPower =
+buildings.filter(b=>b.type==="raid").length * 10 +
+buildings.filter(b=>b.type==="hub").length * 5;
+
+if(myPower > target.power){
+
+state.treasury += target.treasury * 0.2;
+state.players++;
+
+log("🔥 RAID WIN vs " + target.id);
+}
+else{
+state.treasury *= 0.9;
+log("💀 RAID LOST vs " + target.id);
+}
+}
+
+/* ================= ECONOMY ENGINE ================= */
 setInterval(()=>{
 
-let farms=buildings.filter(b=>b.type==="farm");
-let treasury=buildings.filter(b=>b.type==="treasury");
-let market=buildings.filter(b=>b.type==="market");
-let defense=buildings.filter(b=>b.type==="defense");
+let hub = buildings.filter(b=>b.type==="hub").length;
+let farm = buildings.filter(b=>b.type==="farm").length;
+let market = buildings.filter(b=>b.type==="market").length;
 
-/* FOOD / POP */
-game.pop += farms.length * 0.05;
+/* HOLDERS = players growth */
+state.players += hub * 0.05;
 
-/* TREASURY INCOME */
-game.treasury += treasury.length * 5;
+/* TREASURY */
+state.treasury += farm * 10;
 
-/* MARKET EFFECT (PRICE UP) */
-let demand = market.length * game.pop * 0.001;
+/* PRICE SIM */
+let demand = (market * state.players * 0.001);
+let sellPressure = Math.random()*0.5;
 
-/* DEFENSE STABILIZES */
-let stability = defense.length * 0.002;
+state.price += (demand - sellPressure) * 0.01;
 
-game.price += (demand - stability) * 0.01;
+if(state.price < 0.0001) state.price = 0.0001;
 
-if(game.price<0.0001) game.price=0.0001;
+/* SUPPLY BURN */
+state.supply -= hub * 2;
+if(state.supply < 10000) state.supply = 10000;
 
 /* MC */
-game.mc = game.price * 1000000;
+state.mc = state.price * state.supply;
 
-/* POP GROWTH */
-game.pop += 0.01;
+/* LP */
+state.lp += demand * 0.5;
+state.lp -= sellPressure * 0.3;
+if(state.lp < 10) state.lp = 10;
 
 ui();
 
@@ -183,49 +195,43 @@ ui();
 
 /* ================= UI ================= */
 function ui(){
-document.getElementById("treasury").innerText=Math.floor(game.treasury);
-document.getElementById("pop").innerText=Math.floor(game.pop);
-document.getElementById("price").innerText=game.price.toFixed(6);
-document.getElementById("mc").innerText=Math.floor(game.mc);
+document.getElementById("t").innerText=Math.floor(state.treasury);
+document.getElementById("p").innerText=Math.floor(state.players);
+document.getElementById("pr").innerText=state.price.toFixed(6);
+document.getElementById("s").innerText=state.supply;
+document.getElementById("m").innerText=Math.floor(state.mc);
 }
 
 /* ================= RENDER ================= */
 function render(){
 
-ctx.fillStyle="#06101f";
+ctx.fillStyle="#050b18";
 ctx.fillRect(0,0,c.width,c.height);
 
-/* grid */
-for(let x=0;x<gridSize;x++){
-for(let y=0;y<gridSize;y++){
-ctx.strokeStyle="#0f172a";
-ctx.strokeRect(x*cell,y*cell,cell,cell);
-}
-}
-
-/* buildings */
 for(let b of buildings){
 
-let x=b.x*cell;
-let y=b.y*cell;
+let x=b.x*40;
+let y=b.y*40;
 
 ctx.fillStyle =
-b.type==="farm"?"#22c55e":
-b.type==="treasury"?"#fbbf24":
-b.type==="market"?"#3b82f6":
+b.type==="hub"?"#22c55e":
+b.type==="farm"?"#3b82f6":
+b.type==="market"?"#f59e0b":
 "#ef4444";
 
-ctx.fillRect(x+10,y+10,40,40);
+ctx.fillRect(x,y,30,30);
 
-ctx.fillStyle="white";
-ctx.font="12px Arial";
-ctx.fillText(b.type[0].toUpperCase(),x+25,y+35);
-
-/* level */
-ctx.fillText(b.level,x+10,y+15);
+ctx.fillStyle="#fff";
+ctx.font="10px Arial";
+ctx.fillText(b.type[0],x+10,y+20);
 }
 
 requestAnimationFrame(render);
+}
+
+/* ================= LOG ================= */
+function log(t){
+console.log(t);
 }
 
 render();
