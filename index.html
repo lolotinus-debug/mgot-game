@@ -594,18 +594,13 @@ function upgrade(){
         return;
     }
 
-    // ================= NORMAL BUILDINGS =================
-
     let cost = selected.level * 120;
 
-    // ================= CLUSTER BONUS =================
     let clusterBonus = 0;
 
     for(let b of buildings){
-
         let dx = Math.abs(b.x - selected.x);
         let dy = Math.abs(b.y - selected.y);
-
         let dist = dx + dy;
 
         if(dist <= 3){
@@ -627,37 +622,6 @@ function upgrade(){
     log("⬆ Upgraded " + selected.type);
     ui();
 }
-// ================= CLUSTER BONUS =================
-let clusterBonus = 0;
-
-for(let b of buildings){
-
-    let dx = Math.abs(b.x - x);
-    let dy = Math.abs(b.y - y);
-
-    let dist = dx + dy; // Manhattan distance
-
-    if(dist <= 3){
-        clusterBonus++;
-    }
-}
-
-// limit bonusu (aby to nebolo OP)
-let clusterMultiplier = Math.min(clusterBonus * 0.08, 0.35);
-
-// výsledná cena
-let finalCost = Math.floor(cost * (1 - clusterMultiplier));
-
-// kontrola peňazí
-if(game.treasury < finalCost){
-    log("❌ Not enough Treasury");
-    return;
-}
-
-
-// zaplatíš len ONCE (toto je dôležité)
-game.treasury -= finalCost;
-  }
 
 // ================= DEMOLISH =================
 function demolish(){
