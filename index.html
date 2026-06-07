@@ -395,14 +395,15 @@ const ctx = canvas.getContext("2d");
 
 function resizeCanvas(){
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-canvas.style.width = "100vw";
-canvas.style.height = "100vh";
+    canvas.style.width = "100vw";
+    canvas.style.height = "100vh";
 
+    scaleX = canvas.width / canvas.getBoundingClientRect().width;
+    scaleY = canvas.height / canvas.getBoundingClientRect().height;
 }
-
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
@@ -410,6 +411,11 @@ const TILE = 48;
 
 let cameraX = 0;
 let cameraY = 0;
+
+let zoom = 1;
+
+let scaleX = 1;
+let scaleY = 1;
 
 let hubTimer = 0;
 let hubLevel = 0;
@@ -673,17 +679,15 @@ function demolish(){
 // ================= CLICK =================
 canvas.addEventListener("click",(e)=>{
 
-const rect = canvas.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
 
-const x = Math.floor(
-(e.clientX - rect.left + cameraX) / TILE
-);
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top;
 
-const y = Math.floor(
-(e.clientY - rect.top + cameraY) / TILE
-);
+    const x = Math.floor((mx + cameraX) / TILE);
+    const y = Math.floor((my + cameraY) / TILE);
 
-// výber budovy
+    // výber budovy
 for(let b of buildings){
 
     if(b.x===x && b.y===y){
