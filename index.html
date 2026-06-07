@@ -577,12 +577,12 @@ function upgrade(){
         return;
     }
 
-    if(selected.type === "townhall"){
-        log("❌ Headquarters cannot be upgraded");
+    let cost = selected.level * 120;
+
+    if(game.treasury < cost){
+        log("❌ Not enough Treasury");
         return;
     }
-
-    let cost = selected.level * 120;
 
     // ================= CLUSTER BONUS =================
     let clusterBonus = 0;
@@ -599,11 +599,8 @@ function upgrade(){
         }
     }
 
-    let clusterMultiplier =
-        Math.min(clusterBonus * 0.08, 0.35);
-
-    let finalCost =
-        Math.floor(cost * (1 - clusterMultiplier));
+    let clusterMultiplier = Math.min(clusterBonus * 0.08, 0.35);
+    let finalCost = Math.floor(cost * (1 - clusterMultiplier));
 
     if(game.treasury < finalCost){
         log("❌ Not enough Treasury");
@@ -612,35 +609,36 @@ function upgrade(){
 
     game.treasury -= finalCost;
 
+    // level up
     selected.level++;
 
-    // ================= MARKET IMPACT (15%) =================
-    let direction = Math.random() < 0.5 ? -1 : 1;
-    let impact = 0.15;
+    explosion(selected.x * TILE, selected.y * TILE, "#fff");
 
-    game.price *= (1 + direction * impact);
-    game.lp *= (1 + direction * impact);
-    game.marketCap = Math.floor(game.price * game.supply);
+    log("⬆ Upgraded " + selected.type);
 
-    if(game.price < 0.000001) game.price = 0.000001;
-    if(game.lp < 10) game.lp = 10;
+    // ================= SPECIAL: TOWNHALL =================
+    if(selected.type === "townhall"){
 
-    log(
-        direction > 0
-        ? "🚀 MARKET PUMP +15%"
-        : "📉 MARKET DUMP -15%"
-    );
+        let direction = Math.random() < 0.5 ? -1 : 1;
+        let impact = 0.15;
 
-    explosion(
-        selected.x * TILE,
-        selected.y * TILE,
-        "#ffffff"
-    );
+        game.price *= (1 + direction * impact);
+        game.lp *= (1 + direction * impact);
+
+        game.marketCap = Math.floor(game.price * game.supply);
+
+        if(game.price < 0.000001) game.price = 0.000001;
+        if(game.lp < 10) game.lp = 10;
+
+        log(direction > 0
+            ? "🚀 MARKET PUMP +15%"
+            : "📉 MARKET DUMP -15%"
+        );
+    }
 
     ui();
     updateInfo();
 }
-
 
 // ================= DEMOLISH =================
 function demolish(){
