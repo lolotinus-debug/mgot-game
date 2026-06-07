@@ -682,19 +682,18 @@ function demolish(){
 
     const rect = canvas.getBoundingClientRect();
 
-    // screen → CSS pixels
     const cssX = e.clientX - rect.left;
     const cssY = e.clientY - rect.top;
 
-    // CSS → canvas pixels (dôležité!)
-    const canvasX = cssX * (canvas.width / rect.width);
-    const canvasY = cssY * (canvas.height / rect.height);
+    // PREVOD CSS → canvas pixels (FIX MOBILE OFFSET)
+    const x = cssX * (canvas.width / rect.width);
+    const y = cssY * (canvas.height / rect.height);
 
-    // invert transform (zoom + camera)
-    const worldX = (canvasX / zoom) + cameraX;
-    const worldY = (canvasY / zoom) + cameraY;
-
-    return { x: worldX, y: worldY };
+    // INVERSE CAMERA + ZOOM (toto už sedí s renderom)
+    return {
+        x: x / zoom + cameraX,
+        y: y / zoom + cameraY
+    };
 }
 
 // ================= CLICK =================
