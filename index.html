@@ -865,11 +865,6 @@ if(game.price < 0.000001){
 
     game.lastPrice = game.price;
 
-    let buyers =
-        game.holders * 0.02 +
-        game.promoters * 0.5 +
-        game.engagement * 0.001;
-
     let sellers =
         (game.holders * 0.01) *
         (Math.random() * 2);
