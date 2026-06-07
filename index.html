@@ -406,7 +406,7 @@ canvas.style.height = "100vh";
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas);
 
-const TILE = 64;
+const TILE = 32;
 
 let cameraX = 0;
 let cameraY = 0;
@@ -1018,8 +1018,16 @@ function drawMap(){
             let tile = mapData[x][y];
 
             if(tile==="water"){
-                ctx.fillStyle="#2563eb";
-            }
+
+let shades=[
+"#1d4ed8",
+"#2563eb",
+"#3b82f6",
+"#60a5fa"
+];
+
+ctx.fillStyle=shades[(x+y)%4];
+}
             else if(tile==="grass"){
                 let shades=[
                     "#65a30d",
@@ -1031,12 +1039,35 @@ function drawMap(){
                 ctx.fillStyle =
                     shades[(x+y)%shades.length];
             }
-            else if(tile==="forest"){
-                ctx.fillStyle="#166534";
-            }
+            if(tile==="forest"){
+
+ctx.fillStyle="#166534";
+ctx.fillRect(px,py,TILE,TILE);
+
+ctx.fillStyle="#14532d";
+
+ctx.beginPath();
+ctx.arc(
+px+TILE/2,
+py+TILE/2,
+10,
+0,
+Math.PI*2
+);
+ctx.fill();
+}
             else if(tile==="mountain"){
                 ctx.fillStyle="#6b7280";
-            }
+
+ctx.beginPath();
+
+ctx.moveTo(px+TILE/2,py+4);
+ctx.lineTo(px+4,py+TILE-4);
+ctx.lineTo(px+TILE-4,py+TILE-4);
+
+ctx.closePath();
+ctx.fill();
+}
             else if(tile==="road"){
                 ctx.fillStyle="#8b7355";
             }
