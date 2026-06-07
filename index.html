@@ -547,16 +547,6 @@ function upgrade(){
         return;
     }
 
-  if(buildings.some(b => b.x === x && b.y === y)){
-    log("❌ Tile occupied");
-    return;
-}
-
-if(mapData[x][y] === "water"){
-    log("❌ Cannot build on water");
-    return;
-}
-
     game.treasury -= cost;
 
     selected.level++;
@@ -961,30 +951,27 @@ function drawMap(){
 
             ctx.fillRect(px,py,TILE,TILE);
 
-            
-
-          
             let baseColor = ctx.fillStyle;
 
-let grad = ctx.createLinearGradient(
-    px,
-    py,
-    px + TILE,
-    py + TILE
-);
+            let grad = ctx.createLinearGradient(
+                px,
+                py,
+                px + TILE,
+                py + TILE
+            );
 
-grad.addColorStop(0, baseColor);
-grad.addColorStop(1, "#00000022");
+            grad.addColorStop(0, baseColor);
+            grad.addColorStop(1, "#00000022");
 
-ctx.fillStyle = grad;
+            ctx.fillStyle = grad;
 
-ctx.fillRect(
-    px,
-    py,
-    TILE,
-    TILE
-);
-        
+            ctx.fillRect(
+                px,
+                py,
+                TILE,
+                TILE
+            );
+        }
     }
 }
 
