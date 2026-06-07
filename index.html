@@ -574,57 +574,55 @@ Upgrade cost: ${selected.level * 120}<br>
 
 function upgrade(){
 
-    if(!selected){
-        return;
+if(!selected) return;
+
+if(selected.type === "townhall"){
+
+    let roll = Math.random();
+
+    if(roll < 0.6){
+        game.price *= 0.85;
+        log("📉 HQ upgrade failed → price -15%");
+    } else {
+        let pump = 1 + (Math.random() * 0.25 + 0.05);
+        game.price *= pump;
+        game.lp *= 1 + (pump - 1) * 0.8;
+        log("🚀 HQ upgrade success → pump event");
     }
 
-    if(selected.type === "townhall"){
-        
-        let roll = Math.random();
+    game.marketCap = game.price * game.supply;
+    ui();
+    return;
+}
 
-        if(roll < 0.6){
-            // ❌ DUMP EVENT
-            game.price *= 0.85;
+// normal building upgrade cost
+let cost = selected.level * 120;
 
-            log("📉 HQ upgrade failed → price -15%");
-        }
-        else{
-            // 🚀 PUMP EVENT
-            let pump = 1 + (Math.random() * 0.25 + 0.05);
+// cluster bonus
+let clusterBonus = 0;
 
-            game.price *= pump;
-            game.lp *= 1 + (pump - 1) * 0.8;
+for(let b of buildings){
+    let dx = Math.abs(b.x - selected.x);
+    let dy = Math.abs(b.y - selected.y);
+    let dist = dx + dy;
 
-            log("🚀 HQ upgrade success → pump event");
-        }
+    if(dist <= 3) clusterBonus++;
+}
 
-        game.marketCap = game.price * game.supply;
-        ui();
-        return;
-    }
+let clusterMultiplier = Math.min(clusterBonus * 0.08, 0.35);
+let finalCost = Math.floor(cost * (1 - clusterMultiplier));
 
-// kontrola peňazí
 if(game.treasury < finalCost){
     log("❌ Not enough Treasury");
     return;
 }
 
-// zaplatíš len ONCE (toto je dôležité)
 game.treasury -= finalCost;
-  }
-    // ================= NORMAL BUILDINGS =================
-    let cost = selected.level * 120;
+selected.level++;
 
-    if(game.treasury < cost){
-        log("❌ Not enough Treasury");
-        return;
-    }
+log("⬆ Upgraded " + selected.type);
+ui();
 
-    game.treasury -= cost;
-    selected.level++;
-
-    log("⬆ Upgraded " + selected.type);
-    ui();
 }
 // ================= CLUSTER BONUS =================
 let clusterBonus = 0;
