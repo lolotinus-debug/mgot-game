@@ -1,20 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sk">
 <head>
 <meta charset="UTF-8">
-<title>MGOT MMO Economy RTS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MGOT Trading Strategy</title>
 
 <style>
-body{
+*{
 margin:0;
-background:#050b18;
-color:white;
-font-family:Arial;
-overflow:hidden;
+padding:0;
+box-sizing:border-box;
 }
 
-/* TOPBAR */
+body{
+margin:0;
+padding:0;
+box-sizing:border-box;
+background:#020617;
+font-family:Arial, sans-serif;
+overflow:hidden;
+color:white;
+}
+
+/* ================= TOPBAR ================= */
+
 #topbar{
 position:fixed;
 top:0;
@@ -23,42 +32,268 @@ width:100%;
 height:60px;
 background:#0f172a;
 display:flex;
+justify-content:flex-start;
 align-items:center;
-gap:12px;
-padding:0 10px;
+gap:15px;
 border-bottom:2px solid #00d4ff;
-font-size:12px;
-z-index:10;
+z-index:100;
+font-size:14px;
+padding:0 10px;
 }
 
-.resource{color:#00d4ff;font-weight:bold;}
-
-/* PANEL */
-#panel{
-position:fixed;
-left:10px;
-top:80px;
-width:240px;
-background:#0f172a;
-padding:10px;
-border-radius:10px;
-z-index:10;
-}
-
-button{
-width:100%;
-margin:5px 0;
-padding:10px;
-border:none;
-cursor:pointer;
-background:#00d4ff;
+.resource{
+color:#00d4ff;
 font-weight:bold;
 }
 
+/* ================= LOGO ================= */
+
+#logo{
+width:42px;
+height:42px;
+object-fit:cover;
+border-radius:50%;
+border:2px solid #00d4ff;
+box-shadow:0 0 10px #00d4ff88;
+flex-shrink:0;
+}  
+
+/* ================= LEFT PANEL ================= */
+
+#leftPanel{
+position:fixed;
+left:10px;
+top:80px;
+width:260px;
+background:#0f172a;
+padding:12px;
+border-radius:10px;
+z-index:50;
+}
+
+#leftPanel h3{
+margin-bottom:10px;
+}
+
+#leftPanel button{
+width:100%;
+margin-bottom:8px;
+padding:10px;
+border:none;
+cursor:pointer;
+font-weight:bold;
+border-radius:6px;
+text-align:left;
+background:#00d4ff;
+color:black;
+transition:0.2s;
+}
+
+#leftPanel button:hover{
+transform:scale(1.02);
+}
+
+/* ================= RIGHT PANEL ================= */
+
+#rightPanel{
+position:fixed;
+right:10px;
+top:80px;
+width:280px;
+background:#0f172a;
+padding:12px;
+border-radius:10px;
+z-index:50;
+}
+
+#rightPanel h3{
+margin-bottom:10px;
+}
+
+#rightPanel button{
+width:100%;
+margin-top:10px;
+padding:10px;
+border:none;
+cursor:pointer;
+font-weight:bold;
+border-radius:6px;
+background:#00d4ff;
+color:black;
+}
+
+/* ================= INFO ================= */
+
+#info{
+line-height:1.5;
+font-size:14px;
+}
+
+#logoRight{
+width:70px;
+height:70px;
+object-fit:contain;
+image-rendering:auto;
+display:block;
+margin:0 auto 10px auto;
+
+border-radius:12px;
+border:2px solid #00d4ff;
+
+background:#0f172a;
+padding:3px;
+
+box-shadow:0 0 10px #00d4ff55;
+}
+
+/* ================= LOG ================= */
+
+#log{
+position:fixed;
+bottom:10px;
+left:10px;
+width:130px;
+height:90px;
+overflow:auto;
+background:#000;
+padding:10px;
+font-size:12px;
+border-radius:10px;
+z-index:50;
+}
+
+#log::-webkit-scrollbar{
+width:6px;
+}
+
+#log::-webkit-scrollbar-thumb{
+background:#00d4ff;
+border-radius:10px;
+}
+
+/* ================= CANVAS ================= */
+
 canvas{
+display:block;
 position:absolute;
-top:0;
 left:0;
+top:0;
+width:100vw;
+height:100vh;
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width:768px){
+
+#topbar{
+height:auto;
+min-height:60px;
+font-size:11px;
+gap:8px;
+padding:6px;
+flex-wrap:wrap;
+}
+
+/* BUILDINGS PANEL */
+
+#leftPanel{
+left:5px;
+bottom:5px;
+top:auto;
+
+width:48%;
+max-height:220px;
+
+overflow-y:auto;
+
+padding:8px;
+}
+
+/* INFO PANEL */
+
+#rightPanel{
+right:5px;
+bottom:5px;
+top:auto;
+
+width:48%;
+padding:8px;
+}
+
+/* BUTTONS */
+
+#leftPanel button,
+#rightPanel button{
+font-size:14px;
+padding:12px;
+}
+
+/* INFO */
+
+#info{
+font-size:12px;
+}
+
+/* LOG */
+  
+#log{
+width:48%;
+height:90px;
+left:5px;
+bottom:230px;
+transform:none;
+font-size:10px;
+}
+
+/* CANVAS */
+
+canvas{
+width:100vw;
+height:100vh;
+}
+
+/* SCROLL */
+
+#leftPanel::-webkit-scrollbar{
+width:4px;
+}
+
+#leftPanel::-webkit-scrollbar-thumb{
+background:#00d4ff;
+border-radius:10px;
+}
+
+}
+
+/* EXTRA SMALL PHONES */
+
+@media (max-width:480px){
+
+#topbar{
+font-size:10px;
+gap:5px;
+}
+
+#leftPanel{
+width:47%;
+}
+
+#rightPanel{
+width:47%;
+}
+
+#leftPanel button,
+#rightPanel button{
+font-size:12px;
+padding:10px;
+}
+
+#log{
+height:80px;
+font-size:9px;
+}
+
 }
 </style>
 </head>
@@ -66,176 +301,1177 @@ left:0;
 <body>
 
 <div id="topbar">
-<div class="resource">💎 Treasury: <span id="t">0</span></div>
-<div class="resource">👥 Players: <span id="p">1</span></div>
-<div class="resource">📈 Price: <span id="pr">0</span></div>
-<div class="resource">🪙 Supply: <span id="s">0</span></div>
-<div class="resource">💰 MC: <span id="m">0</span></div>
+
+  <img src="logo.png" id="logo">
+
+  <div class="resource">💎 Treasury:
+    <span id="treasury">500</span>
+  </div>
+
+  <div class="resource">👥 Holders:
+    <span id="holders">10</span>
+  </div>
+
+  <div class="resource">⚡ Engagement:
+    <span id="engagement">100</span>
+  </div>
+
+  <div class="resource">🧠 Education:
+    <span id="education">0</span>
+  </div>
+
+  <div class="resource">🔷 Utility:
+    <span id="utility">1</span>
+  </div>
+
+  <div class="resource">🚀 Promoters:
+    <span id="promoters">0</span>
+  </div>
+
+  <div class="resource">🏦 LP:
+    <span id="lp">100</span>
+  </div>
+
+  <div class="resource">📊 Volume:
+    <span id="volume">0</span>
+  </div>
+
+  <div class="resource">⭐ Reputation:
+    <span id="reputation">0</span>
+  </div>
+
+  <div class="resource">🪙 Supply:
+    <span id="supply">1000000</span>
+  </div>
+
+  <div class="resource">📈 Price:
+    <span id="price">0.001</span>
+  </div>
+
+  <div class="resource">💰 MC:
+    <span id="marketCap">1000</span>
+  </div>
+
 </div>
 
-<div id="panel">
-<h3>MGOT MMO</h3>
+<div id="leftPanel">
+<h3>🏗 Buildings</h3>
 
-<button onclick="build('hub')">🏘 Hub</button>
-<button onclick="build('farm')">⚙ Economy Farm</button>
-<button onclick="build('market')">📈 Market Node</button>
-<button onclick="build('raid')">⚔ Defense Tower</button>
-
-<button onclick="raid()">🔥 RAID PLAYER</button>
+<button onclick="selectBuild('community')">🏘 Community Hub (100)</button>
+<button onclick="selectBuild('marketing')">📢 Marketing Center (120)</button>
+<button onclick="selectBuild('treasury')">🏦 Treasury Vault (150)</button>
+<button onclick="selectBuild('academy')">🎓 Education Center (200)</button>
+<button onclick="selectBuild('utility')">⚡ Utility Lab (250)</button>
+<button onclick="selectBuild('influencer')">🚀 Influencer Agency (300)</button>
+<button onclick="selectBuild('burn')">🔥 Burn Engine (350)</button>
 </div>
 
-<canvas id="c"></canvas>
+<div id="rightPanel">
+<h3>📋 Info</h3>
+
+<img src="logo.png" id="logoRight">
+
+<div id="info">Nothing selected</div>
+
+<div id="actionButtons">
+  <button id="upgradeBtn" onclick="upgrade()">⬆ Upgrade</button>
+  <button id="demolishBtn" onclick="demolish()">🗑 Demolish</button>
+</div>
+
+<hr style="margin:10px 0;border:1px solid #333">
+
+<button id="newGameBtn" onclick="newGame()">🆕 New Game</button>
+
+</div>
+
+<div id="log"></div>
+<canvas id="game"></canvas>
 
 <script>
 
-const c=document.getElementById("c");
-const ctx=c.getContext("2d");
+// ================= INIT =================
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-function resize(){
-c.width=innerWidth;
-c.height=innerHeight;
+function resizeCanvas(){
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+canvas.style.width = "100vw";
+canvas.style.height = "100vh";
+
 }
-resize();
-window.addEventListener("resize",resize);
 
-/* ================= WORLD STATE ================= */
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
 
-let state = {
-treasury:500,
-players:1,
-price:0.001,
-supply:1000000,
-mc:1000,
-lp:100,
-raidPower:0
+const TILE = 64;
+
+let cameraX = 0;
+let cameraY = 0;
+
+let hubTimer = 0;
+let hubLevel = 0;
+
+function selectBuild(t){
+  selectedBuild = t;
+
+  document.querySelectorAll("#leftPanel button").forEach(b=>{
+    b.style.outline="none";
+  });
+
+  if(window.event?.target){
+    window.event.target.style.outline="2px solid white";
+  }
+
+  document.getElementById("info").innerHTML = `
+    <b>Selected:</b> ${t}<br>
+    💰 Cost: ${B[t].cost}<br>
+    📍 Click map to place
+  `;
+
+  log("Build: " + t);
+}
+  
+let selected = null;
+let selectedBuild = null;
+
+let particles = [];
+
+let game = {
+  treasury: 500,
+  holders: 1,
+  engagement: 1,
+  education: 0,
+  utility: 1,
+  promoters: 0,
+  lp: 100,
+  supply: 1000000,
+  reputation: 0,
+  communityPower: 0,
+  price: 0.001,
+  marketCap: 1000,
+  volume: 0,
+  lastPrice: 0.001,
 };
 
 let buildings = [];
 
-/* fake MMO players */
-let worldPlayers = [
-{ id:"AI1", power:10, treasury:200 },
-{ id:"AI2", power:15, treasury:300 },
-{ id:"AI3", power:20, treasury:500 }
-];
+buildings.push({
+x:10,
+y:10,
+type:"townhall",
+level:1
+});
 
-/* ================= BUILD ================= */
-function build(type){
+// ================= BUILD COSTS =================
+const B = {
 
-if(state.treasury < 100) return;
+townhall:{cost:0,color:"#ffffff"},
 
-state.treasury -= 100;
+community:{cost:100,color:"#22c55e"},
+
+marketing:{cost:120,color:"#3b82f6"},
+
+treasury:{cost:150,color:"#f59e0b"},
+
+academy:{cost:200,color:"#a855f7"},
+
+utility:{cost:250,color:"#00d4ff"},
+
+influencer:{cost:300,color:"#ef4444"},
+
+burn:{cost:350,color:"#eab308"}
+
+};
+
+// ================= LOG =================
+function log(t){
+const d=document.createElement("div");
+d.innerText=t;
+document.getElementById("log").prepend(d);
+}
+
+// ================= PARTICLES (EXPLOSION) =================
+function explosion(x,y,color){
+for(let i=0;i<12;i++){
+particles.push({
+x,y,
+vx:(Math.random()-0.5)*6,
+vy:(Math.random()-0.5)*6,
+life:30,
+color
+});
+}
+}
+
+// ================= UPDATE UI =================
+function ui(){
+document.getElementById("treasury").innerText =
+Math.floor(game.treasury);
+
+document.getElementById("holders").innerText =
+Math.floor(game.holders);
+
+document.getElementById("engagement").innerText =
+Math.floor(game.engagement);
+
+document.getElementById("education").innerText =
+Math.floor(game.education);
+
+document.getElementById("utility").innerText =
+Math.floor(game.utility);
+
+document.getElementById("promoters").innerText =
+Math.floor(game.promoters);
+
+document.getElementById("lp").innerText =
+Math.floor(game.lp);
+
+document.getElementById("volume").innerText =
+Math.floor(game.volume);  
+
+document.getElementById("reputation").innerText =
+Math.floor(game.reputation);
+
+document.getElementById("supply").innerText =
+Math.floor(game.supply);
+
+document.getElementById("price").innerText =
+game.price.toPrecision(4);
+  
+document.getElementById("marketCap").innerText =
+Math.floor(game.marketCap);
+} 
+
+// ================= INFO =================
+function updateInfo(){
+
+if(!selected){
+
+document.getElementById("upgradeBtn").style.display = "none";
+document.getElementById("demolishBtn").style.display = "none";
+
+document.getElementById("info").innerHTML =
+"Nothing selected";
+
+return;
+}
+
+document.getElementById("upgradeBtn").style.display = "block";
+document.getElementById("demolishBtn").style.display = "block";
+
+document.getElementById("info").innerHTML = `
+<b>${selected.type}</b><br>
+Level: ${selected.level}<br>
+Upgrade cost: ${selected.level * 120}<br>
+`;
+
+}
+
+// ================= UPGRADE =================
+
+function upgrade(){
+
+    if(!selected){
+        return;
+    }
+
+    if(selected.type === "townhall"){
+        log("❌ Headquarters cannot be upgraded");
+        return;
+    }
+
+    let cost = selected.level * 120;
+
+    if(game.treasury < cost){
+        log("❌ Not enough Treasury");
+        return;
+    }
+
+    game.treasury -= cost;
+
+    selected.level++;
+
+    explosion(
+        selected.x * TILE,
+        selected.y * TILE,
+        "#fff"
+    );
+
+    log("⬆ Upgraded " + selected.type);
+
+    ui();
+    updateInfo();
+
+}
+
+// ================= DEMOLISH =================
+function demolish(){
+
+if(!selected){
+return;
+}
+
+if(selected.type === "townhall"){
+log("❌ Town Hall cannot be demolished");
+return;
+}
+
+let index = buildings.indexOf(selected);
+
+if(index !== -1){
+
+buildings.splice(index,1);
+
+log("🗑 Building removed");
+
+selected = null;
+
+document.getElementById("upgradeBtn").style.display = "none";
+document.getElementById("demolishBtn").style.display = "none";
+
+document.getElementById("info").innerHTML =
+"Nothing selected";
+
+}
+
+}
+
+// ================= CLICK =================
+canvas.addEventListener("click",(e)=>{
+
+const rect = canvas.getBoundingClientRect();
+
+const x = Math.floor(
+(e.clientX - rect.left + cameraX) / TILE
+);
+
+const y = Math.floor(
+(e.clientY - rect.top + cameraY) / TILE
+);
+
+// výber budovy
+for(let b of buildings){
+
+    if(b.x===x && b.y===y){
+
+        selected = b;
+
+        updateInfo();
+
+        return;
+    }
+}
+
+// nič nie je vybrané
+selected = null;
+updateInfo();
+
+// musí byť zvolená budova
+if(!selectedBuild){
+    return;
+}
+
+// mapa mimo rozsahu
+if(
+    x < 0 ||
+    y < 0 ||
+    x >= MAP_SIZE ||
+    y >= MAP_SIZE
+){
+    return;
+}
+
+// voda
+if(mapData[x][y] === "water"){
+    log("❌ Cannot build on water");
+    return;
+}
+
+// obsadené políčko
+if(buildings.some(b => b.x===x && b.y===y)){
+    log("❌ Tile occupied");
+    return;
+}
+
+let cost = B[selectedBuild].cost;
+
+if(game.treasury < cost){
+    log("❌ Not enough Treasury");
+    return;
+}
+
+game.treasury -= cost;
 
 buildings.push({
-x:Math.random()*20|0,
-y:Math.random()*15|0,
-type:type,
+    x:x,
+    y:y,
+    type:selectedBuild,
+    level:1,
+    cooldown:0
+});
+
+explosion(
+    x*TILE,
+    y*TILE,
+    B[selectedBuild].color
+);
+
+log("🏗 " + selectedBuild + " built");
+
+ui();
+
+});
+
+// ================= ECONOMY =================
+
+setInterval(()=>{
+
+    for(let b of buildings){
+
+    // COMMUNITY = iba holder growth
+    if(b.type==="community"){
+        // nič nepridáva engagement
+    }
+
+    // MARKETING = jediný zdroj engagementu
+    if(b.type==="marketing"){
+
+        let maxEngagement =
+            game.holders * 3 * b.level;
+
+        if(game.engagement < maxEngagement){
+
+            game.engagement += b.level;
+
+            if(game.engagement > maxEngagement){
+                game.engagement = maxEngagement;
+            }
+        }
+    }
+
+    if(b.type==="treasury"){
+        game.treasury += b.level;
+    }
+
+    if(b.type==="academy"){
+        game.education += b.level;
+        game.reputation += 0.05 * b.level;
+    }
+
+    if(b.type==="utility"){
+        game.utility += 0.2 * b.level;
+        game.reputation += 0.1 * b.level;
+    }
+
+    if(b.type==="influencer"){
+
+        game.promoters +=
+            0.2 * b.level;
+
+        game.holders +=
+            (game.engagement * 0.0005)
+            * b.level;
+    }
+
+    if(b.type==="burn"){
+
+        game.supply -= (10 * b.level);
+
+        if(game.supply < 1000){
+            game.supply = 1000;
+        }
+    }
+}
+    // ================= EDUCATION =================
+
+    if(game.education >= 100){
+
+        game.utility++;
+
+        game.education = 0;
+
+        log("🔷 New Utility Released");
+    }
+
+    // ================= HUB DETECTION =================
+    hubLevel = 0;
+
+    for(let b of buildings){
+        if(b.type === "community"){
+            hubLevel += b.level;
+        }
+    }
+
+    // ak nemáš Hub, nič nerastie
+    if(hubLevel === 0){
+        ui();
+        return;
+    }
+
+   // ================= HUB HOLDER SYSTEM =================
+
+hubTimer++;
+
+let interval = 60;
+
+interval -= (hubLevel - 1) * 10;
+
+if(interval < 10){
+    interval = 10;
+}
+
+if(hubTimer >= interval){
+
+    game.holders += 1;
+
+    hubTimer = 0;
+
+    log("👥 +1 Holder (Hub Lv." + hubLevel + ")");
+}
+
+    // ================= TRADING SIMULATION =================
+
+    game.lastPrice = game.price;
+
+  let buyers =
+    game.holders * 0.02 +
+    game.promoters * 0.5 +
+    game.engagement * 0.001;
+
+    let sellers =
+        (game.holders * 0.01) *
+        (Math.random() * 2);
+
+    let volume = buyers + sellers;
+    game.volume = volume;
+
+    let pressure = buyers - sellers;
+
+game.lp += buyers * 0.01;
+game.lp -= sellers * 0.0098;
+
+let fairPrice =
+    game.lp /
+    (game.supply * 0.1);
+
+game.price +=
+    (fairPrice - game.price) * 0.05;
+
+    if(game.price < 0.000001){
+        game.price = 0.000001;
+    }
+
+    game.lp += buyers * 0.01;
+    game.lp -= sellers * 0.0098;
+
+    game.lp += (Math.random() - 0.5) * 0.5;
+
+    if(game.lp < 10) game.lp = 10;
+    if(game.lp > 50000000) game.lp = 50000000;
+
+    if(Math.random() < 0.01){
+        let whale = (Math.random() - 0.5) * 0.25;
+        game.price *= (1 + whale);
+
+        log(
+            whale > 0
+            ? "🐋 Whale Buy"
+            : "🐋 Whale Sell"
+        );
+    }
+
+    if(game.price > game.lastPrice){
+        game.holders += game.holders * 0.002;
+    }
+
+    if(game.price < game.lastPrice * 0.95){
+        game.holders -= game.holders * 0.01;
+        if(game.holders < 1) game.holders = 1;
+    }
+
+    game.marketCap = Math.floor(game.price * game.supply);
+
+    if(isNaN(game.price)){
+        game.price = 0.001;
+    }
+
+    ui();
+
+},1000);
+
+// ================= MAP DATA =================
+
+const MAP_SIZE = 50;
+const mapData = [];
+
+function noise(x, y){
+    // jednoduchý pseudo-noise (stabilný, smooth)
+    let n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+    return n - Math.floor(n);
+}
+
+function generateMap(){
+
+    for(let x=0; x<MAP_SIZE; x++){
+
+        mapData[x] = [];
+
+        for(let y=0; y<MAP_SIZE; y++){
+
+            let h = noise(x * 0.15, y * 0.15);
+            let m = noise(x * 0.25 + 100, y * 0.25 + 100);
+
+            if(h < 0.22){
+                mapData[x][y] = "water";
+            }
+            else if(h > 0.78){
+                mapData[x][y] = "mountain";
+            }
+            else if(m > 0.60){
+                mapData[x][y] = "forest";
+            }
+            else{
+                mapData[x][y] = "grass";
+            }
+        }
+    }
+
+    // ROADS
+    for(let y=5; y<MAP_SIZE; y+=8){
+
+        for(let x=0; x<MAP_SIZE; x++){
+
+            if(mapData[x][y] !== "water"){
+                mapData[x][y] = "road";
+            }
+        }
+    }
+}
+
+generateMap();
+// ================= ROADS =================
+
+function drawRoads(){
+
+    ctx.strokeStyle = "#8b7355";
+    ctx.lineWidth = 12;
+    ctx.lineCap = "round";
+
+    for(let i=0;i<buildings.length;i++){
+
+        let a = buildings[i];
+
+        let ax = a.x * TILE + TILE/2 - cameraX;
+        let ay = a.y * TILE + TILE/2 - cameraY;
+
+        let nearest = null;
+        let dist = Infinity;
+
+        for(let j=0;j<buildings.length;j++){
+
+            if(i === j) continue;
+
+            let b = buildings[j];
+
+            let d =
+                Math.abs(a.x - b.x) +
+                Math.abs(a.y - b.y);
+
+            if(d < dist){
+                dist = d;
+                nearest = b;
+            }
+        }
+
+        if(nearest){
+
+            let bx =
+                nearest.x * TILE +
+                TILE/2 - cameraX;
+
+            let by =
+                nearest.y * TILE +
+                TILE/2 - cameraY;
+
+            ctx.beginPath();
+            ctx.moveTo(ax, ay);
+            ctx.lineTo(bx, by);
+            ctx.stroke();
+        }
+    }
+}
+
+
+// ================= MAP ZONES =================
+function drawMap(){
+
+    for(let x=0; x<MAP_SIZE; x++){
+
+        for(let y=0; y<MAP_SIZE; y++){
+
+            let px = x * TILE - cameraX;
+            let py = y * TILE - cameraY;
+
+            let tile = mapData[x][y];
+
+            if(tile==="water"){
+                ctx.fillStyle="#2563eb";
+            }
+            else if(tile==="grass"){
+                let shades=[
+                    "#65a30d",
+                    "#4d7c0f",
+                    "#3f6212",
+                    "#4ade80"
+                ];
+
+                ctx.fillStyle =
+                    shades[(x+y)%shades.length];
+            }
+            else if(tile==="forest"){
+                ctx.fillStyle="#166534";
+            }
+            else if(tile==="mountain"){
+                ctx.fillStyle="#6b7280";
+            }
+            else if(tile==="road"){
+                ctx.fillStyle="#8b7355";
+            }
+
+            ctx.fillRect(px,py,TILE,TILE);
+
+            let baseColor = ctx.fillStyle;
+
+            let grad = ctx.createLinearGradient(
+                px,
+                py,
+                px + TILE,
+                py + TILE
+            );
+
+            grad.addColorStop(0, baseColor);
+            grad.addColorStop(1, "#00000022");
+
+            ctx.fillStyle = grad;
+
+            ctx.fillRect(
+                px,
+                py,
+                TILE,
+                TILE
+            );
+        }
+    }
+}
+
+// ================= BUILDINGS =================
+function drawBuildings(){
+
+for(let b of buildings){
+
+let px = b.x * TILE - cameraX;
+let py = b.y * TILE - cameraY;
+
+// tieň
+ctx.fillStyle = "rgba(0,0,0,0.3)";
+ctx.fillRect(px+8, py+50, 48, 8);
+
+// ================= TOWN HALL =================
+if(b.type==="townhall"){
+
+ctx.fillStyle="#334155";
+ctx.fillRect(px+10,py+20,44,34);
+
+ctx.fillStyle="#00d4ff";
+ctx.beginPath();
+ctx.moveTo(px+6,py+20);
+ctx.lineTo(px+32,py+2);
+ctx.lineTo(px+58,py+20);
+ctx.closePath();
+ctx.fill();
+
+ctx.fillStyle="#111";
+ctx.fillRect(px+24,py+30,16,24);
+
+ctx.fillStyle="#fff";
+ctx.fillRect(px+14,py+28,8,8);
+ctx.fillRect(px+42,py+28,8,8);
+}
+
+// ================= COMMUNITY =================
+if(b.type==="community"){
+
+ctx.fillStyle="#22c55e";
+ctx.fillRect(px+14,py+26,14,14);
+
+ctx.fillRect(px+36,py+26,14,14);
+
+ctx.fillStyle="#16a34a";
+
+ctx.beginPath();
+ctx.moveTo(px+12,py+26);
+ctx.lineTo(px+21,py+14);
+ctx.lineTo(px+30,py+26);
+ctx.fill();
+
+ctx.beginPath();
+ctx.moveTo(px+34,py+26);
+ctx.lineTo(px+43,py+14);
+ctx.lineTo(px+52,py+26);
+ctx.fill();
+}
+
+// ================= MARKETING =================
+if(b.type==="marketing"){
+
+ctx.fillStyle="#ffffff";
+ctx.fillRect(px+10,py+10,44,24);
+
+ctx.fillStyle="#475569";
+ctx.fillRect(px+28,py+34,8,20);
+
+ctx.strokeStyle="#22c55e";
+ctx.lineWidth=3;
+
+ctx.beginPath();
+ctx.moveTo(px+16,py+26);
+ctx.lineTo(px+24,py+22);
+ctx.lineTo(px+34,py+18);
+ctx.lineTo(px+46,py+12);
+ctx.stroke();
+}
+
+// ================= TREASURY =================
+if(b.type==="treasury"){
+
+ctx.fillStyle="#64748b";
+ctx.fillRect(px+10,py+10,44,44);
+
+ctx.strokeStyle="#111";
+ctx.lineWidth=2;
+ctx.strokeRect(px+10,py+10,44,44);
+
+ctx.fillStyle="#eab308";
+
+ctx.beginPath();
+ctx.arc(px+32,py+32,10,0,Math.PI*2);
+ctx.fill();
+
+ctx.fillStyle="#111";
+ctx.fillRect(px+30,py+22,4,20);
+ctx.fillRect(px+22,py+30,20,4);
+}
+
+// ================= ACADEMY =================
+if(b.type==="academy"){
+
+ctx.fillStyle="#ffffff";
+
+ctx.fillRect(px+12,py+16,18,28);
+ctx.fillRect(px+34,py+16,18,28);
+
+ctx.strokeStyle="#000";
+ctx.lineWidth=1;
+
+ctx.beginPath();
+ctx.moveTo(px+32,py+16);
+ctx.lineTo(px+32,py+44);
+ctx.stroke();
+
+ctx.fillStyle="#a855f7";
+ctx.fillRect(px+12,py+10,40,6);
+}
+
+// ================= UTILITY =================
+if(b.type==="utility"){
+
+ctx.fillStyle="#94a3b8";
+ctx.fillRect(px+12,py+24,40,24);
+
+ctx.fillStyle="#00d4ff";
+
+ctx.beginPath();
+ctx.moveTo(px+34,py+8);
+ctx.lineTo(px+24,py+28);
+ctx.lineTo(px+34,py+28);
+ctx.lineTo(px+26,py+52);
+ctx.lineTo(px+44,py+24);
+ctx.lineTo(px+34,py+24);
+ctx.fill();
+}
+
+// ================= INFLUENCER =================
+if(b.type==="influencer"){
+
+ctx.fillStyle="#111";
+ctx.fillRect(px+18,py+8,28,48);
+
+ctx.strokeStyle="#fff";
+ctx.strokeRect(px+18,py+8,28,48);
+
+ctx.fillStyle="#ef4444";
+
+ctx.beginPath();
+ctx.moveTo(px+32,py+16);
+ctx.lineTo(px+24,py+32);
+ctx.lineTo(px+40,py+32);
+ctx.closePath();
+ctx.fill();
+
+ctx.fillStyle="#fff";
+ctx.fillRect(px+28,py+34,8,8);
+}
+
+// ================= BURN =================
+if(b.type==="burn"){
+
+ctx.fillStyle="#6b7280";
+ctx.fillRect(px+12,py+20,40,30);
+
+ctx.fillStyle="#ff4500";
+
+ctx.beginPath();
+ctx.moveTo(px+32,py+8);
+ctx.lineTo(px+24,py+24);
+ctx.lineTo(px+32,py+20);
+ctx.lineTo(px+40,py+24);
+ctx.closePath();
+ctx.fill();
+
+ctx.fillStyle="#dc2626";
+
+ctx.beginPath();
+ctx.moveTo(px+32,py+14);
+ctx.lineTo(px+28,py+24);
+ctx.lineTo(px+32,py+20);
+ctx.lineTo(px+36,py+24);
+ctx.closePath();
+ctx.fill();
+}
+
+// LEVEL
+ctx.fillStyle="white";
+ctx.font="12px Arial";
+ctx.fillText("Lv."+b.level, px+8, py+14);
+
+// SELECT
+if(selected===b){
+
+ctx.strokeStyle="#ffffff";
+ctx.lineWidth=3;
+
+ctx.strokeRect(
+px+4,
+py+4,
+56,
+56
+);
+
+}
+
+}
+
+}
+
+// ================= PARTICLES =================
+function drawParticles(){
+for(let p of particles){
+ctx.fillStyle = p.color;
+ctx.fillRect(p.x - cameraX, p.y - cameraY, 3, 3);
+
+p.x += p.vx;
+p.y += p.vy;
+p.life--;
+}
+
+particles = particles.filter(p => p.life > 0);
+}
+
+
+// ================= AUTOSAVE =================
+setInterval(()=>{
+
+localStorage.setItem(
+"mgot_save",
+JSON.stringify({
+game,
+buildings
+})
+);
+
+}, 5000);
+
+
+// ================= LOAD SAVE =================
+const save = localStorage.getItem("mgot_save");
+
+if(save){
+
+try{
+
+const data = JSON.parse(save);
+
+// safe merge (aby sa ti nezmazali nové hodnoty pri update kódu)
+if(data.game){
+game = {
+  treasury:500,
+  holders:10,
+  engagement:100,
+  education:0,
+  utility:1,
+  promoters:0,
+  lp:100,
+  supply:1000000,
+  reputation:0,
+  communityPower:0,
+  price:0.001,
+  marketCap:1000,
+  volume:0,
+  lastPrice:0.001,
+  ...data.game
+};
+}
+
+if(data.buildings){
+buildings = data.buildings;
+}
+
+// guarantee townhall exists
+let hasTownHall = buildings.some(b => b.type === "townhall");
+
+if(!hasTownHall){
+buildings.push({
+x:10,
+y:10,
+type:"townhall",
 level:1
 });
 }
 
-/* ================= RAID SYSTEM ================= */
-function raid(){
-
-let target = worldPlayers[Math.random()*worldPlayers.length|0];
-
-let myPower =
-buildings.filter(b=>b.type==="raid").length * 10 +
-buildings.filter(b=>b.type==="hub").length * 5;
-
-if(myPower > target.power){
-
-state.treasury += target.treasury * 0.2;
-state.players++;
-
-log("🔥 RAID WIN vs " + target.id);
-}
-else{
-state.treasury *= 0.9;
-log("💀 RAID LOST vs " + target.id);
-}
+}catch(err){
+console.log("Save corrupted", err);
 }
 
-/* ================= ECONOMY ENGINE ================= */
-setInterval(()=>{
-
-let hub = buildings.filter(b=>b.type==="hub").length;
-let farm = buildings.filter(b=>b.type==="farm").length;
-let market = buildings.filter(b=>b.type==="market").length;
-
-/* HOLDERS = players growth */
-state.players += hub * 0.05;
-
-/* TREASURY */
-state.treasury += farm * 10;
-
-/* PRICE SIM */
-let demand = (market * state.players * 0.001);
-let sellPressure = Math.random()*0.5;
-
-state.price += (demand - sellPressure) * 0.01;
-
-if(state.price < 0.0001) state.price = 0.0001;
-
-/* SUPPLY BURN */
-state.supply -= hub * 2;
-if(state.supply < 10000) state.supply = 10000;
-
-/* MC */
-state.mc = state.price * state.supply;
-
-/* LP */
-state.lp += demand * 0.5;
-state.lp -= sellPressure * 0.3;
-if(state.lp < 10) state.lp = 10;
-
-ui();
-
-},1000);
-
-/* ================= UI ================= */
-function ui(){
-document.getElementById("t").innerText=Math.floor(state.treasury);
-document.getElementById("p").innerText=Math.floor(state.players);
-document.getElementById("pr").innerText=state.price.toFixed(6);
-document.getElementById("s").innerText=state.supply;
-document.getElementById("m").innerText=Math.floor(state.mc);
 }
 
-/* ================= RENDER ================= */
+// ================= RENDER =================
 function render(){
 
-ctx.fillStyle="#050b18";
-ctx.fillRect(0,0,c.width,c.height);
+    ctx.clearRect(
+        0,
+        0,
+        window.innerWidth,
+        window.innerHeight
+    );
 
-for(let b of buildings){
+    ctx.fillStyle = "#07131f";
 
-let x=b.x*40;
-let y=b.y*40;
+    ctx.fillRect(
+        0,
+        0,
+        window.innerWidth,
+        window.innerHeight
+    );
 
-ctx.fillStyle =
-b.type==="hub"?"#22c55e":
-b.type==="farm"?"#3b82f6":
-b.type==="market"?"#f59e0b":
-"#ef4444";
+    drawMap();
+drawRoads();
+drawBuildings();
+drawParticles();
 
-ctx.fillRect(x,y,30,30);
-
-ctx.fillStyle="#fff";
-ctx.font="10px Arial";
-ctx.fillText(b.type[0],x+10,y+20);
+    requestAnimationFrame(render);
 }
 
-requestAnimationFrame(render);
+// ================= CAMERA =================
+let touchStartX = 0;
+let touchStartY = 0;
+
+canvas.addEventListener("touchstart",(e)=>{
+
+touchStartX = e.touches[0].clientX;
+touchStartY = e.touches[0].clientY;
+
+});
+
+canvas.addEventListener("touchmove",(e)=>{
+
+let dx = e.touches[0].clientX - touchStartX;
+let dy = e.touches[0].clientY - touchStartY;
+
+cameraX -= dx;
+cameraY -= dy;
+
+touchStartX = e.touches[0].clientX;
+touchStartY = e.touches[0].clientY;
+
+});
+window.addEventListener("keydown",(e)=>{
+if(e.key==="ArrowLeft") cameraX-=32;
+if(e.key==="ArrowRight") cameraX+=32;
+if(e.key==="ArrowUp") cameraY-=32;
+if(e.key==="ArrowDown") cameraY+=32;
+});
+function newGame(){
+
+    if(!confirm("Start a new game?")){
+        return;
+    }
+
+    localStorage.removeItem("mgot_save");
+
+  game = {
+  treasury: 500,
+  holders: 1,
+  engagement: 1,
+  education: 0,
+  utility: 1,
+  promoters: 0,
+  lp: 100,
+  supply: 1000000,
+  reputation: 0,
+  communityPower: 0,
+  price: 0.001,
+  marketCap: 1000,
+  volume: 0,
+  lastPrice: 0.001,
+};
+
+    buildings = [{
+        x:10,
+        y:10,
+        type:"townhall",
+        level:1
+    }];
+
+    particles = [];
+    selected = null;
+    selectedBuild = null;
+
+    cameraX = 0;
+    cameraY = 0;
+
+    ui();
+
+    document.getElementById("upgradeBtn").style.display = "none";
+    document.getElementById("demolishBtn").style.display = "none";
+
+    document.getElementById("info").innerHTML =
+    "Nothing selected";
+
+    log("🆕 New Game Started");
+
 }
 
-/* ================= LOG ================= */
-function log(t){
-console.log(t);
-}
+// START
+
+ui();
+
+document.getElementById("upgradeBtn").style.display = "none";
+document.getElementById("demolishBtn").style.display = "none";
 
 render();
-ui();
 
 </script>
 
