@@ -690,52 +690,60 @@ setInterval(()=>{
 
     for(let b of buildings){
 
-        if(b.type==="community"){
-
-    // malé zvýšenie engagementu
-    game.engagement += 0.2 * b.level;
-        }
-
-        if(b.type==="marketing"){
-
-    game.engagement +=
-        3 * b.level;
-        }
-
-        if(b.type==="treasury"){
-            game.treasury += b.level;
-        }
-
-        if(b.type==="academy"){
-            game.education += b.level;
-            game.reputation += 0.05 * b.level;
-        }
-
-        if(b.type==="utility"){
-            game.utility += 0.2 * b.level;
-            game.reputation += 0.1 * b.level;
-        }
-
-        if(b.type==="influencer"){
-
-    game.promoters +=
-        0.2 * b.level;
-
-    game.holders +=
-        (game.engagement * 0.0005)
-        * b.level;
-        }
-
-        if(b.type==="burn"){
-            game.supply -= (10 * b.level);
-
-            if(game.supply < 1000){
-                game.supply = 1000;
-            }
-        }
-
+    // COMMUNITY = iba holder growth
+    if(b.type==="community"){
+        // nič nepridáva engagement
     }
 
+    // MARKETING = jediný zdroj engagementu
+    if(b.type==="marketing"){
+
+        let maxEngagement =
+            game.holders * 3 * b.level;
+
+        if(game.engagement < maxEngagement){
+
+            game.engagement += b.level;
+
+            if(game.engagement > maxEngagement){
+                game.engagement = maxEngagement;
+            }
+        }
+    }
+
+    if(b.type==="treasury"){
+        game.treasury += b.level;
+    }
+
+    if(b.type==="academy"){
+        game.education += b.level;
+        game.reputation += 0.05 * b.level;
+    }
+
+    if(b.type==="utility"){
+        game.utility += 0.2 * b.level;
+        game.reputation += 0.1 * b.level;
+    }
+
+    if(b.type==="influencer"){
+
+        game.promoters +=
+            0.2 * b.level;
+
+        game.holders +=
+            (game.engagement * 0.0005)
+            * b.level;
+    }
+
+    if(b.type==="burn"){
+
+        game.supply -= (10 * b.level);
+
+        if(game.supply < 1000){
+            game.supply = 1000;
+        }
+    }
+}
     // ================= EDUCATION =================
 
     if(game.education >= 100){
