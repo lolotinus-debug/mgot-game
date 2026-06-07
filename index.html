@@ -3,31 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crypto Civilization Builder</title>
+<title>Crypto Civilization FIXED</title>
 
 <style>
 body{
 margin:0;
-background:#050b18;
-color:white;
-font-family:Arial;
 overflow:hidden;
+background:#050b18;
+font-family:Arial;
+color:white;
 }
 
-/* TOPBAR */
 #topbar{
 position:fixed;
 top:0;
 left:0;
 width:100%;
-height:60px;
+height:50px;
 background:#0f172a;
 display:flex;
 align-items:center;
 gap:15px;
-padding:0 10px;
-border-bottom:2px solid #00d4ff;
+padding:5px 10px;
 font-size:13px;
+border-bottom:2px solid #00d4ff;
 }
 
 .resource{
@@ -35,12 +34,11 @@ color:#00d4ff;
 font-weight:bold;
 }
 
-/* LEFT PANEL */
 #panel{
 position:fixed;
 left:10px;
-top:80px;
-width:260px;
+top:70px;
+width:220px;
 background:#0f172a;
 padding:10px;
 border-radius:10px;
@@ -48,219 +46,149 @@ border-radius:10px;
 
 button{
 width:100%;
-margin:5px 0;
-padding:10px;
-border:none;
-cursor:pointer;
+padding:8px;
+margin-top:5px;
 background:#00d4ff;
+border:none;
 font-weight:bold;
+cursor:pointer;
 }
 
-/* CANVAS */
 canvas{
 position:absolute;
 top:0;
 left:0;
-width:100vw;
-height:100vh;
 }
 </style>
 </head>
 
 <body>
 
-<!-- TOP -->
 <div id="topbar">
 <div class="resource">💎 Treasury: <span id="treasury">0</span></div>
 <div class="resource">👥 Holders: <span id="holders">0</span></div>
 <div class="resource">📈 Price: <span id="price">0</span></div>
-<div class="resource">💰 MC: <span id="mc">0</span></div>
-<div class="resource">🪙 Supply: <span id="supply">0</span></div>
 </div>
 
-<!-- PANEL -->
 <div id="panel">
-<h3>🚀 Token Creator</h3>
-
-<div id="setup">
-<input id="name" placeholder="Token name"><br><br>
-
-<select id="platform">
-<option>Solana</option>
-<option>Ethereum</option>
-<option>BSC</option>
-</select><br><br>
-
-<button onclick="startGame()">Create Token</button>
-</div>
-
-<div id="gameUI" style="display:none">
-
-<button onclick="build('community')">Community Hub</button>
+<h3>Builder</h3>
+<button onclick="build('community')">Community</button>
 <button onclick="build('marketing')">Marketing</button>
-<button onclick="build('treasury')">Treasury Vault</button>
-<button onclick="build('burn')">Burn Engine</button>
-
-</div>
-
+<button onclick="build('burn')">Burn</button>
 </div>
 
 <canvas id="c"></canvas>
 
 <script>
 
+/* ================= CANVAS FIX ================= */
 const c = document.getElementById("c");
 const ctx = c.getContext("2d");
 
 function resize(){
-  c.width = window.innerWidth;
-  c.height = window.innerHeight;
+c.width = window.innerWidth;
+c.height = window.innerHeight;
 }
 window.addEventListener("resize", resize);
 resize();
 
-let gameStarted = false;
+/* ================= GAME STATE ================= */
+let gameStarted = true;
 
 let game = {
-treasury:0,
-holders:0,
+treasury:500,
+holders:1,
 price:0.001,
-supply:0,
-mc:0,
-engagement:0
+supply:1000000,
+mc:0
 };
 
-let buildings = [];
-let selected = "community";
-
-/* ================= START ================= */
-function startGame(){
-
-let name = document.getElementById("name").value;
-let platform = document.getElementById("platform").value;
-
-if(!name){
-alert("Enter token name");
-return;
-}
-
-gameStarted = true;
-
-/* TOKENOMICS */
-game.treasury = 500;
-game.holders = 1;
-game.supply = 1000000;
-game.price = 0.001;
-
-document.getElementById("setup").style.display="none";
-document.getElementById("gameUI").style.display="block";
-
-log("Token created: " + name + " on " + platform);
-}
+let buildings = [
+{x:5,y:5,type:"community"}
+];
 
 /* ================= BUILD ================= */
 function build(type){
-
-if(game.treasury < 100){
-log("Not enough treasury");
-return;
-}
+if(game.treasury < 100) return;
 
 game.treasury -= 100;
 
 buildings.push({
-x:Math.random()*20|0,
-y:Math.random()*15|0,
-type:type
+x: Math.floor(Math.random()*20),
+y: Math.floor(Math.random()*15),
+type
 });
-
-log(type + " built");
 }
-
-/* ================= LOG ================= */
-function log(t){
-console.log(t);
-}
-
-/* ================= UPDATE ECONOMY ================= */
-setInterval(()=>{
-
-if(!gameStarted) return;
-
-let marketing = buildings.filter(b=>b.type==="marketing").length;
-let community = buildings.filter(b=>b.type==="community").length;
-let burn = buildings.filter(b=>b.type==="burn").length;
-
-/* HOLDERS */
-game.holders += community * 0.2;
-
-/* PRICE SIM */
-let demand = marketing * game.holders * 0.001;
-let burnEffect = burn * 0.002;
-
-game.price += (demand - burnEffect) * 0.01;
-if(game.price < 0.0001) game.price = 0.0001;
-
-/* MC */
-game.mc = game.price * game.supply;
-
-/* TREASURY */
-game.treasury += marketing * 5;
-
-ui();
-
-},1000);
 
 /* ================= UI ================= */
 function ui(){
 document.getElementById("treasury").innerText = Math.floor(game.treasury);
 document.getElementById("holders").innerText = Math.floor(game.holders);
 document.getElementById("price").innerText = game.price.toFixed(6);
-document.getElementById("mc").innerText = Math.floor(game.mc);
-document.getElementById("supply").innerText = game.supply;
 }
 
-/* ================= RENDER ================= */
+/* ================= ECONOMY ================= */
+setInterval(()=>{
+
+let marketing = buildings.filter(b=>b.type==="marketing").length;
+let community = buildings.filter(b=>b.type==="community").length;
+let burn = buildings.filter(b=>b.type==="burn").length;
+
+game.holders += community * 0.1;
+
+let demand = marketing * game.holders * 0.001;
+let burnEffect = burn * 0.002;
+
+game.price += (demand - burnEffect) * 0.01;
+
+if(game.price < 0.0001) game.price = 0.0001;
+
+game.mc = game.price * game.supply;
+
+game.treasury += marketing * 5;
+
+ui();
+
+},1000);
+
+/* ================= RENDER (IMPORTANT FIX) ================= */
 function render(){
 
 ctx.fillStyle="#050b18";
 ctx.fillRect(0,0,c.width,c.height);
 
-/* GRID (aby si videl mapu) */
-ctx.strokeStyle = "#0f172a";
+/* GRID */
+ctx.strokeStyle="#111";
 for(let x=0;x<c.width;x+=40){
-  ctx.beginPath();
-  ctx.moveTo(x,0);
-  ctx.lineTo(x,c.height);
-  ctx.stroke();
+ctx.beginPath();
+ctx.moveTo(x,0);
+ctx.lineTo(x,c.height);
+ctx.stroke();
 }
 
 for(let y=0;y<c.height;y+=40){
-  ctx.beginPath();
-  ctx.moveTo(0,y);
-  ctx.lineTo(c.width,y);
-  ctx.stroke();
+ctx.beginPath();
+ctx.moveTo(0,y);
+ctx.lineTo(c.width,y);
+ctx.stroke();
 }
 
 /* BUILDINGS */
-for(let i=0;i<buildings.length;i++){
-
-let b = buildings[i];
+for(let b of buildings){
 
 let x = b.x*40;
 let y = b.y*40;
 
 ctx.fillStyle =
-b.type==="marketing"?"#3b82f6":
 b.type==="community"?"#22c55e":
-b.type==="burn"?"#ef4444":"#f59e0b";
+b.type==="marketing"?"#3b82f6":
+"#ef4444";
 
 ctx.fillRect(x,y,30,30);
 
-/* label */
-ctx.fillStyle="white";
+ctx.fillStyle="#fff";
 ctx.font="10px Arial";
-ctx.fillText(b.type[0], x+8, y+20);
+ctx.fillText(b.type[0], x+10, y+20);
 }
 
 requestAnimationFrame(render);
