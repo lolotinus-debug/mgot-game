@@ -9,7 +9,7 @@
 *{
 margin:0;
 padding:0;
-box-sizing:border-box;
+box-sizing:border-box;e
 }
 
 body{
@@ -1385,173 +1385,379 @@ ctx.fill();
 // ================= TOWN HALL =================
 if(b.type==="townhall"){
 
-ctx.fillStyle="#334155";
-ctx.fillRect(px+10,py+20,44,34);
+// kamenná základňa
+ctx.fillStyle="#64748b";
+ctx.fillRect(px+8,py+24,48,28);
 
-ctx.fillStyle="#00d4ff";
+// tmavší spodok
+ctx.fillStyle="#475569";
+ctx.fillRect(px+8,py+42,48,10);
+
+// hlavná strecha
+ctx.fillStyle="#7c2d12";
+
 ctx.beginPath();
-ctx.moveTo(px+6,py+20);
-ctx.lineTo(px+32,py+2);
-ctx.lineTo(px+58,py+20);
+ctx.moveTo(px+4,py+24);
+ctx.lineTo(px+32,py+4);
+ctx.lineTo(px+60,py+24);
 ctx.closePath();
 ctx.fill();
 
-ctx.fillStyle="#111";
-ctx.fillRect(px+24,py+30,16,24);
+// svetlo na streche
+ctx.fillStyle="#b45309";
 
-ctx.fillStyle="#fff";
-ctx.fillRect(px+14,py+28,8,8);
-ctx.fillRect(px+42,py+28,8,8);
+ctx.beginPath();
+ctx.moveTo(px+10,py+22);
+ctx.lineTo(px+32,py+8);
+ctx.lineTo(px+54,py+22);
+ctx.closePath();
+ctx.fill();
+
+// ľavá veža
+ctx.fillStyle="#94a3b8";
+ctx.fillRect(px+6,py+16,10,18);
+
+ctx.fillStyle="#991b1b";
+ctx.beginPath();
+ctx.moveTo(px+4,py+16);
+ctx.lineTo(px+11,py+8);
+ctx.lineTo(px+18,py+16);
+ctx.closePath();
+ctx.fill();
+
+// pravá veža
+ctx.fillStyle="#94a3b8";
+ctx.fillRect(px+48,py+16,10,18);
+
+ctx.fillStyle="#991b1b";
+ctx.beginPath();
+ctx.moveTo(px+46,py+16);
+ctx.lineTo(px+53,py+8);
+ctx.lineTo(px+60,py+16);
+ctx.closePath();
+ctx.fill();
+
+// brána
+ctx.fillStyle="#3f2a14";
+ctx.fillRect(px+25,py+32,14,20);
+
+// okná
+ctx.fillStyle="#f8fafc";
+ctx.fillRect(px+14,py+30,6,6);
+ctx.fillRect(px+44,py+30,6,6);
+
+// vlajka
+ctx.strokeStyle="#d1d5db";
+ctx.lineWidth=2;
+
+ctx.beginPath();
+ctx.moveTo(px+32,py+4);
+ctx.lineTo(px+32,py-6);
+ctx.stroke();
+
+ctx.fillStyle="#00d4ff";
+ctx.fillRect(px+32,py-6,10,6);
 }
 
 // ================= COMMUNITY =================
 if(b.type==="community"){
 
-ctx.fillStyle="#22c55e";
-ctx.fillRect(px+14,py+26,14,14);
+// dom 1
+ctx.fillStyle="#d6d3d1";
+ctx.fillRect(px+8,py+28,14,12);
 
-ctx.fillRect(px+36,py+26,14,14);
-
-ctx.fillStyle="#16a34a";
-
+ctx.fillStyle="#92400e";
 ctx.beginPath();
-ctx.moveTo(px+12,py+26);
-ctx.lineTo(px+21,py+14);
-ctx.lineTo(px+30,py+26);
+ctx.moveTo(px+6,py+28);
+ctx.lineTo(px+15,py+18);
+ctx.lineTo(px+24,py+28);
+ctx.closePath();
 ctx.fill();
 
+// dom 2
+ctx.fillStyle="#e7e5e4";
+ctx.fillRect(px+24,py+22,16,14);
+
+ctx.fillStyle="#b45309";
 ctx.beginPath();
-ctx.moveTo(px+34,py+26);
-ctx.lineTo(px+43,py+14);
-ctx.lineTo(px+52,py+26);
+ctx.moveTo(px+22,py+22);
+ctx.lineTo(px+32,py+10);
+ctx.lineTo(px+42,py+22);
+ctx.closePath();
 ctx.fill();
+
+// dom 3
+ctx.fillStyle="#d6d3d1";
+ctx.fillRect(px+42,py+30,12,10);
+
+ctx.fillStyle="#92400e";
+ctx.beginPath();
+ctx.moveTo(px+40,py+30);
+ctx.lineTo(px+48,py+20);
+ctx.lineTo(px+56,py+30);
+ctx.closePath();
+ctx.fill();
+
+// studňa uprostred
+ctx.fillStyle="#64748b";
+ctx.fillRect(px+28,py+38,8,6);
+
+ctx.strokeStyle="#94a3b8";
+ctx.strokeRect(px+28,py+38,8,6);
 }
 
 // ================= MARKETING =================
 if(b.type==="marketing"){
 
-ctx.fillStyle="#ffffff";
-ctx.fillRect(px+10,py+10,44,24);
+// budova
+ctx.fillStyle="#cbd5e1";
+ctx.fillRect(px+10,py+20,44,26);
 
-ctx.fillStyle="#475569";
-ctx.fillRect(px+28,py+34,8,20);
+ctx.fillStyle="#94a3b8";
+ctx.fillRect(px+10,py+40,44,6);
 
-ctx.strokeStyle="#22c55e";
-ctx.lineWidth=3;
+// strecha
+ctx.fillStyle="#2563eb";
 
 ctx.beginPath();
-ctx.moveTo(px+16,py+26);
-ctx.lineTo(px+24,py+22);
-ctx.lineTo(px+34,py+18);
-ctx.lineTo(px+46,py+12);
+ctx.moveTo(px+8,py+20);
+ctx.lineTo(px+32,py+8);
+ctx.lineTo(px+56,py+20);
+ctx.closePath();
+ctx.fill();
+
+// billboard
+ctx.fillStyle="#ffffff";
+ctx.fillRect(px+18,py+4,28,12);
+
+ctx.strokeStyle="#111827";
+ctx.strokeRect(px+18,py+4,28,12);
+
+// rastúci graf
+ctx.strokeStyle="#22c55e";
+ctx.lineWidth=2;
+
+ctx.beginPath();
+ctx.moveTo(px+22,py+12);
+ctx.lineTo(px+28,py+10);
+ctx.lineTo(px+34,py+8);
+ctx.lineTo(px+42,py+6);
 ctx.stroke();
+
+// stĺp billboardu
+ctx.fillStyle="#475569";
+ctx.fillRect(px+30,py+16,4,8);
+
+// okná
+ctx.fillStyle="#f8fafc";
+ctx.fillRect(px+16,py+26,6,6);
+ctx.fillRect(px+42,py+26,6,6);
 }
 
 // ================= TREASURY =================
 if(b.type==="treasury"){
 
-ctx.fillStyle="#64748b";
-ctx.fillRect(px+10,py+10,44,44);
+// kamenná pevnosť
+ctx.fillStyle="#475569";
+ctx.fillRect(px+8,py+14,48,40);
 
-ctx.strokeStyle="#111";
-ctx.lineWidth=2;
-ctx.strokeRect(px+10,py+10,44,44);
+// základ + tieň
+ctx.fillStyle="#334155";
+ctx.fillRect(px+8,py+44,48,10);
 
+// kovové dvere
+ctx.fillStyle="#1f2937";
+ctx.fillRect(px+26,py+30,12,24);
+
+// zlatý symbol (coin)
 ctx.fillStyle="#eab308";
-
 ctx.beginPath();
-ctx.arc(px+32,py+32,10,0,Math.PI*2);
+ctx.arc(px+32,py+22,8,0,Math.PI*2);
 ctx.fill();
 
-ctx.fillStyle="#111";
-ctx.fillRect(px+30,py+22,4,20);
-ctx.fillRect(px+22,py+30,20,4);
+// + znak prosperity
+ctx.strokeStyle="#111827";
+ctx.lineWidth=2;
+
+ctx.beginPath();
+ctx.moveTo(px+32,py+16);
+ctx.lineTo(px+32,py+28);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(px+26,py+22);
+ctx.lineTo(px+38,py+22);
+ctx.stroke();
+
+// malé striešky (fort vibe)
+ctx.fillStyle="#64748b";
+ctx.beginPath();
+ctx.moveTo(px+6,py+14);
+ctx.lineTo(px+32,py+2);
+ctx.lineTo(px+58,py+14);
+ctx.closePath();
+ctx.fill();
 }
 
 // ================= ACADEMY =================
 if(b.type==="academy"){
 
-ctx.fillStyle="#ffffff";
+// hlavná budova
+ctx.fillStyle="#e2e8f0";
+ctx.fillRect(px+10,py+18,44,34);
 
-ctx.fillRect(px+12,py+16,18,28);
-ctx.fillRect(px+34,py+16,18,28);
+// spodok / základ
+ctx.fillStyle="#94a3b8";
+ctx.fillRect(px+10,py+46,44,8);
 
-ctx.strokeStyle="#000";
-ctx.lineWidth=1;
+// strecha (temple style)
+ctx.fillStyle="#7c3aed";
 
 ctx.beginPath();
-ctx.moveTo(px+32,py+16);
-ctx.lineTo(px+32,py+44);
+ctx.moveTo(px+6,py+18);
+ctx.lineTo(px+32,py+6);
+ctx.lineTo(px+58,py+18);
+ctx.closePath();
+ctx.fill();
+
+// stĺpy (kolonáda)
+ctx.fillStyle="#cbd5e1";
+ctx.fillRect(px+18,py+26,4,20);
+ctx.fillRect(px+28,py+26,4,20);
+ctx.fillRect(px+38,py+26,4,20);
+ctx.fillRect(px+48,py+26,4,20);
+
+// vstup
+ctx.fillStyle="#0f172a";
+ctx.fillRect(px+28,py+34,8,18);
+
+// kniha / symbol vzdelania
+ctx.strokeStyle="#a855f7";
+ctx.lineWidth=2;
+
+ctx.beginPath();
+ctx.moveTo(px+20,py+14);
+ctx.lineTo(px+44,py+14);
 ctx.stroke();
 
-ctx.fillStyle="#a855f7";
-ctx.fillRect(px+12,py+10,40,6);
+ctx.beginPath();
+ctx.moveTo(px+20,py+14);
+ctx.lineTo(px+20,py+20);
+ctx.lineTo(px+44,py+20);
+ctx.lineTo(px+44,py+14);
+ctx.stroke();
 }
 
 // ================= UTILITY =================
 if(b.type==="utility"){
 
-ctx.fillStyle="#94a3b8";
-ctx.fillRect(px+12,py+24,40,24);
+// hlavná tech budova
+ctx.fillStyle="#334155";
+ctx.fillRect(px+10,py+20,44,32);
 
+// reaktor core
 ctx.fillStyle="#00d4ff";
+ctx.beginPath();
+ctx.arc(px+32,py+30,8,0,Math.PI*2);
+ctx.fill();
+
+// energia glow
+ctx.fillStyle="rgba(0,212,255,0.25)";
+ctx.beginPath();
+ctx.arc(px+32,py+30,14,0,Math.PI*2);
+ctx.fill();
+
+// horný modul
+ctx.fillStyle="#94a3b8";
+ctx.fillRect(px+14,py+10,36,12);
+
+// lightning znak
+ctx.strokeStyle="#00d4ff";
+ctx.lineWidth=2;
 
 ctx.beginPath();
-ctx.moveTo(px+34,py+8);
-ctx.lineTo(px+24,py+28);
+ctx.moveTo(px+34,py+14);
+ctx.lineTo(px+28,py+28);
 ctx.lineTo(px+34,py+28);
-ctx.lineTo(px+26,py+52);
-ctx.lineTo(px+44,py+24);
-ctx.lineTo(px+34,py+24);
-ctx.fill();
+ctx.lineTo(px+30,py+44);
+ctx.stroke();
 }
-
 // ================= INFLUENCER =================
 if(b.type==="influencer"){
 
-ctx.fillStyle="#111";
-ctx.fillRect(px+18,py+8,28,48);
+// vysoká veža
+ctx.fillStyle="#0f172a";
+ctx.fillRect(px+22,py+6,20,52);
 
-ctx.strokeStyle="#fff";
-ctx.strokeRect(px+18,py+8,28,48);
-
-ctx.fillStyle="#ef4444";
+// antena
+ctx.strokeStyle="#f8fafc";
+ctx.lineWidth=2;
 
 ctx.beginPath();
-ctx.moveTo(px+32,py+16);
-ctx.lineTo(px+24,py+32);
-ctx.lineTo(px+40,py+32);
+ctx.moveTo(px+32,py+6);
+ctx.lineTo(px+32,py-6);
+ctx.stroke();
+
+// signál vlny
+ctx.beginPath();
+ctx.arc(px+32,py+10,6,0,Math.PI*2);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.arc(px+32,py+10,12,0,Math.PI*2);
+ctx.strokeStyle="rgba(255,255,255,0.3)";
+ctx.stroke();
+
+// “live” obrazovka
+ctx.fillStyle="#ef4444";
+ctx.fillRect(px+24,py+28,16,10);
+
+// play symbol
+ctx.fillStyle="#fff";
+ctx.beginPath();
+ctx.moveTo(px+30,py+30);
+ctx.lineTo(px+30,py+36);
+ctx.lineTo(px+36,py+33);
 ctx.closePath();
 ctx.fill();
-
-ctx.fillStyle="#fff";
-ctx.fillRect(px+28,py+34,8,8);
 }
-
 // ================= BURN =================
 if(b.type==="burn"){
 
-ctx.fillStyle="#6b7280";
-ctx.fillRect(px+12,py+20,40,30);
+// základ reaktora
+ctx.fillStyle="#1f2937";
+ctx.fillRect(px+10,py+22,44,28);
 
-ctx.fillStyle="#ff4500";
-
+// core
+ctx.fillStyle="#ef4444";
 ctx.beginPath();
-ctx.moveTo(px+32,py+8);
-ctx.lineTo(px+24,py+24);
-ctx.lineTo(px+32,py+20);
-ctx.lineTo(px+40,py+24);
+ctx.arc(px+32,py+34,8,0,Math.PI*2);
+ctx.fill();
+
+// plameň 1
+ctx.fillStyle="#f97316";
+ctx.beginPath();
+ctx.moveTo(px+32,py+10);
+ctx.lineTo(px+24,py+28);
+ctx.lineTo(px+32,py+26);
+ctx.lineTo(px+40,py+28);
 ctx.closePath();
 ctx.fill();
 
+// plameň 2 (vnútro)
 ctx.fillStyle="#dc2626";
-
 ctx.beginPath();
 ctx.moveTo(px+32,py+14);
-ctx.lineTo(px+28,py+24);
-ctx.lineTo(px+32,py+20);
-ctx.lineTo(px+36,py+24);
+ctx.lineTo(px+28,py+28);
+ctx.lineTo(px+32,py+24);
+ctx.lineTo(px+36,py+28);
 ctx.closePath();
+ctx.fill();
+
+// energetický glow
+ctx.fillStyle="rgba(239,68,68,0.2)";
+ctx.beginPath();
+ctx.arc(px+32,py+34,14,0,Math.PI*2);
 ctx.fill();
 }
 
