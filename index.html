@@ -1,328 +1,247 @@
 <!DOCTYPE html>
-<html lang="sk">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Crypto Ecosystem Simulator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crypto Civilization Builder</title>
 
 <style>
 body{
 margin:0;
-font-family:Arial;
-background:#020617;
+background:#050b18;
 color:white;
+font-family:Arial;
 overflow:hidden;
 }
 
-#start{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-width:360px;
+/* TOPBAR */
+#topbar{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:60px;
 background:#0f172a;
-padding:20px;
-border-radius:12px;
-border:1px solid #00d4ff;
+display:flex;
+align-items:center;
+gap:15px;
+padding:0 10px;
+border-bottom:2px solid #00d4ff;
+font-size:13px;
 }
 
-input,select{
-width:100%;
+.resource{
+color:#00d4ff;
+font-weight:bold;
+}
+
+/* LEFT PANEL */
+#panel{
+position:fixed;
+left:10px;
+top:80px;
+width:260px;
+background:#0f172a;
 padding:10px;
-margin-top:8px;
-background:#111827;
-border:none;
-color:white;
-border-radius:6px;
+border-radius:10px;
 }
 
 button{
 width:100%;
-margin-top:8px;
+margin:5px 0;
 padding:10px;
 border:none;
-border-radius:6px;
+cursor:pointer;
 background:#00d4ff;
 font-weight:bold;
-cursor:pointer;
 }
 
-button:hover{
-transform:scale(1.03);
-}
-
-#game{
-display:none;
-padding:10px;
-}
-
-.panel{
-display:flex;
-gap:10px;
-}
-
-.box{
-flex:1;
-background:#0f172a;
-padding:10px;
-border-radius:10px;
-border:1px solid #1e293b;
-}
-
-.stat{
-color:#00d4ff;
-margin:3px 0;
-font-size:13px;
-}
-
-#log{
-position:fixed;
-right:10px;
-top:10px;
-width:320px;
-height:90%;
-background:#000;
-padding:10px;
-overflow:auto;
-font-size:12px;
+/* CANVAS */
+canvas{
+position:absolute;
+top:0;
+left:0;
+width:100vw;
+height:100vh;
 }
 </style>
 </head>
 
 <body>
 
-<div id="start">
-<h2>🧠 Create Token</h2>
+<!-- TOP -->
+<div id="topbar">
+<div class="resource">💎 Treasury: <span id="treasury">0</span></div>
+<div class="resource">👥 Holders: <span id="holders">0</span></div>
+<div class="resource">📈 Price: <span id="price">0</span></div>
+<div class="resource">💰 MC: <span id="mc">0</span></div>
+<div class="resource">🪙 Supply: <span id="supply">0</span></div>
+</div>
 
-<input id="name" placeholder="Token name">
-<select id="chain">
+<!-- PANEL -->
+<div id="panel">
+<h3>🚀 Token Creator</h3>
+
+<div id="setup">
+<input id="name" placeholder="Token name"><br><br>
+
+<select id="platform">
 <option>Solana</option>
 <option>Ethereum</option>
-<option>Base</option>
-<option>BNB</option>
-</select>
+<option>BSC</option>
+</select><br><br>
 
-<input id="budget" type="number" placeholder="Budget USD">
-
-<button onclick="start()">🚀 Launch Project</button>
+<button onclick="startGame()">Create Token</button>
 </div>
 
-<div id="game">
+<div id="gameUI" style="display:none">
 
-<div class="panel">
-
-<div class="box">
-<h3>📊 Market</h3>
-<div class="stat">💰 Cash: <span id="cash"></span></div>
-<div class="stat">👥 Users: <span id="users"></span></div>
-<div class="stat">🪙 Price: <span id="price"></span></div>
-<div class="stat">💎 MC: <span id="mc"></span></div>
-<div class="stat">🏦 LP: <span id="lp"></span></div>
-</div>
-
-<div class="box">
-<h3>🧠 Tokenomics</h3>
-<div class="stat">📦 Supply: <span id="supply"></span></div>
-<div class="stat">🔥 Burned: <span id="burned"></span></div>
-<div class="stat">⚖ Trust: <span id="trust"></span></div>
-<div class="stat">⚠ Risk: <span id="risk"></span></div>
-<div class="stat">🔍 KYC: <span id="kyc"></span></div>
-<div class="stat">📍 Roadmap: <span id="roadmap"></span></div>
-</div>
-
-<div class="box">
-<h3>⚙ Actions</h3>
-<button onclick="marketing()">📢 Marketing (-120)</button>
-<button onclick="dev()">👨‍💻 Dev (-150)</button>
-<button onclick="influencer()">🚀 Influencer (-300)</button>
-<button onclick="burn()">🔥 Burn</button>
-<button onclick="mint()">➕ Mint</button>
-<button onclick="lp()">🏦 LP boost</button>
-<button onclick="event()">⚡ Event</button>
-</div>
+<button onclick="build('community')">Community Hub</button>
+<button onclick="build('marketing')">Marketing</button>
+<button onclick="build('treasury')">Treasury Vault</button>
+<button onclick="build('burn')">Burn Engine</button>
 
 </div>
 
 </div>
 
-<div id="log"></div>
+<canvas id="c"></canvas>
 
 <script>
 
-let state = {
-name:"",
-chain:"",
-cash:0,
-users:1,
-price:0.01,
-lp:1000,
+const c = document.getElementById("c");
+const ctx = c.getContext("2d");
 
-supply:1000000,
-burned:0,
+c.width = innerWidth;
+c.height = innerHeight;
 
-trust:50,
-risk:10,
-kyc:40,
+let gameStarted = false;
 
-roadmap:1
+let game = {
+treasury:0,
+holders:0,
+price:0.001,
+supply:0,
+mc:0,
+engagement:0
 };
 
-function log(t){
-let d=document.createElement("div");
-d.innerText=t;
-document.getElementById("log").prepend(d);
-}
+let buildings = [];
+let selected = "community";
 
-function ui(){
-document.getElementById("cash").innerText = state.cash.toFixed(0);
-document.getElementById("users").innerText = state.users.toFixed(1);
-document.getElementById("price").innerText = state.price.toFixed(6);
-document.getElementById("mc").innerText = (state.price*state.users).toFixed(0);
-document.getElementById("lp").innerText = state.lp.toFixed(0);
+/* ================= START ================= */
+function startGame(){
 
-document.getElementById("supply").innerText = state.supply;
-document.getElementById("burned").innerText = state.burned;
+let name = document.getElementById("name").value;
+let platform = document.getElementById("platform").value;
 
-document.getElementById("trust").innerText = state.trust.toFixed(0);
-document.getElementById("risk").innerText = state.risk.toFixed(0);
-document.getElementById("kyc").innerText = state.kyc.toFixed(0);
-document.getElementById("roadmap").innerText = "Phase " + state.roadmap;
-}
-
-// ================= START =================
-function start(){
-
-state.name = document.getElementById("name").value;
-state.chain = document.getElementById("chain").value;
-state.cash = parseFloat(document.getElementById("budget").value);
-
-if(!state.name || !state.cash){
-alert("Fill inputs");
+if(!name){
+alert("Enter token name");
 return;
 }
 
-document.getElementById("start").style.display="none";
-document.getElementById("game").style.display="block";
+gameStarted = true;
 
-log("🚀 Launch: " + state.name + " on " + state.chain);
+/* TOKENOMICS */
+game.treasury = 500;
+game.holders = 1;
+game.supply = 1000000;
+game.price = 0.001;
 
-setInterval(tick,1000);
-ui();
+document.getElementById("setup").style.display="none";
+document.getElementById("gameUI").style.display="block";
+
+log("Token created: " + name + " on " + platform);
 }
 
-// ================= ECONOMY =================
-function tick(){
+/* ================= BUILD ================= */
+function build(type){
 
-// PRICE = LP / SUPPLY
-state.price = state.lp / state.supply;
-if(state.price < 0.000001) state.price = 0.000001;
-
-// users growth
-state.users += state.trust * 0.01;
-
-// cashflow
-state.cash += state.users * 0.1;
-
-// LP drift
-state.lp += (Math.random()-0.5)*10;
-
-// trust decay by risk
-state.trust -= state.risk * 0.01;
-if(state.trust < 0) state.trust = 0;
-
-// roadmap
-if(state.cash > 500 && state.roadmap === 1){
-state.roadmap = 2;
-state.trust += 10;
-log("📍 Roadmap 2 unlocked");
+if(game.treasury < 100){
+log("Not enough treasury");
+return;
 }
 
-if(state.cash > 1500 && state.roadmap === 2){
-state.roadmap = 3;
-state.kyc += 20;
-log("📍 Roadmap 3 unlocked");
+game.treasury -= 100;
+
+buildings.push({
+x:Math.random()*20|0,
+y:Math.random()*15|0,
+type:type
+});
+
+log(type + " built");
 }
 
-ui();
+/* ================= LOG ================= */
+function log(t){
+console.log(t);
 }
 
-// ================= ACTIONS =================
+/* ================= UPDATE ECONOMY ================= */
+setInterval(()=>{
 
-function marketing(){
-if(state.cash < 120) return log("❌ No cash");
-state.cash -= 120;
+if(!gameStarted) return;
 
-state.users += Math.random()*6;
-state.trust += 2;
+let marketing = buildings.filter(b=>b.type==="marketing").length;
+let community = buildings.filter(b=>b.type==="community").length;
+let burn = buildings.filter(b=>b.type==="burn").length;
 
-log("📢 Marketing boost");
-}
+/* HOLDERS */
+game.holders += community * 0.2;
 
-function dev(){
-if(state.cash < 150) return log("❌ No cash");
-state.cash -= 150;
+/* PRICE SIM */
+let demand = marketing * game.holders * 0.001;
+let burnEffect = burn * 0.002;
 
-state.trust += 5;
-state.price += 0.002;
+game.price += (demand - burnEffect) * 0.01;
+if(game.price < 0.0001) game.price = 0.0001;
 
-log("👨‍💻 Dev improved system");
-}
+/* MC */
+game.mc = game.price * game.supply;
 
-function influencer(){
-if(state.cash < 300) return log("❌ No cash");
-state.cash -= 300;
-
-state.users += Math.random()*10;
-state.price *= 1.1;
-
-log("🚀 Influencer pump");
-}
-
-function burn(){
-let amount = Math.floor(state.supply * 0.02);
-state.supply -= amount;
-state.burned += amount;
-
-log("🔥 Burned " + amount);
-}
-
-function mint(){
-let amount = Math.floor(state.supply * 0.03);
-state.supply += amount;
-
-state.trust -= 5;
-
-log("➕ Minted " + amount);
-}
-
-function lp(){
-state.lp += 200;
-state.trust += 2;
-
-log("🏦 Liquidity added");
-}
-
-function event(){
-
-let r = Math.random();
-
-if(r < 0.4){
-state.price *= 0.7;
-state.trust -= 10;
-log("💀 Crash event");
-}
-else if(r < 0.7){
-state.price *= 1.2;
-state.trust += 5;
-log("📈 Pump event");
-}
-else{
-state.lp += 100;
-log("🛡 Neutral event");
-}
+/* TREASURY */
+game.treasury += marketing * 5;
 
 ui();
+
+},1000);
+
+/* ================= UI ================= */
+function ui(){
+document.getElementById("treasury").innerText = Math.floor(game.treasury);
+document.getElementById("holders").innerText = Math.floor(game.holders);
+document.getElementById("price").innerText = game.price.toFixed(6);
+document.getElementById("mc").innerText = Math.floor(game.mc);
+document.getElementById("supply").innerText = game.supply;
 }
+
+/* ================= RENDER ================= */
+function render(){
+
+ctx.fillStyle="#050b18";
+ctx.fillRect(0,0,c.width,c.height);
+
+/* simple grid world */
+for(let i=0;i<buildings.length;i++){
+
+let b = buildings[i];
+
+let x = b.x*40;
+let y = b.y*40;
+
+ctx.fillStyle = b.type==="marketing"?"#3b82f6":
+                b.type==="community"?"#22c55e":
+                b.type==="burn"?"#ef4444":"#f59e0b";
+
+ctx.fillRect(x,y,30,30);
+}
+
+requestAnimationFrame(render);
+}
+
+render();
+ui();
 
 </script>
 
