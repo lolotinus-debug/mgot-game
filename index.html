@@ -1051,8 +1051,8 @@ let bottomRight =
     y < MAP_SIZE-1 &&
     mapData[x+1][y+1] === tile;
 
-            // ===== WATER =====
-            if(tile==="water"){
+  // ===== WATER =====
+if(tile==="water"){
 
     const shades = [
         "#1e40af",
@@ -1064,115 +1064,86 @@ let bottomRight =
     ctx.fillStyle =
         shades[(x+y)%shades.length];
 
-    ctx.fillRect(
-        px,
-        py,
-        TILE,
-        TILE
-    );
-
-ctx.fillStyle = shades[(x+y)%shades.length];
-
-// horný ľavý vnútorný roh
-if(top && left && !topLeft){
-
     ctx.beginPath();
 
-    ctx.arc(
-        px,
-        py,
-        12,
-        0,
-        Math.PI*2
+    // začiatok
+    ctx.moveTo(
+        px + (left ? 0 : 10),
+        py
     );
 
-    ctx.fill();
-}
-
-// horný pravý
-if(top && right && !topRight){
-
-    ctx.beginPath();
-
-    ctx.arc(
-        px + TILE,
-        py,
-        12,
-        0,
-        Math.PI*2
+    // horná hrana
+    ctx.lineTo(
+        px + TILE - (right ? 0 : 10),
+        py
     );
 
-    ctx.fill();
-}
-
-// dolný ľavý
-if(bottom && left && !bottomLeft){
-
-    ctx.beginPath();
-
-    ctx.arc(
-        px,
-        py + TILE,
-        12,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-}
-
-// dolný pravý
-if(bottom && right && !bottomRight){
-
-    ctx.beginPath();
-
-    ctx.arc(
-        px + TILE,
-        py + TILE,
-        12,
-        0,
-        Math.PI*2
-    );
-
-    ctx.fill();
-}
-              
-    // svetlejší breh
-    ctx.fillStyle = "#93c5fd";
-
-    if(!top){
-        ctx.fillRect(px, py, TILE, 4);
-    }
-
-    if(!bottom){
-        ctx.fillRect(
-            px,
-            py + TILE - 4,
-            TILE,
-            4
+    // horný pravý roh
+    if(!right || !top){
+        ctx.quadraticCurveTo(
+            px + TILE,
+            py,
+            px + TILE,
+            py + (top ? 0 : 10)
         );
     }
 
-    if(!left){
-        ctx.fillRect(
+    // pravá hrana
+    ctx.lineTo(
+        px + TILE,
+        py + TILE - (bottom ? 0 : 10)
+    );
+
+    // dolný pravý roh
+    if(!right || !bottom){
+        ctx.quadraticCurveTo(
+            px + TILE,
+            py + TILE,
+            px + TILE - (right ? 0 : 10),
+            py + TILE
+        );
+    }
+
+    // dolná hrana
+    ctx.lineTo(
+        px + (left ? 0 : 10),
+        py + TILE
+    );
+
+    // dolný ľavý roh
+    if(!left || !bottom){
+        ctx.quadraticCurveTo(
+            px,
+            py + TILE,
+            px,
+            py + TILE - (bottom ? 0 : 10)
+        );
+    }
+
+    // ľavá hrana
+    ctx.lineTo(
+        px,
+        py + (top ? 0 : 10)
+    );
+
+    // horný ľavý roh
+    if(!left || !top){
+        ctx.quadraticCurveTo(
             px,
             py,
-            4,
-            TILE
+            px + (left ? 0 : 10),
+            py
         );
     }
 
-    if(!right){
-        ctx.fillRect(
-            px + TILE - 4,
-            py,
-            4,
-            TILE
-        );
-    }
+    ctx.closePath();
+    ctx.fill();
+
+    // brehy
+    ctx.strokeStyle = "#93c5fd";
+    ctx.lineWidth = 2;
+    ctx.stroke();
 }
-
-            
             // ===== GRASS =====
             else if(tile==="grass"){
 
