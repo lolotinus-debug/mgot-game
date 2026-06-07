@@ -592,7 +592,7 @@ function upgrade(){
         let dx = Math.abs(b.x - selected.x);
         let dy = Math.abs(b.y - selected.y);
 
-        let dist = dx + dy; // Manhattan distance
+        let dist = dx + dy;
 
         if(dist <= 3){
             clusterBonus++;
@@ -614,13 +614,28 @@ function upgrade(){
 
     selected.level++;
 
+    // ================= MARKET IMPACT (15%) =================
+    let direction = Math.random() < 0.5 ? -1 : 1;
+    let impact = 0.15;
+
+    game.price *= (1 + direction * impact);
+    game.lp *= (1 + direction * impact);
+    game.marketCap = Math.floor(game.price * game.supply);
+
+    if(game.price < 0.000001) game.price = 0.000001;
+    if(game.lp < 10) game.lp = 10;
+
+    log(
+        direction > 0
+        ? "🚀 MARKET PUMP +15%"
+        : "📉 MARKET DUMP -15%"
+    );
+
     explosion(
         selected.x * TILE,
         selected.y * TILE,
-        "#fff"
+        "#ffffff"
     );
-
-    log("⬆ Upgraded " + selected.type);
 
     ui();
     updateInfo();
@@ -1841,45 +1856,62 @@ try{
 
 const data = JSON.parse(save);
 
-// safe merge (aby sa ti nezmazali nové hodnoty pri update kódu)
+// ================= SAFE GAME MERGE =================
 if(data.game){
-game = {
-  treasury:500,
-  holders:10,
-  engagement:100,
-  education:0,
-  utility:1,
-  promoters:0,
-  lp:100,
-  supply:1000000,
-  reputation:0,
-  communityPower:0,
-  price:0.001,
-  marketCap:1000,
-  volume:0,
-  lastPrice:0.001,
-  ...data.game
-};
+
+    game = {
+        treasury: 500,
+        holders: 1,
+        engagement: 1,
+        education: 0,
+        utility: 1,
+        promoters: 0,
+        lp: 100,
+        supply: 1000000,
+        reputation: 0,
+        communityPower: 0,
+        price: 0.001,
+        marketCap: 1000,
+        volume: 0,
+        lastPrice: 0.001,
+        ...data.game
+    };
 }
 
-if(data.buildings){
-buildings = data.buildings;
+// ================= BUILDINGS =================
+if(data.buildings && Array.isArray(data.buildings)){
+    buildings = data.buildings;
 }
 
-// guarantee townhall exists
+// ================= GUARANTEE TOWNHALL =================
 let hasTownHall = buildings.some(b => b.type === "townhall");
 
 if(!hasTownHall){
-buildings.push({
-x:10,
-y:10,
-type:"townhall",
-level:1
-});
+    buildings.push({
+        x: 10,
+        y: 10,
+        type: "townhall",
+        level: 1
+    });
 }
+
+// ================= CAMERA SAFE RESET =================
+cameraX = 0;
+cameraY = 0;
+
+// zoom safe fallback
+if(typeof zoom === "undefined"){
+    zoom = 1;
+}
+
+// ================= AUTO CENTER AFTER LOAD =================
+requestAnimationFrame(() => {
+    centerOnTownHall();
+});
 
 }catch(err){
 console.log("Save corrupted", err);
+localStorage.removeItem("mgot_save");
 }
 
 }
@@ -1887,30 +1919,30 @@ console.log("Save corrupted", err);
 // ================= RENDER =================
 function render(){
 
-    ctx.clearRect(
-        0,
-        0,
-        window.innerWidth,
-        window.innerHeight
-    );
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
+    // background (bez transformu)
     ctx.fillStyle = "#07131f";
+    ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
-    ctx.fillRect(
-        0,
-        0,
-        window.innerWidth,
-        window.innerHeight
+    // ================= CAMERA + ZOOM START =================
+    ctx.setTransform(
+        zoom, 0,
+        0, zoom,
+        -cameraX * zoom,
+        -cameraY * zoom
     );
 
     drawMap();
-drawRoads();
-drawBuildings();
-drawParticles();
+    drawRoads();
+    drawBuildings();
+    drawParticles();
+
+    // ================= RESET TRANSFORM =================
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
 
     requestAnimationFrame(render);
 }
-
 // ================= CAMERA =================
 let touchStartX = 0;
 let touchStartY = 0;
@@ -1948,22 +1980,22 @@ function newGame(){
 
     localStorage.removeItem("mgot_save");
 
-  game = {
-  treasury: 500,
-  holders: 1,
-  engagement: 1,
-  education: 0,
-  utility: 1,
-  promoters: 0,
-  lp: 100,
-  supply: 1000000,
-  reputation: 0,
-  communityPower: 0,
-  price: 0.001,
-  marketCap: 1000,
-  volume: 0,
-  lastPrice: 0.001,
-};
+    game = {
+        treasury: 500,
+        holders: 1,
+        engagement: 1,
+        education: 0,
+        utility: 1,
+        promoters: 0,
+        lp: 100,
+        supply: 1000000,
+        reputation: 0,
+        communityPower: 0,
+        price: 0.001,
+        marketCap: 1000,
+        volume: 0,
+        lastPrice: 0.001,
+    };
 
     buildings = [{
         x:10,
@@ -1976,19 +2008,22 @@ function newGame(){
     selected = null;
     selectedBuild = null;
 
+    // ================= CAMERA RESET =================
     cameraX = 0;
     cameraY = 0;
+    zoom = zoom || 1; // safety fallback
 
     ui();
 
     document.getElementById("upgradeBtn").style.display = "none";
     document.getElementById("demolishBtn").style.display = "none";
 
-    document.getElementById("info").innerHTML =
-    "Nothing selected";
+    document.getElementById("info").innerHTML = "Nothing selected";
 
     log("🆕 New Game Started");
 
+    // ================= AUTO CENTER =================
+    centerOnTownHall();
 }
 
 // START
