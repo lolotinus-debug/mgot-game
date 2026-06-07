@@ -112,8 +112,12 @@ height:100vh;
 const c = document.getElementById("c");
 const ctx = c.getContext("2d");
 
-c.width = innerWidth;
-c.height = innerHeight;
+function resize(){
+  c.width = window.innerWidth;
+  c.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
 
 let gameStarted = false;
 
@@ -222,7 +226,23 @@ function render(){
 ctx.fillStyle="#050b18";
 ctx.fillRect(0,0,c.width,c.height);
 
-/* simple grid world */
+/* GRID (aby si videl mapu) */
+ctx.strokeStyle = "#0f172a";
+for(let x=0;x<c.width;x+=40){
+  ctx.beginPath();
+  ctx.moveTo(x,0);
+  ctx.lineTo(x,c.height);
+  ctx.stroke();
+}
+
+for(let y=0;y<c.height;y+=40){
+  ctx.beginPath();
+  ctx.moveTo(0,y);
+  ctx.lineTo(c.width,y);
+  ctx.stroke();
+}
+
+/* BUILDINGS */
 for(let i=0;i<buildings.length;i++){
 
 let b = buildings[i];
@@ -230,11 +250,17 @@ let b = buildings[i];
 let x = b.x*40;
 let y = b.y*40;
 
-ctx.fillStyle = b.type==="marketing"?"#3b82f6":
-                b.type==="community"?"#22c55e":
-                b.type==="burn"?"#ef4444":"#f59e0b";
+ctx.fillStyle =
+b.type==="marketing"?"#3b82f6":
+b.type==="community"?"#22c55e":
+b.type==="burn"?"#ef4444":"#f59e0b";
 
 ctx.fillRect(x,y,30,30);
+
+/* label */
+ctx.fillStyle="white";
+ctx.font="10px Arial";
+ctx.fillText(b.type[0], x+8, y+20);
 }
 
 requestAnimationFrame(render);
