@@ -1031,6 +1031,25 @@ let left =
 let right =
     x < MAP_SIZE-1 &&
     mapData[x+1][y] === tile;
+          let topLeft =
+    x > 0 &&
+    y > 0 &&
+    mapData[x-1][y-1] === tile;
+
+let topRight =
+    x < MAP_SIZE-1 &&
+    y > 0 &&
+    mapData[x+1][y-1] === tile;
+
+let bottomLeft =
+    x > 0 &&
+    y < MAP_SIZE-1 &&
+    mapData[x-1][y+1] === tile;
+
+let bottomRight =
+    x < MAP_SIZE-1 &&
+    y < MAP_SIZE-1 &&
+    mapData[x+1][y+1] === tile;
 
             // ===== WATER =====
             if(tile==="water"){
@@ -1052,6 +1071,72 @@ let right =
         TILE
     );
 
+ctx.fillStyle = shades[(x+y)%shades.length];
+
+// horný ľavý vnútorný roh
+if(top && left && !topLeft){
+
+    ctx.beginPath();
+
+    ctx.arc(
+        px,
+        py,
+        12,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+}
+
+// horný pravý
+if(top && right && !topRight){
+
+    ctx.beginPath();
+
+    ctx.arc(
+        px + TILE,
+        py,
+        12,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+}
+
+// dolný ľavý
+if(bottom && left && !bottomLeft){
+
+    ctx.beginPath();
+
+    ctx.arc(
+        px,
+        py + TILE,
+        12,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+}
+
+// dolný pravý
+if(bottom && right && !bottomRight){
+
+    ctx.beginPath();
+
+    ctx.arc(
+        px + TILE,
+        py + TILE,
+        12,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+}
+              
     // svetlejší breh
     ctx.fillStyle = "#93c5fd";
 
@@ -1108,7 +1193,69 @@ let right =
                     TILE
                 );
             }
+// zaoblené rohy jazera
 
+ctx.fillStyle = "#93c5fd";
+
+if(!top && !left){
+
+    ctx.beginPath();
+
+    ctx.arc(
+        px,
+        py,
+        8,
+        0,
+        Math.PI/2
+    );
+
+    ctx.fill();
+}
+
+if(!top && !right){
+
+    ctx.beginPath();
+
+    ctx.arc(
+        px + TILE,
+        py,
+        8,
+        Math.PI/2,
+        Math.PI
+    );
+
+    ctx.fill();
+}
+
+if(!bottom && !left){
+
+    ctx.beginPath();
+
+    ctx.arc(
+        px,
+        py + TILE,
+        8,
+        -Math.PI/2,
+        0
+    );
+
+    ctx.fill();
+}
+
+if(!bottom && !right){
+
+    ctx.beginPath();
+
+    ctx.arc(
+        px + TILE,
+        py + TILE,
+        8,
+        Math.PI,
+        Math.PI * 1.5
+    );
+
+    ctx.fill();
+}
             // ===== FOREST =====
             else if(tile==="forest"){
 
