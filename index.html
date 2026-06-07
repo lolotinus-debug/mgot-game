@@ -687,15 +687,19 @@ setInterval(()=>{
     for(let b of buildings){
 
         if(b.type==="community"){
-            game.holders += 0.05 * b.level;
-            game.communityPower += 0.1 * b.level;
+
+    game.holders +=
+        0.5 * b.level *
+        (1 + game.engagement/1000);
+
+    game.communityPower +=
+        0.2 * b.level;
         }
 
         if(b.type==="marketing"){
-            game.engagement += 2 * b.level;
 
-            game.holders +=
-            game.engagement * 0.0002 * b.level;
+    game.engagement +=
+        3 * b.level;
         }
 
         if(b.type==="treasury"){
@@ -713,7 +717,13 @@ setInterval(()=>{
         }
 
         if(b.type==="influencer"){
-            game.promoters += 0.2 * b.level;
+
+    game.promoters +=
+        0.2 * b.level;
+
+    game.holders +=
+        (game.engagement * 0.0005)
+        * b.level;
         }
 
         if(b.type==="burn"){
@@ -805,10 +815,13 @@ if(Math.random() < 0.01){
 }
 
 // FOMO
-if(game.price > game.lastPrice){
+if(
+    game.price >
+    game.lastPrice * 1.05
+){
 
     game.holders +=
-        game.holders * 0.002;
+        game.promoters * 0.5;
 }
 
 // PANIC SELL
