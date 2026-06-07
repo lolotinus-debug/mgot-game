@@ -2,14 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crypto Civilization FIXED</title>
+<title>MGOT RTS Rework</title>
 
 <style>
 body{
 margin:0;
 overflow:hidden;
-background:#050b18;
+background:#06101f;
 font-family:Arial;
 color:white;
 }
@@ -23,22 +22,19 @@ height:50px;
 background:#0f172a;
 display:flex;
 align-items:center;
-gap:15px;
-padding:5px 10px;
-font-size:13px;
+gap:20px;
+padding:0 10px;
 border-bottom:2px solid #00d4ff;
+font-size:13px;
 }
 
-.resource{
-color:#00d4ff;
-font-weight:bold;
-}
+.resource{color:#00d4ff;font-weight:bold}
 
 #panel{
 position:fixed;
 left:10px;
 top:70px;
-width:220px;
+width:200px;
 background:#0f172a;
 padding:10px;
 border-radius:10px;
@@ -46,8 +42,8 @@ border-radius:10px;
 
 button{
 width:100%;
-padding:8px;
 margin-top:5px;
+padding:8px;
 background:#00d4ff;
 border:none;
 font-weight:bold;
@@ -66,129 +62,167 @@ left:0;
 
 <div id="topbar">
 <div class="resource">💎 Treasury: <span id="treasury">0</span></div>
-<div class="resource">👥 Holders: <span id="holders">0</span></div>
+<div class="resource">👥 Population: <span id="pop">0</span></div>
 <div class="resource">📈 Price: <span id="price">0</span></div>
+<div class="resource">💰 MC: <span id="mc">0</span></div>
 </div>
 
 <div id="panel">
-<h3>Builder</h3>
-<button onclick="build('community')">Community</button>
-<button onclick="build('marketing')">Marketing</button>
-<button onclick="build('burn')">Burn</button>
+<h3>MGOT RTS</h3>
+
+<button onclick="select('farm')">Farm</button>
+<button onclick="select('treasury')">Treasury</button>
+<button onclick="select('market')">Marketing</button>
+<button onclick="select('defense')">Defense</button>
+<button onclick="upgrade()">Upgrade selected</button>
 </div>
 
 <canvas id="c"></canvas>
 
 <script>
 
-/* ================= CANVAS FIX ================= */
-const c = document.getElementById("c");
-const ctx = c.getContext("2d");
+const c=document.getElementById("c");
+const ctx=c.getContext("2d");
 
 function resize(){
-c.width = window.innerWidth;
-c.height = window.innerHeight;
+c.width=innerWidth;
+c.height=innerHeight;
 }
-window.addEventListener("resize", resize);
+window.addEventListener("resize",resize);
 resize();
 
-/* ================= GAME STATE ================= */
-let gameStarted = true;
-
-let game = {
+/* ================= GAME ================= */
+let game={
 treasury:500,
-holders:1,
+pop:1,
 price:0.001,
-supply:1000000,
 mc:0
 };
 
-let buildings = [
-{x:5,y:5,type:"community"}
-];
+let gridSize=10;
+let cell=60;
+
+let selectedType="farm";
+
+let buildings=[];
 
 /* ================= BUILD ================= */
-function build(type){
-if(game.treasury < 100) return;
-
-game.treasury -= 100;
-
-buildings.push({
-x: Math.floor(Math.random()*20),
-y: Math.floor(Math.random()*15),
-type
-});
+function select(t){
+selectedType=t;
 }
 
-/* ================= UI ================= */
-function ui(){
-document.getElementById("treasury").innerText = Math.floor(game.treasury);
-document.getElementById("holders").innerText = Math.floor(game.holders);
-document.getElementById("price").innerText = game.price.toFixed(6);
+/* click to place */
+c.addEventListener("click",(e)=>{
+
+let x=Math.floor(e.clientX/cell);
+let y=Math.floor(e.clientY/cell);
+
+let existing=buildings.find(b=>b.x==x && b.y==y);
+
+if(existing){
+selected=existing;
+return;
+}
+
+if(game.treasury<100) return;
+
+game.treasury-=100;
+
+buildings.push({
+x,y,
+type:selectedType,
+level:1
+});
+
+});
+
+/* ================= UPGRADE ================= */
+let selected=null;
+
+function upgrade(){
+if(!selected) return;
+if(game.treasury<selected.level*80) return;
+
+game.treasury-=selected.level*80;
+selected.level++;
 }
 
 /* ================= ECONOMY ================= */
 setInterval(()=>{
 
-let marketing = buildings.filter(b=>b.type==="marketing").length;
-let community = buildings.filter(b=>b.type==="community").length;
-let burn = buildings.filter(b=>b.type==="burn").length;
+let farms=buildings.filter(b=>b.type==="farm");
+let treasury=buildings.filter(b=>b.type==="treasury");
+let market=buildings.filter(b=>b.type==="market");
+let defense=buildings.filter(b=>b.type==="defense");
 
-game.holders += community * 0.1;
+/* FOOD / POP */
+game.pop += farms.length * 0.05;
 
-let demand = marketing * game.holders * 0.001;
-let burnEffect = burn * 0.002;
+/* TREASURY INCOME */
+game.treasury += treasury.length * 5;
 
-game.price += (demand - burnEffect) * 0.01;
+/* MARKET EFFECT (PRICE UP) */
+let demand = market.length * game.pop * 0.001;
 
-if(game.price < 0.0001) game.price = 0.0001;
+/* DEFENSE STABILIZES */
+let stability = defense.length * 0.002;
 
-game.mc = game.price * game.supply;
+game.price += (demand - stability) * 0.01;
 
-game.treasury += marketing * 5;
+if(game.price<0.0001) game.price=0.0001;
+
+/* MC */
+game.mc = game.price * 1000000;
+
+/* POP GROWTH */
+game.pop += 0.01;
 
 ui();
 
 },1000);
 
-/* ================= RENDER (IMPORTANT FIX) ================= */
+/* ================= UI ================= */
+function ui(){
+document.getElementById("treasury").innerText=Math.floor(game.treasury);
+document.getElementById("pop").innerText=Math.floor(game.pop);
+document.getElementById("price").innerText=game.price.toFixed(6);
+document.getElementById("mc").innerText=Math.floor(game.mc);
+}
+
+/* ================= RENDER ================= */
 function render(){
 
-ctx.fillStyle="#050b18";
+ctx.fillStyle="#06101f";
 ctx.fillRect(0,0,c.width,c.height);
 
-/* GRID */
-ctx.strokeStyle="#111";
-for(let x=0;x<c.width;x+=40){
-ctx.beginPath();
-ctx.moveTo(x,0);
-ctx.lineTo(x,c.height);
-ctx.stroke();
+/* grid */
+for(let x=0;x<gridSize;x++){
+for(let y=0;y<gridSize;y++){
+ctx.strokeStyle="#0f172a";
+ctx.strokeRect(x*cell,y*cell,cell,cell);
+}
 }
 
-for(let y=0;y<c.height;y+=40){
-ctx.beginPath();
-ctx.moveTo(0,y);
-ctx.lineTo(c.width,y);
-ctx.stroke();
-}
-
-/* BUILDINGS */
+/* buildings */
 for(let b of buildings){
 
-let x = b.x*40;
-let y = b.y*40;
+let x=b.x*cell;
+let y=b.y*cell;
 
 ctx.fillStyle =
-b.type==="community"?"#22c55e":
-b.type==="marketing"?"#3b82f6":
+b.type==="farm"?"#22c55e":
+b.type==="treasury"?"#fbbf24":
+b.type==="market"?"#3b82f6":
 "#ef4444";
 
-ctx.fillRect(x,y,30,30);
+ctx.fillRect(x+10,y+10,40,40);
 
-ctx.fillStyle="#fff";
-ctx.font="10px Arial";
-ctx.fillText(b.type[0], x+10, y+20);
+ctx.fillStyle="white";
+ctx.font="12px Arial";
+ctx.fillText(b.type[0].toUpperCase(),x+25,y+35);
+
+/* level */
+ctx.fillText(b.level,x+10,y+15);
 }
 
 requestAnimationFrame(render);
