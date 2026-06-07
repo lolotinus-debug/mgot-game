@@ -697,9 +697,18 @@ setInterval(()=>{
 
         if(b.type==="marketing"){
 
-    game.engagement +=
-        3 * b.level;
+    let maxEngagement =
+        game.holders * 3 * b.level;
+
+    if(game.engagement < maxEngagement){
+
+        game.engagement += b.level;
+
+        if(game.engagement > maxEngagement){
+            game.engagement = maxEngagement;
         }
+    }
+}
 
         if(b.type==="treasury"){
             game.treasury += b.level;
