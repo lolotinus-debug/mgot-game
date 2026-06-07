@@ -767,44 +767,6 @@ setInterval(()=>{
         return;
     }
 
-    // ================= BUILDING ECONOMY =================
-    for(let b of buildings){
-
-        if(b.type==="community"){
-            game.engagement += 0.2 * b.level;
-        }
-
-        if(b.type==="marketing"){
-            game.engagement += 3 * b.level;
-        }
-
-        if(b.type==="treasury"){
-            game.treasury += b.level;
-        }
-
-        if(b.type==="academy"){
-            game.education += b.level;
-            game.reputation += 0.05 * b.level;
-        }
-
-        if(b.type==="utility"){
-            game.utility += 0.2 * b.level;
-            game.reputation += 0.1 * b.level;
-        }
-
-        if(b.type==="influencer"){
-            game.promoters += 0.2 * b.level;
-        }
-
-        if(b.type==="burn"){
-            game.supply -= (10 * b.level);
-            if(game.supply < 1000){
-                game.supply = 1000;
-            }
-        }
-
-    }
-
     // ================= HUB HOLDER SYSTEM =================
 
     hubTimer++;
@@ -830,6 +792,11 @@ setInterval(()=>{
     // ================= TRADING SIMULATION =================
 
     game.lastPrice = game.price;
+
+  let buyers =
+    game.holders * 0.02 +
+    game.promoters * 0.5 +
+    game.engagement * 0.001;
 
     let sellers =
         (game.holders * 0.01) *
