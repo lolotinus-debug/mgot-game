@@ -767,27 +767,26 @@ setInterval(()=>{
         return;
     }
 
-    // ================= HUB HOLDER SYSTEM =================
+   // ================= HUB HOLDER SYSTEM =================
 
-    hubTimer++;
+hubTimer++;
 
-    let interval = 30; // základ 30 sekúnd
+let interval = 60;
 
-    // každý ďalší level Hubu skracuje čas o 3 sekundy
-    interval -= (hubLevel - 1) * 3;
+interval -= (hubLevel - 1) * 10;
 
-    // minimum aby to nešlo do chaosu
-    if(interval < 5){
-        interval = 5;
-    }
+if(interval < 10){
+    interval = 10;
+}
 
-    if(hubTimer >= interval){
+if(hubTimer >= interval){
 
-        game.holders += 1;
-        hubTimer = 0;
+    game.holders += 1;
 
-        log("👥 +1 Holder (Hub growth)");
-    }
+    hubTimer = 0;
+
+    log("👥 +1 Holder (Hub Lv." + hubLevel + ")");
+}
 
     // ================= TRADING SIMULATION =================
 
