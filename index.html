@@ -955,15 +955,22 @@ function expandWater(iterations = 3){
 // ===== forest clustering =====
 function expandForest(){
 
-    let newMap = JSON.parse(JSON.stringify(mapData));
+    let newMap =
+        JSON.parse(JSON.stringify(mapData));
 
     for(let x=0; x<MAP_SIZE; x++){
+
         for(let y=0; y<MAP_SIZE; y++){
 
-            if(mapData[x][y] !== "forest") continue;
+            if(mapData[x][y] !== "forest"){
+                continue;
+            }
 
             let dirs = [
-                [1,0],[-1,0],[0,1],[0,-1]
+                [1,0],
+                [-1,0],
+                [0,1],
+                [0,-1]
             ];
 
             for(let d of dirs){
@@ -972,11 +979,16 @@ function expandForest(){
                 let ny = y + d[1];
 
                 if(
-                    nx>=0 && ny>=0 &&
-                    nx<MAP_SIZE && ny<MAP_SIZE
+                    nx >= 0 &&
+                    ny >= 0 &&
+                    nx < MAP_SIZE &&
+                    ny < MAP_SIZE
                 ){
 
-                    if(Math.random() < 0.22){
+                    if(
+                        newMap[nx][ny] === "grass" &&
+                        Math.random() < 0.22
+                    ){
                         newMap[nx][ny] = "forest";
                     }
                 }
@@ -984,33 +996,82 @@ function expandForest(){
         }
     }
 
-    mapData = newMap;
+    for(let x=0; x<MAP_SIZE; x++){
+        for(let y=0; y<MAP_SIZE; y++){
+            mapData[x][y] = newMap[x][y];
+        }
+    }
 }
 
+  function smoothTerrain(passes){
+
+    for(let p=0; p<passes; p++){
+
+        let copy =
+            JSON.parse(JSON.stringify(mapData));
+
+        for(let x=1; x<MAP_SIZE-1; x++){
+
+            for(let y=1; y<MAP_SIZE-1; y++){
+
+                let counts = {};
+
+                for(let dx=-1; dx<=1; dx++){
+
+                    for(let dy=-1; dy<=1; dy++){
+
+                        let t = copy[x+dx][y+dy];
+
+                        counts[t] =
+                            (counts[t] || 0) + 1;
+                    }
+                }
+
+                let best = copy[x][y];
+                let max = 0;
+
+                for(let k in counts){
+
+                    if(counts[k] > max){
+
+                        max = counts[k];
+                        best = k;
+                    }
+                }
+
+                mapData[x][y] = best;
+            }
+        }
+    }
+}
 // ================= GENERATE MAP =================
 
 function generateMap(){
 
+    // vyčisti mapu
+    mapData.length = 0;
+
     for(let x=0; x<MAP_SIZE; x++){
+
         mapData[x] = [];
 
         for(let y=0; y<MAP_SIZE; y++){
 
             let h =
-                noise(x*0.03,y*0.03)*0.6 +
-                noise(x*0.07,y*0.07)*0.3 +
-                noise(x*0.15,y*0.15)*0.1;
+                noise(x*0.025,y*0.025)*0.55 +
+                noise(x*0.06,y*0.06)*0.30 +
+                noise(x*0.12,y*0.12)*0.15;
 
             let m =
-                noise(x*0.04+100,y*0.04+100);
+                noise(x*0.035+100,y*0.035+100);
 
-            if(h < 0.20){
+            if(h < 0.18){
                 mapData[x][y] = "water";
             }
-            else if(h > 0.83){
+            else if(h > 0.86){
                 mapData[x][y] = "mountain";
             }
-            else if(m > 0.58){
+            else if(m > 0.60){
                 mapData[x][y] = "forest";
             }
             else{
@@ -1019,11 +1080,14 @@ function generateMap(){
         }
     }
 
-    // 🌊 veľké jazerá
-    expandWater(3);
+    // väčšie jazerá
+    expandWater(4);
 
-    // 🌲 lesy sa zhustia
+    // hustejšie lesy
     expandForest();
+
+    // vyhladenie terénu
+    smoothTerrain(2);
 }
 
 generateMap();
@@ -1223,10 +1287,9 @@ if(tile==="water"){
             else if(tile==="grass"){
 
                 const shades = [
-                    "#65a30d",
-                    "#4d7c0f",
-                    "#3f6212",
-                    "#4ade80"
+                    "#5f8f3a",
+    "#669940",
+    "#6ea347"
                 ];
 
                 ctx.fillStyle =
