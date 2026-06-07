@@ -688,12 +688,14 @@ setInterval(()=>{
 
         if(b.type==="community"){
 
-    game.holders +=
-        0.5 * b.level *
-        (1 + game.engagement/1000);
+    // BASE growth (stabilný rast vždy)
+    game.holders += 0.3 * b.level;
 
-    game.communityPower +=
-        0.2 * b.level;
+    // HUB bonus (hlavný efekt budovy)
+    game.holders += game.utility * 0.05 * b.level;
+
+    // malé zvýšenie engagementu
+    game.engagement += 0.2 * b.level;
         }
 
         if(b.type==="marketing"){
@@ -849,6 +851,9 @@ Math.floor(
 if(isNaN(game.price)){
     game.price = 0.001;
 }
+
+// natural growth (bez budov)
+game.holders += 0.005;
 
     ui();
 
