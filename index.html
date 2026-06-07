@@ -905,32 +905,112 @@ game.price +=
 // ================= MAP DATA =================
 
 const MAP_SIZE = 50;
-const mapData = [];
+let mapData = [];
 
+// ===== improved noise =====
 function noise(x, y){
-    // jednoduchý pseudo-noise (stabilný, smooth)
-    let n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+    let n = Math.sin(x * 127.1 + y * 311.7) * 43758.5453;
     return n - Math.floor(n);
 }
+
+// ===== lake expansion (AoE style water bodies) =====
+function expandWater(iterations = 3){
+
+    for(let i=0;i<iterations;i++){
+
+        let newMap = JSON.parse(JSON.stringify(mapData));
+
+        for(let x=0; x<MAP_SIZE; x++){
+            for(let y=0; y<MAP_SIZE; y++){
+
+                if(mapData[x][y] !== "water") continue;
+
+                let dirs = [
+                    [1,0],[-1,0],[0,1],[0,-1],
+                    [1,1],[-1,-1],[1,-1],[-1,1]
+                ];
+
+                for(let d of dirs){
+
+                    let nx = x + d[0];
+                    let ny = y + d[1];
+
+                    if(
+                        nx>=0 && ny>=0 &&
+                        nx<MAP_SIZE && ny<MAP_SIZE
+                    ){
+
+                        if(Math.random() < 0.28){
+                            newMap[nx][ny] = "water";
+                        }
+                    }
+                }
+            }
+        }
+
+        mapData = newMap;
+    }
+}
+
+// ===== forest clustering =====
+function expandForest(){
+
+    let newMap = JSON.parse(JSON.stringify(mapData));
+
+    for(let x=0; x<MAP_SIZE; x++){
+        for(let y=0; y<MAP_SIZE; y++){
+
+            if(mapData[x][y] !== "forest") continue;
+
+            let dirs = [
+                [1,0],[-1,0],[0,1],[0,-1]
+            ];
+
+            for(let d of dirs){
+
+                let nx = x + d[0];
+                let ny = y + d[1];
+
+                if(
+                    nx>=0 && ny>=0 &&
+                    nx<MAP_SIZE && ny<MAP_SIZE
+                ){
+
+                    if(Math.random() < 0.22){
+                        newMap[nx][ny] = "forest";
+                    }
+                }
+            }
+        }
+    }
+
+    mapData = newMap;
+}
+
+// ================= GENERATE MAP =================
 
 function generateMap(){
 
     for(let x=0; x<MAP_SIZE; x++){
-
         mapData[x] = [];
 
         for(let y=0; y<MAP_SIZE; y++){
 
-            let h = noise(x * 0.05, y * 0.05);
-let m = noise(x * 0.08 + 100, y * 0.08 + 100);
+            let h =
+                noise(x*0.03,y*0.03)*0.6 +
+                noise(x*0.07,y*0.07)*0.3 +
+                noise(x*0.15,y*0.15)*0.1;
 
-            if(h < 0.22){
+            let m =
+                noise(x*0.04+100,y*0.04+100);
+
+            if(h < 0.20){
                 mapData[x][y] = "water";
             }
-            else if(h > 0.78){
+            else if(h > 0.83){
                 mapData[x][y] = "mountain";
             }
-            else if(m > 0.60){
+            else if(m > 0.58){
                 mapData[x][y] = "forest";
             }
             else{
@@ -939,16 +1019,11 @@ let m = noise(x * 0.08 + 100, y * 0.08 + 100);
         }
     }
 
-    // ROADS
-    for(let y=5; y<MAP_SIZE; y+=8){
+    // 🌊 veľké jazerá
+    expandWater(3);
 
-        for(let x=0; x<MAP_SIZE; x++){
-
-            if(mapData[x][y] !== "water"){
-                mapData[x][y] = "road";
-            }
-        }
-    }
+    // 🌲 lesy sa zhustia
+    expandForest();
 }
 
 generateMap();
