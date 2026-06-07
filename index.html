@@ -1974,6 +1974,16 @@ if(e.key==="ArrowRight") cameraX+=32;
 if(e.key==="ArrowUp") cameraY-=32;
 if(e.key==="ArrowDown") cameraY+=32;
 });
+
+function centerOnTownHall(){
+
+    let th = buildings.find(b => b.type === "townhall");
+    if(!th) return;
+
+    cameraX = th.x * TILE - window.innerWidth / 2;
+    cameraY = th.y * TILE - window.innerHeight / 2;
+}  
+  
 function newGame(){
 
     if(!confirm("Start a new game?")){
