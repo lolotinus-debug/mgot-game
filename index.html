@@ -809,7 +809,15 @@ if(hubTimer >= interval){
 
     let pressure = buyers - sellers;
 
-    game.price *= (1 + pressure * 0.0005);
+game.lp += buyers * 0.01;
+game.lp -= sellers * 0.0098;
+
+let fairPrice =
+    game.lp /
+    (game.supply * 0.1);
+
+game.price +=
+    (fairPrice - game.price) * 0.05;
 
     if(game.price < 0.000001){
         game.price = 0.000001;
