@@ -1016,6 +1016,21 @@ function drawMap(){
             let py = y * TILE - cameraY;
 
             let tile = mapData[x][y];
+          let top =
+    y > 0 &&
+    mapData[x][y-1] === tile;
+
+let bottom =
+    y < MAP_SIZE-1 &&
+    mapData[x][y+1] === tile;
+
+let left =
+    x > 0 &&
+    mapData[x-1][y] === tile;
+
+let right =
+    x < MAP_SIZE-1 &&
+    mapData[x+1][y] === tile;
 
             // ===== WATER =====
             if(tile==="water"){
