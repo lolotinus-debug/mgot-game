@@ -691,11 +691,7 @@ setInterval(()=>{
 
         if(b.type==="community"){
 
-    // malé zvýšenie engagementu
-    game.engagement += 0.2 * b.level;
-        }
-
-        if(b.type==="marketing"){
+    if(b.type==="marketing"){
 
     let maxEngagement =
         game.holders * 3 * b.level;
