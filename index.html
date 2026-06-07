@@ -352,15 +352,13 @@ const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
 function resizeCanvas(){
-const dpr = window.devicePixelRatio || 1;
 
-canvas.width = window.innerWidth * dpr;
-canvas.height = window.innerHeight * dpr;
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-canvas.style.width = window.innerWidth + "px";
-canvas.style.height = window.innerHeight + "px";
+canvas.style.width = "100vw";
+canvas.style.height = "100vh";
 
-ctx.setTransform(dpr,0,0,dpr,0,0);
 }
 
 resizeCanvas();
@@ -598,7 +596,7 @@ document.getElementById("info").innerHTML =
 
 // ================= CLICK =================
 canvas.addEventListener("click",(e)=>{
-  
+
 const rect = canvas.getBoundingClientRect();
 
 const x = Math.floor(
@@ -609,23 +607,51 @@ const y = Math.floor(
 (e.clientY - rect.top + cameraY) / TILE
 );
 
-console.log("CLICK WORLD:", x, y, selectedBuild);
-console.log("CLICK DETECTED");
-console.log("selectedBuild:", selectedBuild);
-  
-// select
+// výber budovy
 for(let b of buildings){
-if(b.x===x&&b.y===y){
-selected=b;
+
+    if(b.x===x && b.y===y){
+
+        selected = b;
+
+        updateInfo();
+
+        return;
+    }
+}
+
+// nič nie je vybrané
+selected = null;
 updateInfo();
-return;
-}
+
+// musí byť zvolená budova
+if(!selectedBuild){
+    return;
 }
 
-// build
-if(!selectedBuild) return;
+// mapa mimo rozsahu
+if(
+    x < 0 ||
+    y < 0 ||
+    x >= MAP_SIZE ||
+    y >= MAP_SIZE
+){
+    return;
+}
 
-let cost=B[selectedBuild].cost;
+// voda
+if(mapData[x][y] === "water"){
+    log("❌ Cannot build on water");
+    return;
+}
+
+// obsadené políčko
+if(buildings.some(b => b.x===x && b.y===y)){
+    log("❌ Tile occupied");
+    return;
+}
+
+let cost = B[selectedBuild].cost;
 
 if(game.treasury < cost){
     log("❌ Not enough Treasury");
@@ -635,18 +661,23 @@ if(game.treasury < cost){
 game.treasury -= cost;
 
 buildings.push({
-x,y,
-type:selectedBuild,
-level:1,
-cooldown:0
+    x:x,
+    y:y,
+    type:selectedBuild,
+    level:1,
+    cooldown:0
 });
 
-console.log("ADDED BUILDING:", buildings);
+explosion(
+    x*TILE,
+    y*TILE,
+    B[selectedBuild].color
+);
 
-explosion(x*TILE,y*TILE,B[selectedBuild].color);
+log("🏗 " + selectedBuild + " built");
 
-log("🏗 "+selectedBuild+" built");
 ui();
+
 });
 
 // ================= ECONOMY =================
