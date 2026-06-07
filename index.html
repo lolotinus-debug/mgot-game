@@ -678,6 +678,20 @@ function demolish(){
             "Nothing selected";
     }
 }
+  function screenToWorld(e){
+
+    const rect = canvas.getBoundingClientRect();
+
+    // 1. screen position (CSS pixels)
+    let sx = e.clientX - rect.left;
+    let sy = e.clientY - rect.top;
+
+    // 2. convert to world (reverse transform)
+    return {
+        x: sx / zoom + cameraX,
+        y: sy / zoom + cameraY
+    };
+}
 
 // ================= CLICK =================
 canvas.addEventListener("click",(e)=>{
