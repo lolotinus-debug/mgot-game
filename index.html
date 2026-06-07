@@ -34,6 +34,7 @@ background:#0f172a;
 
 display:flex;
 align-items:center;
+justify-content:flex-start;
 
 padding:0 12px;
 gap:12px;
@@ -41,19 +42,38 @@ gap:12px;
 border-bottom:2px solid #00d4ff;
 z-index:100;
 font-size:14px;
+
+overflow:hidden;
 }
+
+/* logo */
+#logo{
+width:42px;
+height:42px;
+object-fit:cover;
+border-radius:50%;
+border:2px solid #00d4ff;
+box-shadow:0 0 10px #00d4ff88;
+flex-shrink:0;
+}
+
+/* resources container */
+#resources{
+display:flex;
+gap:12px;
+align-items:center;
+flex-wrap:wrap;
+margin-left:12px;
+overflow:hidden;
+}
+
+/* jednotlivé staty */
 .resource{
+white-space:nowrap;
+font-size:12px;
 color:#00d4ff;
 font-weight:bold;
 }
-
-  display:flex;
-    gap:15px;
-    margin-left:auto;
-    margin-right:auto;
-    flex-wrap:wrap;
-    justify-content:center;
-}   
 
 /* ================= LEFT PANEL ================= */
 
@@ -89,7 +109,6 @@ transition:0.2s;
 #leftPanel button:hover{
 transform:scale(1.02);
 }
-
 /* ================= RIGHT PANEL ================= */
 
 #rightPanel{
@@ -175,8 +194,6 @@ padding:6px;
 flex-wrap:wrap;
 }
 
-/* BUILDINGS PANEL */
-
 #leftPanel{
 left:5px;
 bottom:5px;
@@ -186,11 +203,8 @@ width:48%;
 max-height:220px;
 
 overflow-y:auto;
-
 padding:8px;
 }
-
-/* INFO PANEL */
 
 #rightPanel{
 right:5px;
@@ -201,21 +215,15 @@ width:48%;
 padding:8px;
 }
 
-/* BUTTONS */
-
 #leftPanel button,
 #rightPanel button{
 font-size:14px;
 padding:12px;
 }
 
-/* INFO */
-
 #info{
 font-size:12px;
 }
-
-/* LOG */
 
 #log{
 width:95%;
@@ -223,33 +231,18 @@ height:90px;
 
 left:50%;
 transform:translateX(-50%);
-
 bottom:240px;
 
 font-size:10px;
 }
 
-/* CANVAS */
-
 canvas{
 width:100vw;
 height:100vh;
 }
-
-/* SCROLL */
-
-#leftPanel::-webkit-scrollbar{
-width:4px;
 }
 
-#leftPanel::-webkit-scrollbar-thumb{
-background:#00d4ff;
-border-radius:10px;
-}
-
-}
-
-/* EXTRA SMALL PHONES */
+/* ================= EXTRA SMALL PHONES ================= */
 
 @media (max-width:480px){
 
@@ -276,16 +269,6 @@ padding:10px;
 height:80px;
 font-size:9px;
 }
-
-#logo{
-    width:42px;
-    height:42px;
-    object-fit:cover;
-    border-radius:50%;
-    border:2px solid #00d4ff;
-    box-shadow:0 0 10px #00d4ff88;
-
-    flex-shrink:0;
 }
 
 }
