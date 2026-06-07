@@ -1064,7 +1064,7 @@ function generateMap(){
             let m=
                 noise(x*0.035+100,y*0.035+100);
 
-            if(h<0.15){
+            if(h<0.05){
 
                 mapData[x][y]="water";
 
@@ -1083,7 +1083,7 @@ function generateMap(){
         }
     }
 
-    expandWater(5);
+    expandWater(1);
 
     expandForest();
 
