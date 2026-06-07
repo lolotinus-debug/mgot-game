@@ -579,16 +579,44 @@ function upgrade(){
     }
 
     if(selected.type === "townhall"){
-        log("❌ Headquarters cannot be upgraded");
+        
+        let roll = Math.random();
+
+        if(roll < 0.6){
+            // ❌ DUMP EVENT
+            game.price *= 0.85;
+
+            log("📉 HQ upgrade failed → price -15%");
+        }
+        else{
+            // 🚀 PUMP EVENT
+            let pump = 1 + (Math.random() * 0.25 + 0.05);
+
+            game.price *= pump;
+            game.lp *= 1 + (pump - 1) * 0.8;
+
+            log("🚀 HQ upgrade success → pump event");
+        }
+
+        game.marketCap = game.price * game.supply;
+        ui();
         return;
     }
 
+    // ================= NORMAL BUILDINGS =================
     let cost = selected.level * 120;
 
     if(game.treasury < cost){
         log("❌ Not enough Treasury");
         return;
     }
+
+    game.treasury -= cost;
+    selected.level++;
+
+    log("⬆ Upgraded " + selected.type);
+    ui();
+}
 // ================= CLUSTER BONUS =================
 let clusterBonus = 0;
 
