@@ -593,6 +593,7 @@ function upgrade(){
 
         game.marketCap = game.price * game.supply;
         ui();
+      updateInfo();
         return;
     }
 
@@ -619,11 +620,12 @@ function upgrade(){
     }
 
     game.treasury -= finalCost;
-    selected.level++;
+selected.level++;
 
-    log("⬆ Upgraded " + selected.type);
-    ui();
-}
+log("⬆ Upgraded " + selected.type);
+
+ui();
+updateInfo();
 
 // ================= DEMOLISH =================
 function demolish(){
