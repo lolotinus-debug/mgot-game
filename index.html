@@ -688,7 +688,46 @@ document.getElementById("info").innerHTML =
 
 }
 
+function hasRoadConnection(x,y){
+
+    const dirs = [
+        [1,0],
+        [-1,0],
+        [0,1],
+        [0,-1]
+    ];
+
+    for(let d of dirs){
+
+        let nx = x + d[0];
+        let ny = y + d[1];
+
+        // cesta
+        if(
+            roads.some(r =>
+                r.x === nx &&
+                r.y === ny
+            )
+        ){
+            return true;
+        }
+
+        // Town Hall
+        if(
+            buildings.some(b =>
+                b.type === "townhall" &&
+                b.x === nx &&
+                b.y === ny
+            )
+        ){
+            return true;
+        }
+    }
+
+    return false;
 }
+}
+
 
 // ================= CLICK =================
 canvas.addEventListener("click",(e)=>{
@@ -763,7 +802,18 @@ ui();
 
 return;
 }
+if(
+    selectedBuild !== "road" &&
+    selectedBuild !== "townhall"
+){
 
+    if(!hasRoadConnection(x,y)){
+
+        log("❌ Must be connected to road");
+
+        return;
+    }
+}
 if(buildings.some(b =>
 b.x===x &&
 b.y===y
