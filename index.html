@@ -687,8 +687,8 @@ document.getElementById("info").innerHTML =
 "Nothing selected";
 
 }
-
-function hasRoadConnection(x,y){
+}
+unction hasRoadConnection(x,y){
 
     const dirs = [
         [1,0],
@@ -726,8 +726,6 @@ function hasRoadConnection(x,y){
 
     return false;
 }
-}
-
 
 // ================= CLICK =================
 canvas.addEventListener("click",(e)=>{
@@ -807,12 +805,15 @@ if(
     selectedBuild !== "townhall"
 ){
 
-    if(!hasRoadConnection(x,y)){
+   let hasRoads = roads.length > 0;
 
-        log("❌ Must be connected to road");
-
-        return;
-    }
+if(
+    hasRoads &&
+    !hasRoadConnection(x,y)
+){
+    log("❌ Must be connected to road");
+    return;
+}
 }
 if(buildings.some(b =>
 b.x===x &&
@@ -2080,22 +2081,22 @@ function newGame(){
 
     localStorage.removeItem("mgot_save");
 
-  game = {
-  treasury: 500,
-  holders: 1,
-  engagement: 1,
-  education: 0,
-  utility: 1,
-  promoters: 0,
-  lp: 100,
-  supply: 1000000,
-  reputation: 0,
-  communityPower: 0,
-  price: 0.001,
-  marketCap: 1000,
-  volume: 0,
-  lastPrice: 0.001,
-};
+    game = {
+        treasury: 500,
+        holders: 1,
+        engagement: 1,
+        education: 0,
+        utility: 1,
+        promoters: 0,
+        lp: 100,
+        supply: 1000000,
+        reputation: 0,
+        communityPower: 0,
+        price: 0.001,
+        marketCap: 1000,
+        volume: 0,
+        lastPrice: 0.001,
+    };
 
     buildings = [{
         x:10,
@@ -2103,6 +2104,9 @@ function newGame(){
         type:"townhall",
         level:1
     }];
+
+    // RESET CIEST
+    roads = [];
 
     particles = [];
     selected = null;
@@ -2122,6 +2126,7 @@ function newGame(){
     log("🆕 New Game Started");
 
 }
+  
 
 // START
 
