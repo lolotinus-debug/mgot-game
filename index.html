@@ -738,19 +738,12 @@ canvas.addEventListener("click",(e)=>{
 
 const rect = canvas.getBoundingClientRect();
 
-const x = Math.floor(
-    (e.clientX - rect.left + cameraX) / SUBTILE
-);
+const x = Math.floor((e.clientX - rect.left + cameraX) / SUBTILE);
+const y = Math.floor((e.clientY - rect.top + cameraY) / SUBTILE);
 
-const y = Math.floor(
-    (e.clientY - rect.top + cameraY) / SUBTILE
-);
-
-// výber budovy
+// SELECT BUILDING
 for(let b of buildings){
-
     if(b.x === x && b.y === y){
-
         selected = b;
         updateInfo();
         return;
@@ -760,88 +753,48 @@ for(let b of buildings){
 selected = null;
 updateInfo();
 
-if(!selectedBuild){
-    return;
-}
+if(!selectedBuild) return;
 
-// prepočet malého políčka na veľké mapové políčko
+// MAP BOUNDS (SUBTILE GRID)
+if(x < 0 || y < 0) return;
+
+// WATER CHECK (konvert na map grid)
 const mapX = Math.floor(x / SUBGRID);
 const mapY = Math.floor(y / SUBGRID);
 
-if(
-    mapX < 0 ||
-    mapY < 0 ||
-    mapX >= MAP_SIZE ||
-    mapY >= MAP_SIZE
-){
-    return;
-}
-
-// voda
-if(mapData[mapX][mapY] === "water"){
+if(mapData[mapX]?.[mapY] === "water"){
     log("❌ Cannot build on water");
     return;
 }
 
-// cesta
+// ROAD
 if(selectedBuild === "road"){
-
-    if(
-        roads.some(r =>
-            r.x === x &&
-            r.y === y
-        )
-    ){
-        return;
-    }
 
     if(game.treasury < 5){
         log("❌ Not enough Treasury");
         return;
     }
 
+    if(roads.some(r => r.x === x && r.y === y)){
+        return;
+    }
+
     game.treasury -= 5;
 
-    roads.push({
-        x:x,
-        y:y
-    });
+    roads.push({x,y});
 
     log("🛣 Road built");
-
     ui();
-
     return;
 }
 
-// ostatné budovy
-if(
-    selectedBuild !== "road" &&
-    selectedBuild !== "townhall"
-){
-
-    let hasRoads = roads.length > 0;
-
-    if(
-        hasRoads &&
-        !hasRoadConnection(x,y)
-    ){
-        log("❌ Must be connected to road");
-        return;
-    }
-}
-
-// obsadené miesto
-if(
-    buildings.some(b =>
-        b.x === x &&
-        b.y === y
-    )
-){
+// BLOCK IF OCCUPIED
+if(buildings.some(b => b.x === x && b.y === y)){
     log("❌ Tile occupied");
     return;
 }
 
+// COST
 let cost = B[selectedBuild].cost;
 
 if(game.treasury < cost){
@@ -852,11 +805,10 @@ if(game.treasury < cost){
 game.treasury -= cost;
 
 buildings.push({
-    x:x,
-    y:y,
-    type:selectedBuild,
-    level:1,
-    cooldown:0
+    x,
+    y,
+    type: selectedBuild,
+    level: 1
 });
 
 explosion(
@@ -865,8 +817,7 @@ explosion(
     B[selectedBuild].color
 );
 
-log("🏗 " + selectedBuild + " built");
-
+log("🏗 Built: " + selectedBuild);
 ui();
 
 });
@@ -1326,11 +1277,8 @@ function drawMap(){
 
         for(let y=0;y<MAP_SIZE;y++){
 
-            let px=
-                x*TILE-cameraX;
-
-            let py=
-                y*TILE-cameraY;
+            let px = x*SUBTILE*SUBGRID - cameraX;
+            let py = y*SUBTILE*SUBGRID - cameraY;
 
             let tile=
                 mapData[x][y];
@@ -1520,8 +1468,8 @@ function drawBuildings(){
 
 for(let b of buildings){
 
-let px = b.x * TILE - cameraX;
-let py = b.y * TILE - cameraY;
+let px = b.x * SUBTILE;
+let py = b.y * SUBTILE;
 
 // tieň
 ctx.fillStyle = "rgba(0,0,0,0.3)";
