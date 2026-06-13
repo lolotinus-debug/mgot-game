@@ -1241,92 +1241,84 @@ generateMap();
 
 function drawRoads(){
 
-for(let r of roads){
+    for(let r of roads){
 
-let px =
-r.x * TILE - cameraX;
+        let px = r.x * SUBTILE - cameraX;
+        let py = r.y * SUBTILE - cameraY;
 
-let py =
-r.y * TILE - cameraY;
+        let up = roads.some(a =>
+            a.x === r.x &&
+            a.y === r.y - 1
+        );
 
-let up =
-roads.some(a =>
-a.x===r.x &&
-a.y===r.y-1
-);
+        let down = roads.some(a =>
+            a.x === r.x &&
+            a.y === r.y + 1
+        );
 
-let down =
-roads.some(a =>
-a.x===r.x &&
-a.y===r.y+1
-);
+        let left = roads.some(a =>
+            a.x === r.x - 1 &&
+            a.y === r.y
+        );
 
-let left =
-roads.some(a =>
-a.x===r.x-1 &&
-a.y===r.y
-);
+        let right = roads.some(a =>
+            a.x === r.x + 1 &&
+            a.y === r.y
+        );
 
-let right =
-roads.some(a =>
-a.x===r.x+1 &&
-a.y===r.y
-);
+        ctx.fillStyle = "#8b7355";
 
-ctx.fillStyle="#8b7355";
+        ctx.fillRect(
+            px + 2,
+            py + 2,
+            SUBTILE - 4,
+            SUBTILE - 4
+        );
 
-ctx.fillRect(
-px+18,
-py+18,
-12,
-12
-);
+        // connections
+        if(up)
+            ctx.fillRect(
+                px + 4,
+                py - SUBTILE + 4,
+                SUBTILE - 8,
+                SUBTILE
+            );
 
-if(up)
-ctx.fillRect(
-px+18,
-py,
-12,
-30
-);
+        if(down)
+            ctx.fillRect(
+                px + 4,
+                py + SUBTILE - 4,
+                SUBTILE - 8,
+                SUBTILE
+            );
 
-if(down)
-ctx.fillRect(
-px+18,
-py+18,
-12,
-30
-);
+        if(left)
+            ctx.fillRect(
+                px - SUBTILE + 4,
+                py + 4,
+                SUBTILE,
+                SUBTILE - 8
+            );
 
-if(left)
-ctx.fillRect(
-px,
-py+18,
-30,
-12
-);
+        if(right)
+            ctx.fillRect(
+                px + SUBTILE - 4,
+                py + 4,
+                SUBTILE,
+                SUBTILE - 8
+            );
 
-if(right)
-ctx.fillRect(
-px+18,
-py+18,
-30,
-12
-);
+        ctx.strokeStyle = "#c4a484";
+        ctx.lineWidth = 1;
 
-ctx.strokeStyle="#c4a484";
-ctx.lineWidth=2;
-
-ctx.strokeRect(
-px+18,
-py+18,
-12,
-12
-);
-
+        ctx.strokeRect(
+            px + 2,
+            py + 2,
+            SUBTILE - 4,
+            SUBTILE - 4
+        );
+    }
 }
-}
-
 // ================= MAP ZONES =================
 function drawMap(){
 
