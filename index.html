@@ -359,6 +359,7 @@ font-size:9px;
 <div id="leftPanel">
 <h3>🏗 Buildings</h3>
 
+<button onclick="selectBuild('road')">🛣 Road (5)</button>
 <button onclick="selectBuild('community')">🏘 Community Hub (100)</button>
 <button onclick="selectBuild('marketing')">📢 Marketing Center (120)</button>
 <button onclick="selectBuild('treasury')">🏦 Treasury Vault (150)</button>
@@ -459,6 +460,7 @@ let game = {
 };
 
 let buildings = [];
+let roads = [];
 
 buildings.push({
 x:10,
@@ -470,21 +472,50 @@ level:1
 // ================= BUILD COSTS =================
 const B = {
 
-townhall:{cost:0,color:"#ffffff"},
+townhall:{
+cost:0,
+color:"#ffffff"
+},
 
-community:{cost:100,color:"#22c55e"},
+community:{
+cost:100,
+color:"#22c55e"
+},
 
-marketing:{cost:120,color:"#3b82f6"},
+marketing:{
+cost:120,
+color:"#3b82f6"
+},
 
-treasury:{cost:150,color:"#f59e0b"},
+treasury:{
+cost:150,
+color:"#f59e0b"
+},
 
-academy:{cost:200,color:"#a855f7"},
+academy:{
+cost:200,
+color:"#a855f7"
+},
 
-utility:{cost:250,color:"#00d4ff"},
+utility:{
+cost:250,
+color:"#00d4ff"
+},
 
-influencer:{cost:300,color:"#ef4444"},
+influencer:{
+cost:300,
+color:"#ef4444"
+},
 
-burn:{cost:350,color:"#eab308"}
+burn:{
+cost:350,
+color:"#eab308"
+},
+
+road:{
+cost:5,
+color:"#8b7355"
+}
 
 };
 
@@ -672,71 +703,96 @@ const y = Math.floor(
 (e.clientY - rect.top + cameraY) / TILE
 );
 
-// výber budovy
 for(let b of buildings){
 
-    if(b.x===x && b.y===y){
+if(b.x===x && b.y===y){
 
-        selected = b;
+selected = b;
 
-        updateInfo();
+updateInfo();
 
-        return;
-    }
+return;
+}
 }
 
-// nič nie je vybrané
 selected = null;
 updateInfo();
 
-// musí byť zvolená budova
 if(!selectedBuild){
-    return;
+return;
 }
 
-// mapa mimo rozsahu
 if(
-    x < 0 ||
-    y < 0 ||
-    x >= MAP_SIZE ||
-    y >= MAP_SIZE
+x < 0 ||
+y < 0 ||
+x >= MAP_SIZE ||
+y >= MAP_SIZE
 ){
-    return;
+return;
 }
 
-// voda
 if(mapData[x][y] === "water"){
-    log("❌ Cannot build on water");
-    return;
+log("❌ Cannot build on water");
+return;
 }
 
-// obsadené políčko
-if(buildings.some(b => b.x===x && b.y===y)){
-    log("❌ Tile occupied");
-    return;
+if(selectedBuild === "road"){
+
+if(roads.some(r =>
+r.x===x &&
+r.y===y
+)){
+return;
+}
+
+if(game.treasury < 5){
+log("❌ Not enough Treasury");
+return;
+}
+
+game.treasury -= 5;
+
+roads.push({
+x:x,
+y:y
+});
+
+log("🛣 Road built");
+
+ui();
+
+return;
+}
+
+if(buildings.some(b =>
+b.x===x &&
+b.y===y
+)){
+log("❌ Tile occupied");
+return;
 }
 
 let cost = B[selectedBuild].cost;
 
 if(game.treasury < cost){
-    log("❌ Not enough Treasury");
-    return;
+log("❌ Not enough Treasury");
+return;
 }
 
 game.treasury -= cost;
 
 buildings.push({
-    x:x,
-    y:y,
-    type:selectedBuild,
-    level:1,
-    cooldown:0
+x:x,
+y:y,
+type:selectedBuild,
+level:1,
+cooldown:0
 });
 
 explosion(
-    x*TILE,
-    y*TILE,
-    B[selectedBuild].color
+x*TILE,
+y*TILE,
+B[selectedBuild].color
 );
 
 log("🏗 " + selectedBuild + " built");
@@ -1115,71 +1171,90 @@ generateMap();
 
 function drawRoads(){
 
-    if(buildings.length < 2){
-        return;
-    }
+for(let r of roads){
 
-    ctx.lineWidth = 10;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "#8b7355";
+let px =
+r.x * TILE - cameraX;
 
-    const townHall =
-        buildings.find(
-            b=>b.type==="townhall"
-        );
+let py =
+r.y * TILE - cameraY;
 
-    if(!townHall){
-        return;
-    }
+let up =
+roads.some(a =>
+a.x===r.x &&
+a.y===r.y-1
+);
 
-    for(let b of buildings){
+let down =
+roads.some(a =>
+a.x===r.x &&
+a.y===r.y+1
+);
 
-        if(b===townHall){
-            continue;
-        }
+let left =
+roads.some(a =>
+a.x===r.x-1 &&
+a.y===r.y
+);
 
-        let x1=
-            townHall.x*TILE+
-            TILE/2-
-            cameraX;
+let right =
+roads.some(a =>
+a.x===r.x+1 &&
+a.y===r.y
+);
 
-        let y1=
-            townHall.y*TILE+
-            TILE/2-
-            cameraY;
+ctx.fillStyle="#8b7355";
 
-        let x2=
-            b.x*TILE+
-            TILE/2-
-            cameraX;
+ctx.fillRect(
+px+18,
+py+18,
+12,
+12
+);
 
-        let y2=
-            b.y*TILE+
-            TILE/2-
-            cameraY;
+if(up)
+ctx.fillRect(
+px+18,
+py,
+12,
+30
+);
 
-        ctx.beginPath();
+if(down)
+ctx.fillRect(
+px+18,
+py+18,
+12,
+30
+);
 
-        ctx.moveTo(x1,y1);
+if(left)
+ctx.fillRect(
+px,
+py+18,
+30,
+12
+);
 
-        ctx.lineTo(x2,y2);
+if(right)
+ctx.fillRect(
+px+18,
+py+18,
+30,
+12
+);
 
-        ctx.stroke();
+ctx.strokeStyle="#c4a484";
+ctx.lineWidth=2;
 
-        ctx.strokeStyle="#b08968";
-        ctx.lineWidth=4;
+ctx.strokeRect(
+px+18,
+py+18,
+12,
+12
+);
 
-        ctx.beginPath();
-
-        ctx.moveTo(x1,y1);
-
-        ctx.lineTo(x2,y2);
-
-        ctx.stroke();
-
-        ctx.strokeStyle="#8b7355";
-        ctx.lineWidth=10;
-    }
+}
 }
 
 // ================= MAP ZONES =================
@@ -1827,7 +1902,8 @@ localStorage.setItem(
 "mgot_save",
 JSON.stringify({
 game,
-buildings
+buildings,
+roads
 })
 );
 
@@ -1867,6 +1943,10 @@ game = {
 if(data.buildings){
 buildings = data.buildings;
 }
+
+if(data.roads){
+roads = data.roads;
+}  
 
 // guarantee townhall exists
 let hasTownHall = buildings.some(b => b.type === "townhall");
