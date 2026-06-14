@@ -441,7 +441,8 @@ function selectBuild(t){
 
   log("Build: " + t);
 }
-  
+let hoverTileX = -1;
+let hoverTileY = -1; 
 let selected = null;
 let selectedBuild = null;
 
@@ -675,6 +676,21 @@ document.getElementById("info").innerHTML =
 }
 
 // ================= CLICK =================
+
+canvas.addEventListener("mousemove",(e)=>{
+
+const rect = canvas.getBoundingClientRect();
+
+hoverTileX = Math.floor(
+(e.clientX - rect.left + cameraX) / TILE
+);
+
+hoverTileY = Math.floor(
+(e.clientY - rect.top + cameraY) / TILE
+);
+
+});
+  
 canvas.addEventListener("click",(e)=>{
 
 const rect = canvas.getBoundingClientRect();
@@ -1154,12 +1170,24 @@ generateMap();
 function hasRoad(x,y){
 
     return buildings.some(b =>
-        (b.type==="road" || b.type==="townhall")
-        &&
-        b.x===x
-        &&
-        b.y===y
+
+        b.x===x &&
+        b.y===y &&
+
+        (
+            b.type==="road" ||
+            b.type==="townhall" ||
+            b.type==="community" ||
+            b.type==="marketing" ||
+            b.type==="treasury" ||
+            b.type==="academy" ||
+            b.type==="utility" ||
+            b.type==="influencer" ||
+            b.type==="burn"
+        )
+
     );
+
 }
 
 function drawRoads(){
@@ -1210,19 +1238,19 @@ for(let r of buildings){
     // svetlejší stred
     ctx.fillStyle="#b8956a";
 
-    ctx.fillRect(px+10,py+10,28,28);
-
+   ctx.fillRect(px+4,py+4,40,40);
+  
     if(top)
-        ctx.fillRect(px+10,py,28,18);
+          ctx.fillRect(px+4,py,40,24);
 
     if(bottom)
-        ctx.fillRect(px+10,py+30,28,18);
+ctx.fillRect(px+4,py+24,40,24);
 
     if(left)
-        ctx.fillRect(px,py+10,18,28);
-
+ctx.fillRect(px,py+4,24,40);
+  
     if(right)
-        ctx.fillRect(px+30,py+10,18,28);
+ctx.fillRect(px+24,py+4,24,40);
 
     // okraje
     ctx.strokeStyle="#5a4632";
@@ -1457,6 +1485,67 @@ ctx.ellipse(
 
 ctx.fillStyle="rgba(0,0,0,0.25)";
 ctx.fill();
+
+function drawGhostBuilding(){
+
+if(!selectedBuild) return;
+
+let px = hoverTileX * TILE - cameraX;
+let py = hoverTileY * TILE - cameraY;
+
+let valid = true;
+
+if(
+hoverTileX < 0 ||
+hoverTileY < 0 ||
+hoverTileX >= MAP_SIZE ||
+hoverTileY >= MAP_SIZE
+){
+valid = false;
+}
+
+if(
+mapData[hoverTileX]?.[hoverTileY] === "water"
+){
+valid = false;
+}
+
+if(
+buildings.some(
+b=>b.x===hoverTileX && b.y===hoverTileY
+)
+){
+valid = false;
+}
+
+ctx.fillStyle =
+valid
+? "rgba(0,255,0,0.35)"
+: "rgba(255,0,0,0.35)";
+
+ctx.fillRect(
+px,
+py,
+TILE,
+TILE
+);
+
+ctx.strokeStyle =
+valid
+? "#00ff00"
+: "#ff0000";
+
+ctx.lineWidth = 2;
+
+ctx.strokeRect(
+px,
+py,
+TILE,
+TILE
+);
+
+}
+  
 // ================= TOWN HALL =================
 if(b.type==="townhall"){
 
@@ -1989,6 +2078,9 @@ ctx.fillRect(
 
 drawMap();
 drawRoads();
+
+drawGhostBuilding();
+
 drawBuildings();
 drawParticles();
 
