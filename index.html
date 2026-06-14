@@ -1127,76 +1127,65 @@ function generateMap(){
 generateMap();
 // ================= ROADS =================
 
+function hasRoad(x,y){
+
+    return buildings.some(b =>
+        (b.type==="road" || b.type==="townhall")
+        &&
+        b.x===x
+        &&
+        b.y===y
+    );
+}
+
 function drawRoads(){
 
 for(let r of buildings){
 
-    if(r.type !== "road") continue;
+    if(r.type!=="road") continue;
 
-    let px = r.x * TILE - cameraX;
-    let py = r.y * TILE - cameraY;
+    let px = r.x*TILE-cameraX;
+    let py = r.y*TILE-cameraY;
 
-    const up =
-        buildings.some(b =>
-            (b.type==="road" || b.type==="townhall") &&
-            b.x===r.x &&
-            b.y===r.y-1
-        );
+    let top    = hasRoad(r.x,r.y-1);
+    let bottom = hasRoad(r.x,r.y+1);
+    let left   = hasRoad(r.x-1,r.y);
+    let right  = hasRoad(r.x+1,r.y);
 
-    const down =
-        buildings.some(b =>
-            (b.type==="road" || b.type==="townhall") &&
-            b.x===r.x &&
-            b.y===r.y+1
-        );
-
-    const left =
-        buildings.some(b =>
-            (b.type==="road" || b.type==="townhall") &&
-            b.x===r.x-1 &&
-            b.y===r.y
-        );
-
-    const right =
-        buildings.some(b =>
-            (b.type==="road" || b.type==="townhall") &&
-            b.x===r.x+1 &&
-            b.y===r.y
-        );
-
-    // stred cesty
+    // základ
     ctx.fillStyle="#8b7355";
-    ctx.fillRect(px+16,py+16,16,16);
 
-    // vetvy
-    if(up)
-        ctx.fillRect(px+16,py,16,24);
+    // stred
+    ctx.fillRect(px+10,py+10,28,28);
 
-    if(down)
-        ctx.fillRect(px+16,py+24,16,24);
+    if(top)
+        ctx.fillRect(px+10,py,28,20);
+
+    if(bottom)
+        ctx.fillRect(px+10,py+28,28,20);
 
     if(left)
-        ctx.fillRect(px,py+16,24,16);
+        ctx.fillRect(px,py+10,20,28);
 
     if(right)
-        ctx.fillRect(px+24,py+16,24,16);
+        ctx.fillRect(px+28,py+10,20,28);
 
     // svetlejší stred
     ctx.fillStyle="#b08968";
 
-    ctx.fillRect(px+20,py+20,8,8);
+    ctx.fillRect(px+14,py+14,20,20);
 
-    if(up)
-        ctx.fillRect(px+20,py,8,24);
+    if(top)
+        ctx.fillRect(px+14,py,20,18);
 
-    if(down)
-        ctx.fillRect(px+20,py+24,8,24);
+    if(bottom)
+        ctx.fillRect(px+14,py+30,20,18);
 
     if(left)
-        ctx.fillRect(px,py+20,24,8);
+        ctx.fillRect(px,py+14,18,20);
 
     if(right)
-        ctx.fillRect(px+24,py+20,24,8);
+        ctx.fillRect(px+30,py+14,18,20);
 }
 }
 
@@ -1407,8 +1396,8 @@ for(let b of buildings){
     }
 
     let px = b.x * TILE - cameraX;
-    let py = b.y * TILE - cameraY;
-// tieň
+let py = b.y * TILE - cameraY - 6;
+  // tieň
 ctx.fillStyle = "rgba(0,0,0,0.3)";
 ctx.beginPath();
 
