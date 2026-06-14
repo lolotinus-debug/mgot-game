@@ -414,6 +414,11 @@ const TILE = 48;
 let cameraX = 0;
 let cameraY = 0;
 
+let zoom = 1;
+
+const MIN_ZOOM = 0.5;
+const MAX_ZOOM = 3;
+
 let hubTimer = 0;
 let hubLevel = 0;
 
@@ -674,13 +679,20 @@ canvas.addEventListener("click",(e)=>{
 
 const rect = canvas.getBoundingClientRect();
 
-const x = Math.floor(
-(e.clientX - rect.left + cameraX) / TILE
-);
+const worldX =
+(e.clientX - rect.left) / zoom
++ cameraX;
 
-const y = Math.floor(
-(e.clientY - rect.top + cameraY) / TILE
-);
+const worldY =
+(e.clientY - rect.top) / zoom
++ cameraY;
+
+const x =
+Math.floor(worldX / TILE);
+
+const y =
+Math.floor(worldY / TILE);
+  );
 
 // výber budovy
 for(let b of buildings){
@@ -1953,25 +1965,34 @@ console.log("Save corrupted", err);
 function render(){
 
     ctx.clearRect(
-        0,
-        0,
-        window.innerWidth,
-        window.innerHeight
-    );
+    0,
+    0,
+    canvas.width,
+    canvas.height
+);
 
-    ctx.fillStyle = "#07131f";
+ctx.save();
 
-    ctx.fillRect(
-        0,
-        0,
-        window.innerWidth,
-        window.innerHeight
-    );
+ctx.scale(
+    zoom,
+    zoom
+);
 
-    drawMap();
+ctx.fillStyle="#07131f";
+
+ctx.fillRect(
+    0,
+    0,
+    canvas.width/zoom,
+    canvas.height/zoom
+);
+
+drawMap();
 drawRoads();
 drawBuildings();
 drawParticles();
+
+ctx.restore();
 
     requestAnimationFrame(render);
 }
@@ -1992,19 +2013,56 @@ canvas.addEventListener("touchmove",(e)=>{
 let dx = e.touches[0].clientX - touchStartX;
 let dy = e.touches[0].clientY - touchStartY;
 
-cameraX -= dx;
-cameraY -= dy;
+cameraX -= dx / zoom;
+cameraY -= dy / zoom;
 
 touchStartX = e.touches[0].clientX;
 touchStartY = e.touches[0].clientY;
 
 });
 window.addEventListener("keydown",(e)=>{
-if(e.key==="ArrowLeft") cameraX-=32;
-if(e.key==="ArrowRight") cameraX+=32;
-if(e.key==="ArrowUp") cameraY-=32;
-if(e.key==="ArrowDown") cameraY+=32;
+if(e.key==="ArrowLeft") cameraX-=32/zoom;
+if(e.key==="ArrowRight") cameraX+=32/zoom;
+if(e.key==="ArrowUp") cameraY-=32/zoom;
+if(e.key==="ArrowDown") cameraY+=32/zoom;
 });
+
+canvas.addEventListener("wheel",(e)=>{
+
+e.preventDefault();
+
+let oldZoom = zoom;
+
+if(e.deltaY < 0){
+
+zoom *= 1.1;
+
+}else{
+
+zoom *= 0.9;
+
+}
+
+zoom = Math.max(
+MIN_ZOOM,
+Math.min(MAX_ZOOM,zoom)
+);
+
+const mouseX = e.offsetX;
+const mouseY = e.offsetY;
+
+cameraX +=
+(mouseX/oldZoom)
+-
+(mouseX/zoom);
+
+cameraY +=
+(mouseY/oldZoom)
+-
+(mouseY/zoom);
+
+});
+  
 function newGame(){
 
     if(!confirm("Start a new game?")){
