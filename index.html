@@ -800,33 +800,57 @@ setInterval(()=>{
 
     // ================= TIMER =================
     if(gameTime <= 0){
+        gameTime = 0;
         log("⛔ GAME OVER");
         return;
     }
 
     gameTime--;
 
-    if(gameTime <= 0){
-        gameTime = 0;
-        log("⛔ GAME OVER");
+    // ================= HUB DETECTION =================
+    let hubLevel = 0;
+
+    for(let b of buildings){
+        if(b.type === "community"){
+            hubLevel += b.level;
+        }
+    }
+
+    // ak nemáš Hub, nič nerastie
+    if(hubLevel === 0){
+        ui();
         return;
     }
 
+    // ================= HUB HOLDER SYSTEM =================
+    hubTimer++;
+
+    let interval = 60;
+    interval -= (hubLevel - 1) * 10;
+
+    if(interval < 10){
+        interval = 10;
+    }
+
+    if(hubTimer >= interval){
+        game.holders += 1;
+        hubTimer = 0;
+        log("👥 +1 Holder (Hub Lv." + hubLevel + ")");
+    }
+
+    // ================= BUILDINGS =================
     for(let b of buildings){
 
-        // COMMUNITY = iba holder growth
         if(b.type==="community"){
-            // nič nepridáva engagement
+            // nothing
         }
 
-        // MARKETING = jediný zdroj engagementu
         if(b.type==="marketing"){
 
             let maxEngagement =
                 game.holders * 3 * b.level;
 
             if(game.engagement < maxEngagement){
-
                 game.engagement += b.level;
 
                 if(game.engagement > maxEngagement){
@@ -850,15 +874,11 @@ setInterval(()=>{
         }
 
         if(b.type==="influencer"){
-
             game.promoters += 0.2 * b.level;
-
-            game.holders +=
-                (game.engagement * 0.0005) * b.level;
+            game.holders += (game.engagement * 0.0005) * b.level;
         }
 
         if(b.type==="burn"){
-
             game.supply -= (10 * b.level);
 
             if(game.supply < 1000){
@@ -867,9 +887,16 @@ setInterval(()=>{
         }
     }
 
-    // passive growth
+    // ================= PASSIVE GROWTH =================
     game.engagement += game.promoters * 0.05;
     game.engagement += game.holders * 0.0005;
+
+    // ================= EDUCATION =================
+    if(game.education >= 100){
+        game.utility++;
+        game.education = 0;
+        log("🔷 New Utility Released");
+    }
 
 },1000);
     // ================= EDUCATION =================
