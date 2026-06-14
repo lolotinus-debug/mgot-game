@@ -1468,8 +1468,8 @@ function drawBuildings(){
 
 for(let b of buildings){
 
-let px = b.x * SUBTILE;
-let py = b.y * SUBTILE;
+let px = b.x * SUBTILE - cameraX;
+let py = b.y * SUBTILE - cameraY;
 
 // tieň
 ctx.fillStyle = "rgba(0,0,0,0.3)";
