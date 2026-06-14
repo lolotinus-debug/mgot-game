@@ -726,11 +726,7 @@ game.treasury -= cost;
 if(selectedBuild==="road"){
 
     let nearRoad =
-        buildings.some(b=>
-
-            (b.type==="road" ||
-             b.type==="townhall") &&
-
+        buildings.some(b =>
             Math.abs(b.x-x)+
             Math.abs(b.y-y)===1
         );
@@ -1135,37 +1131,75 @@ function drawRoads(){
 
 for(let r of buildings){
 
-    if(r.type !== "road"){
-        continue;
-    }
+    if(r.type !== "road") continue;
 
     let px = r.x * TILE - cameraX;
     let py = r.y * TILE - cameraY;
 
-    ctx.fillStyle = "#8b7355";
-    ctx.fillRect(px+4,py+18,40,12);
+    const up =
+        buildings.some(b =>
+            (b.type==="road" || b.type==="townhall") &&
+            b.x===r.x &&
+            b.y===r.y-1
+        );
 
-    ctx.fillStyle = "#b08968";
-    ctx.fillRect(px+4,py+22,40,4);
+    const down =
+        buildings.some(b =>
+            (b.type==="road" || b.type==="townhall") &&
+            b.x===r.x &&
+            b.y===r.y+1
+        );
 
-    let top =
-        buildings.some(b=>b.type==="road" &&
-        b.x===r.x && b.y===r.y-1);
+    const left =
+        buildings.some(b =>
+            (b.type==="road" || b.type==="townhall") &&
+            b.x===r.x-1 &&
+            b.y===r.y
+        );
 
-    let bottom =
-        buildings.some(b=>b.type==="road" &&
-        b.x===r.x && b.y===r.y+1);
+    const right =
+        buildings.some(b =>
+            (b.type==="road" || b.type==="townhall") &&
+            b.x===r.x+1 &&
+            b.y===r.y
+        );
 
-    if(top || bottom){
+    // stred cesty
+    ctx.fillStyle="#8b7355";
+    ctx.fillRect(px+16,py+16,16,16);
 
-        ctx.fillStyle="#8b7355";
-        ctx.fillRect(px+18,py+4,12,40);
+    // vetvy
+    if(up)
+        ctx.fillRect(px+16,py,16,24);
 
-        ctx.fillStyle="#b08968";
-        ctx.fillRect(px+22,py+4,4,40);
-    }
+    if(down)
+        ctx.fillRect(px+16,py+24,16,24);
+
+    if(left)
+        ctx.fillRect(px,py+16,24,16);
+
+    if(right)
+        ctx.fillRect(px+24,py+16,24,16);
+
+    // svetlejší stred
+    ctx.fillStyle="#b08968";
+
+    ctx.fillRect(px+20,py+20,8,8);
+
+    if(up)
+        ctx.fillRect(px+20,py,8,24);
+
+    if(down)
+        ctx.fillRect(px+20,py+24,8,24);
+
+    if(left)
+        ctx.fillRect(px,py+20,24,8);
+
+    if(right)
+        ctx.fillRect(px+24,py+20,24,8);
 }
 }
+
 
 // ================= MAP ZONES =================
 function drawMap(){
