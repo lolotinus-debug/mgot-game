@@ -845,6 +845,8 @@ setInterval(()=>{
         }
     }
 }
+  game.engagement += game.promoters * 0.05;
+game.engagement += game.holders * 0.0005;
     // ================= EDUCATION =================
 
     if(game.education >= 100){
@@ -1205,14 +1207,15 @@ if(roads.length===0) return;
 
 // ================= MAX WALKERS =================
 
+let basePop = game.holders * 0.03;
+let engagementPop = game.engagement * 0.02;
+let influencerPop = game.promoters * 3;
+
+// synergy bonus (dôležité!)
+let synergy = 1 + (game.engagement / 500) * (game.promoters / 10);
+
 let maxWalkers = Math.floor(
-
-    game.holders * 0.05 +
-
-    game.engagement * 0.01 +
-
-    game.promoters * 2
-
+    (basePop + engagementPop + influencerPop) * synergy
 );
 
 // minimálne 1
@@ -1226,9 +1229,16 @@ if(maxWalkers > 100){
 }
 
 // ak je už dosť ľudí
-if(walkers.length >= maxWalkers){
-    return;
-}
+let spawnSpeed = 3000;
+
+// viac engagement = rýchlejší svet
+spawnSpeed -= game.engagement * 2;
+
+// influenceri zrýchlia “viral movement”
+spawnSpeed -= game.promoters * 100;
+
+// clamp
+spawnSpeed = Math.max(300, spawnSpeed);
 
 // ================= SPAWN =================
 
