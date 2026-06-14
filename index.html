@@ -469,8 +469,10 @@ let buildings = [];
 let roads = [];
 
 buildings.push({
-x:10,
-y:10,
+x:20,
+y:20,
+w:4,
+h:4,
 type:"townhall",
 level:1
 });
@@ -801,7 +803,14 @@ if(game.treasury < cost){
     log("❌ Not enough Treasury");
     return;
 }
+if(selectedBuild !== "road"){
 
+    if(!hasRoadConnection(x,y)){
+        log("❌ Building must connect to road");
+        return;
+    }
+
+}
 game.treasury -= cost;
 
 buildings.push({
@@ -1963,8 +1972,10 @@ let hasTownHall = buildings.some(b => b.type === "townhall");
 
 if(!hasTownHall){
 buildings.push({
-x:10,
-y:10,
+x:20,
+y:20,
+w:4,
+h:4,
 type:"townhall",
 level:1
 });
