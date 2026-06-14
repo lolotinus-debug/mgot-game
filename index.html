@@ -1164,41 +1164,61 @@ for(let r of buildings){
     let left   = hasRoad(r.x-1,r.y);
     let right  = hasRoad(r.x+1,r.y);
 
-    // základ
-    ctx.fillStyle="#8b7355";
+    // hlavná cesta
+    ctx.fillStyle="#7c6244";
 
-    // stred
+    // širší stred
+    ctx.fillRect(px+4,py+4,40,40);
+
+    if(top)
+        ctx.fillRect(px+4,py,40,24);
+
+    if(bottom)
+        ctx.fillRect(px+4,py+24,40,24);
+
+    if(left)
+        ctx.fillRect(px,py+4,24,40);
+
+    if(right)
+        ctx.fillRect(px+24,py+4,24,40);
+
+    // textúra cesty
+    ctx.fillStyle="#a7865e";
+
+    for(let i=0;i<8;i++){
+
+        ctx.fillRect(
+            px+6+Math.random()*36,
+            py+6+Math.random()*36,
+            2,
+            2
+        );
+    }
+
+    // svetlejší stred
+    ctx.fillStyle="#b8956a";
+
     ctx.fillRect(px+10,py+10,28,28);
 
     if(top)
-        ctx.fillRect(px+10,py,28,20);
+        ctx.fillRect(px+10,py,28,18);
 
     if(bottom)
-        ctx.fillRect(px+10,py+28,28,20);
+        ctx.fillRect(px+10,py+30,28,18);
 
     if(left)
-        ctx.fillRect(px,py+10,20,28);
+        ctx.fillRect(px,py+10,18,28);
 
     if(right)
-        ctx.fillRect(px+28,py+10,20,28);
+        ctx.fillRect(px+30,py+10,18,28);
 
-    // svetlejší stred
-    ctx.fillStyle="#b08968";
+    // okraje
+    ctx.strokeStyle="#5a4632";
+    ctx.lineWidth=1;
 
-    ctx.fillRect(px+14,py+14,20,20);
-
-    if(top)
-        ctx.fillRect(px+14,py,20,18);
-
-    if(bottom)
-        ctx.fillRect(px+14,py+30,20,18);
-
-    if(left)
-        ctx.fillRect(px,py+14,18,20);
-
-    if(right)
-        ctx.fillRect(px+30,py+14,18,20);
+    ctx.strokeRect(px+4,py+4,40,40);
 }
+
 }
 
 
@@ -1408,7 +1428,7 @@ for(let b of buildings){
     }
 
     let px = b.x * TILE - cameraX;
-let py = b.y * TILE - cameraY - 6;
+let py = b.y * TILE - cameraY - 2;
   // tieň
 ctx.fillStyle = "rgba(0,0,0,0.3)";
 ctx.beginPath();
