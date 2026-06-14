@@ -957,7 +957,39 @@ game.price +=
     if(isNaN(game.price)){
         game.price = 0.001;
     }
+// ================= POPULATION CONTROL =================
 
+let maxWalkers = Math.floor(
+
+    game.holders * 0.05 +
+
+    game.engagement * 0.01 +
+
+    game.promoters * 2
+
+);
+
+if(maxWalkers < 1){
+    maxWalkers = 1;
+}
+
+if(maxWalkers > 100){
+    maxWalkers = 100;
+}
+
+// ak komunita klesne,
+// časť ľudí zmizne
+
+while(walkers.length > maxWalkers){
+
+    walkers.splice(
+        Math.floor(
+            Math.random()*walkers.length
+        ),
+        1
+    );
+
+}
     ui();
 
 },1000);
@@ -1166,29 +1198,59 @@ function hasRoad(x,y){
 setInterval(()=>{
 
 let roads = buildings.filter(
-b=>b.type==="road"
+    b => b.type==="road"
 );
 
 if(roads.length===0) return;
 
-let r =
-roads[
-Math.floor(
-Math.random()*roads.length
-)
+// ================= MAX WALKERS =================
+
+let maxWalkers = Math.floor(
+
+    game.holders * 0.05 +
+
+    game.engagement * 0.01 +
+
+    game.promoters * 2
+
+);
+
+// minimálne 1
+if(maxWalkers < 1){
+    maxWalkers = 1;
+}
+
+// kvôli výkonu
+if(maxWalkers > 100){
+    maxWalkers = 100;
+}
+
+// ak je už dosť ľudí
+if(walkers.length >= maxWalkers){
+    return;
+}
+
+// ================= SPAWN =================
+
+let r = roads[
+    Math.floor(
+        Math.random()*roads.length
+    )
 ];
 
 walkers.push({
 
-x:r.x,
-y:r.y,
+    x:r.x,
+    y:r.y,
 
-px:r.x*TILE+24,
-py:r.y*TILE+24,
+    px:r.x*TILE+24,
+    py:r.y*TILE+24,
 
-speed:0.8,
+    speed:
+        0.6 +
+        Math.random()*0.8,
 
-target:null
+    target:null
 
 });
 
