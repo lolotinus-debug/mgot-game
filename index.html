@@ -991,20 +991,14 @@ if(maxWalkers > 100){
 // ak komunita klesne,
 // časť ľudí zmizne
 
-while(walkers.length > maxWalkers){
-
+while (walkers.length > maxWalkers) {
     walkers.splice(
-        Math.floor(
-            Math.random()*walkers.length
-        ),
+        Math.floor(Math.random() * walkers.length),
         1
     );
-
 }
-    ui();
 
-1000);
-
+ui();
 // ================= MAP DATA =================
 
 const MAP_SIZE = 50;
