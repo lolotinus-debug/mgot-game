@@ -354,6 +354,10 @@ font-size:9px;
     <span id="marketCap">1000</span>
   </div>
 
+  <div class="resource">⏳ Time:
+  <span id="time">600</span>
+</div>
+
 </div>
 
 <div id="leftPanel">
@@ -466,6 +470,8 @@ let game = {
   lastPrice: 0.001,
 };
 
+let gameTime = 600; // 10 minút
+  
 let buildings = [];
 
 buildings.push({
@@ -558,6 +564,9 @@ game.price.toPrecision(4);
   
 document.getElementById("marketCap").innerText =
 Math.floor(game.marketCap);
+
+document.getElementById("time").innerText = gameTime;
+  
 } 
 
 // ================= INFO =================
@@ -789,64 +798,80 @@ ui();
 
 setInterval(()=>{
 
-    for(let b of buildings){
-
-    // COMMUNITY = iba holder growth
-    if(b.type==="community"){
-        // nič nepridáva engagement
+    // ================= TIMER =================
+    if(gameTime <= 0){
+        log("⛔ GAME OVER");
+        return;
     }
 
-    // MARKETING = jediný zdroj engagementu
-    if(b.type==="marketing"){
+    gameTime--;
 
-        let maxEngagement =
-            game.holders * 3 * b.level;
+    if(gameTime <= 0){
+        gameTime = 0;
+        log("⛔ GAME OVER");
+        return;
+    }
 
-        if(game.engagement < maxEngagement){
+    for(let b of buildings){
 
-            game.engagement += b.level;
+        // COMMUNITY = iba holder growth
+        if(b.type==="community"){
+            // nič nepridáva engagement
+        }
 
-            if(game.engagement > maxEngagement){
-                game.engagement = maxEngagement;
+        // MARKETING = jediný zdroj engagementu
+        if(b.type==="marketing"){
+
+            let maxEngagement =
+                game.holders * 3 * b.level;
+
+            if(game.engagement < maxEngagement){
+
+                game.engagement += b.level;
+
+                if(game.engagement > maxEngagement){
+                    game.engagement = maxEngagement;
+                }
+            }
+        }
+
+        if(b.type==="treasury"){
+            game.treasury += b.level;
+        }
+
+        if(b.type==="academy"){
+            game.education += b.level;
+            game.reputation += 0.05 * b.level;
+        }
+
+        if(b.type==="utility"){
+            game.utility += 0.2 * b.level;
+            game.reputation += 0.1 * b.level;
+        }
+
+        if(b.type==="influencer"){
+
+            game.promoters += 0.2 * b.level;
+
+            game.holders +=
+                (game.engagement * 0.0005) * b.level;
+        }
+
+        if(b.type==="burn"){
+
+            game.supply -= (10 * b.level);
+
+            if(game.supply < 1000){
+                game.supply = 1000;
             }
         }
     }
 
-    if(b.type==="treasury"){
-        game.treasury += b.level;
-    }
+    // passive growth
+    game.engagement += game.promoters * 0.05;
+    game.engagement += game.holders * 0.0005;
 
-    if(b.type==="academy"){
-        game.education += b.level;
-        game.reputation += 0.05 * b.level;
-    }
-
-    if(b.type==="utility"){
-        game.utility += 0.2 * b.level;
-        game.reputation += 0.1 * b.level;
-    }
-
-    if(b.type==="influencer"){
-
-        game.promoters +=
-            0.2 * b.level;
-
-        game.holders +=
-            (game.engagement * 0.0005)
-            * b.level;
-    }
-
-    if(b.type==="burn"){
-
-        game.supply -= (10 * b.level);
-
-        if(game.supply < 1000){
-            game.supply = 1000;
-        }
-    }
-}
-  game.engagement += game.promoters * 0.05;
-game.engagement += game.holders * 0.0005;
+},1000);
     // ================= EDUCATION =================
 
     if(game.education >= 100){
