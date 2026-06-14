@@ -353,7 +353,12 @@ font-size:9px;
   <div class="resource">💰 MC:
     <span id="marketCap">1000</span>
   </div>
-
+  
+<div class="resource">
+⏳ Time:
+<span id="timer">30:00</span>
+</div>
+  
 </div>
 
 <div id="leftPanel">
@@ -448,7 +453,8 @@ let selectedBuild = null;
  let walkers = []; 
 
 let particles = [];
-
+let gameTime = 1800; // 30 minút v sekundách
+let gameEnded = false;
 let game = {
   treasury: 500,
   holders: 1,
@@ -559,7 +565,17 @@ game.price.toPrecision(4);
 document.getElementById("marketCap").innerText =
 Math.floor(game.marketCap);
 } 
+function updateTimer(){
 
+let min = Math.floor(gameTime / 60);
+let sec = gameTime % 60;
+
+document.getElementById("timer").innerText =
+String(min).padStart(2,"0") +
+":" +
+String(sec).padStart(2,"0");
+
+}
 // ================= INFO =================
 function updateInfo(){
 
@@ -643,6 +659,7 @@ log("⬆ Upgraded " + selected.type);
 
 ui();
 updateInfo();
+updateTimer();
 }
 // ================= DEMOLISH =================
 function demolish(){
@@ -789,7 +806,9 @@ ui();
 
 setInterval(()=>{
 
-    for(let b of buildings){
+if(gameEnded) return;
+
+for(let b of buildings){
 
     // COMMUNITY = iba holder growth
     if(b.type==="community"){
@@ -997,6 +1016,38 @@ while(walkers.length > maxWalkers){
 },1000);
 
 // ================= MAP DATA =================
+
+function endGame(){
+
+gameEnded = true;
+
+alert(
+"🏆 Game Over\n\n" +
+"Market Cap: " + Math.floor(game.marketCap) +
+"\nHolders: " + Math.floor(game.holders)
+);
+
+}
+
+setInterval(()=>{
+
+if(gameEnded) return;
+
+if(gameTime > 0){
+
+    gameTime--;
+
+    updateTimer();
+
+}
+
+if(gameTime <= 0){
+
+    endGame();
+
+}
+
+},1000);  
 
 const MAP_SIZE = 50;
 let mapData = [];
