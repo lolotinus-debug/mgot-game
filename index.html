@@ -354,10 +354,6 @@ font-size:9px;
     <span id="marketCap">1000</span>
   </div>
 
-  <div class="resource">⏳ Time:
-  <span id="time">600</span>
-</div>
-
 </div>
 
 <div id="leftPanel">
@@ -470,8 +466,6 @@ let game = {
   lastPrice: 0.001,
 };
 
-let gameTime = 600; // 10 minút
-  
 let buildings = [];
 
 buildings.push({
@@ -564,9 +558,6 @@ game.price.toPrecision(4);
   
 document.getElementById("marketCap").innerText =
 Math.floor(game.marketCap);
-
-document.getElementById("time").innerText = gameTime;
-  
 } 
 
 // ================= INFO =================
@@ -798,57 +789,110 @@ ui();
 
 setInterval(()=>{
 
-    if(gameTime <= 0){
-        gameTime = 0;
-        log("⛔ GAME OVER");
+    for(let b of buildings){
+
+    // COMMUNITY = iba holder growth
+    if(b.type==="community"){
+        // nič nepridáva engagement
+    }
+
+    // MARKETING = jediný zdroj engagementu
+    if(b.type==="marketing"){
+
+        let maxEngagement =
+            game.holders * 3 * b.level;
+
+        if(game.engagement < maxEngagement){
+
+            game.engagement += b.level;
+
+            if(game.engagement > maxEngagement){
+                game.engagement = maxEngagement;
+            }
+        }
+    }
+
+    if(b.type==="treasury"){
+        game.treasury += b.level;
+    }
+
+    if(b.type==="academy"){
+        game.education += b.level;
+        game.reputation += 0.05 * b.level;
+    }
+
+    if(b.type==="utility"){
+        game.utility += 0.2 * b.level;
+        game.reputation += 0.1 * b.level;
+    }
+
+    if(b.type==="influencer"){
+
+        game.promoters +=
+            0.2 * b.level;
+
+        game.holders +=
+            (game.engagement * 0.0005)
+            * b.level;
+    }
+
+    if(b.type==="burn"){
+
+        game.supply -= (10 * b.level);
+
+        if(game.supply < 1000){
+            game.supply = 1000;
+        }
+    }
+}
+  game.engagement += game.promoters * 0.05;
+game.engagement += game.holders * 0.0005;
+    // ================= EDUCATION =================
+
+    if(game.education >= 100){
+
+        game.utility++;
+
+        game.education = 0;
+
+        log("🔷 New Utility Released");
+    }
+
+    // ================= HUB DETECTION =================
+    hubLevel = 0;
+
+    for(let b of buildings){
+        if(b.type === "community"){
+            hubLevel += b.level;
+        }
+    }
+
+    // ak nemáš Hub, nič nerastie
+    if(hubLevel === 0){
+        ui();
         return;
     }
 
-    gameTime--;
+   // ================= HUB HOLDER SYSTEM =================
 
-    // ================= BUILDINGS LOGIC =================
-    for(let b of buildings){
+hubTimer++;
 
-        if(b.type==="treasury") game.treasury += b.level;
+let interval = 60;
 
-        if(b.type==="marketing"){
-            let maxEngagement = game.holders * 3 * b.level;
-            if(game.engagement < maxEngagement){
-                game.engagement += b.level;
-            }
-        }
+interval -= (hubLevel - 1) * 10;
 
-    }
+if(interval < 10){
+    interval = 10;
+}
 
-    // ================= TRADING SIMULATION (SEM PRESUNÚŤ) =================
+if(hubTimer >= interval){
 
-    game.lastPrice = game.price;
+    game.holders += 1;
 
-    let buyers =
-        game.holders * 0.02 +
-        game.promoters * 0.5 +
-        game.engagement * 0.001;
+    hubTimer = 0;
 
-    let sellers =
-        (game.holders * 0.01) * (Math.random() * 2);
-
-    let volume = buyers + sellers;
-    game.volume = volume;
-
-    let fairPrice =
-        game.lp / (game.supply * 0.1);
-
-    game.price += (fairPrice - game.price) * 0.05;
-
-    if(game.price < 0.000001){
-        game.price = 0.000001;
-    }
-
-    game.marketCap = game.price * game.supply;
-
-    ui();
-
-},1000);
+    log("👥 +1 Holder (Hub Lv." + hubLevel + ")");
+}
 
     // ================= TRADING SIMULATION =================
 
@@ -938,14 +982,20 @@ if(maxWalkers > 100){
 // ak komunita klesne,
 // časť ľudí zmizne
 
-while (walkers.length > maxWalkers) {
+while(walkers.length > maxWalkers){
+
     walkers.splice(
-        Math.floor(Math.random() * walkers.length),
+        Math.floor(
+            Math.random()*walkers.length
+        ),
         1
     );
-}
 
-ui();
+}
+    ui();
+
+},1000);
+
 // ================= MAP DATA =================
 
 const MAP_SIZE = 50;
