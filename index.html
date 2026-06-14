@@ -2297,7 +2297,9 @@ localStorage.setItem(
 "mgot_save",
 JSON.stringify({
 game,
-buildings
+buildings,
+gameTime,
+gameEnded
 })
 );
 
@@ -2338,6 +2340,14 @@ if(data.buildings){
 buildings = data.buildings;
 }
 
+if(data.gameTime !== undefined){
+    gameTime = data.gameTime;
+}
+
+if(data.gameEnded !== undefined){
+    gameEnded = data.gameEnded;
+}
+  
 // guarantee townhall exists
 let hasTownHall = buildings.some(b => b.type === "townhall");
 
@@ -2472,22 +2482,25 @@ function newGame(){
 
     localStorage.removeItem("mgot_save");
 
-  game = {
-  treasury: 500,
-  holders: 1,
-  engagement: 1,
-  education: 0,
-  utility: 1,
-  promoters: 0,
-  lp: 100,
-  supply: 1000000,
-  reputation: 0,
-  communityPower: 0,
-  price: 0.001,
-  marketCap: 1000,
-  volume: 0,
-  lastPrice: 0.001,
-};
+    gameTime = 1800;
+    gameEnded = false;
+
+    game = {
+        treasury: 500,
+        holders: 1,
+        engagement: 1,
+        education: 0,
+        utility: 1,
+        promoters: 0,
+        lp: 100,
+        supply: 1000000,
+        reputation: 0,
+        communityPower: 0,
+        price: 0.001,
+        marketCap: 1000,
+        volume: 0,
+        lastPrice: 0.001
+    };
 
     buildings = [{
         x:10,
@@ -2496,13 +2509,21 @@ function newGame(){
         level:1
     }];
 
+    walkers = [];
     particles = [];
+
     selected = null;
     selectedBuild = null;
+
+    hubTimer = 0;
+    hubLevel = 0;
 
     cameraX = 0;
     cameraY = 0;
 
+    generateMap();
+
+    updateTimer();
     ui();
 
     document.getElementById("upgradeBtn").style.display = "none";
@@ -2512,7 +2533,6 @@ function newGame(){
     "Nothing selected";
 
     log("🆕 New Game Started");
-
 }
 
 // START
