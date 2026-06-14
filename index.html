@@ -1486,64 +1486,64 @@ ctx.ellipse(
 ctx.fillStyle="rgba(0,0,0,0.25)";
 ctx.fill();
 
+
 function drawGhostBuilding(){
 
-if(!selectedBuild) return;
+    if(!selectedBuild) return;
 
-let px = hoverTileX * TILE - cameraX;
-let py = hoverTileY * TILE - cameraY;
+    let px = hoverTileX * TILE - cameraX;
+    let py = hoverTileY * TILE - cameraY;
 
-let valid = true;
+    let valid = true;
 
-if(
-hoverTileX < 0 ||
-hoverTileY < 0 ||
-hoverTileX >= MAP_SIZE ||
-hoverTileY >= MAP_SIZE
-){
-valid = false;
-}
+    if(
+        hoverTileX < 0 ||
+        hoverTileY < 0 ||
+        hoverTileX >= MAP_SIZE ||
+        hoverTileY >= MAP_SIZE
+    ){
+        valid = false;
+    }
 
-if(
-mapData[hoverTileX]?.[hoverTileY] === "water"
-){
-valid = false;
-}
+    if(
+        mapData[hoverTileX]?.[hoverTileY] === "water"
+    ){
+        valid = false;
+    }
 
-if(
-buildings.some(
-b=>b.x===hoverTileX && b.y===hoverTileY
-)
-){
-valid = false;
-}
+    if(
+        buildings.some(
+            b => b.x===hoverTileX && b.y===hoverTileY
+        )
+    ){
+        valid = false;
+    }
 
-ctx.fillStyle =
-valid
-? "rgba(0,255,0,0.35)"
-: "rgba(255,0,0,0.35)";
+    ctx.fillStyle =
+        valid
+        ? "rgba(0,255,0,0.35)"
+        : "rgba(255,0,0,0.35)";
 
-ctx.fillRect(
-px,
-py,
-TILE,
-TILE
-);
+    ctx.fillRect(
+        px,
+        py,
+        TILE,
+        TILE
+    );
 
-ctx.strokeStyle =
-valid
-? "#00ff00"
-: "#ff0000";
+    ctx.strokeStyle =
+        valid
+        ? "#00ff00"
+        : "#ff0000";
 
-ctx.lineWidth = 2;
+    ctx.lineWidth = 2;
 
-ctx.strokeRect(
-px,
-py,
-TILE,
-TILE
-);
-
+    ctx.strokeRect(
+        px,
+        py,
+        TILE,
+        TILE
+    );
 }
   
 // ================= TOWN HALL =================
