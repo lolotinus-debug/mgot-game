@@ -881,31 +881,7 @@ setInterval(()=>{
     }
 
 },1000);
-    // ================= EDUCATION =================
-
-    if(game.education >= 100){
-
-        game.utility++;
-
-        game.education = 0;
-
-        log("🔷 New Utility Released");
-    }
-
-    // ================= HUB DETECTION =================
-    hubLevel = 0;
-
-    for(let b of buildings){
-        if(b.type === "community"){
-            hubLevel += b.level;
-        }
-    }
-
-    if(hubLevel === 0){
-        ui();
-        return; // OK len vnútri setInterval
-    }
-
+   
    // ================= HUB HOLDER SYSTEM =================
 
 hubTimer++;
