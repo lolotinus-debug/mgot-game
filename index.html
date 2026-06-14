@@ -806,79 +806,47 @@ setInterval(()=>{
 
     gameTime--;
 
-    // HUB DETECTION
-    let hubLevel = 0;
-
+    // ================= BUILDINGS LOGIC =================
     for(let b of buildings){
-        if(b.type === "community"){
-            hubLevel += b.level;
-        }
-    }
-
-    if(hubLevel === 0){
-        ui();
-        return;
-    }
-
-    // HUB TIMER
-    hubTimer++;
-
-    let interval = 60 - (hubLevel - 1) * 10;
-    if(interval < 10) interval = 10;
-
-    if(hubTimer >= interval){
-        game.holders++;
-        hubTimer = 0;
-        log("👥 +1 Holder (Hub Lv." + hubLevel + ")");
-    }
-
-    // BUILDINGS LOGIC
-    for(let b of buildings){
-
-        if(b.type==="marketing"){
-            let maxEngagement = game.holders * 3 * b.level;
-
-            if(game.engagement < maxEngagement){
-                game.engagement += b.level;
-                if(game.engagement > maxEngagement){
-                    game.engagement = maxEngagement;
-                }
-            }
-        }
 
         if(b.type==="treasury") game.treasury += b.level;
 
-        if(b.type==="academy"){
-            game.education += b.level;
-            game.reputation += 0.05 * b.level;
+        if(b.type==="marketing"){
+            let maxEngagement = game.holders * 3 * b.level;
+            if(game.engagement < maxEngagement){
+                game.engagement += b.level;
+            }
         }
 
-        if(b.type==="utility"){
-            game.utility += 0.2 * b.level;
-            game.reputation += 0.1 * b.level;
-        }
-
-        if(b.type==="influencer"){
-            game.promoters += 0.2 * b.level;
-            game.holders += (game.engagement * 0.0005) * b.level;
-        }
-
-        if(b.type==="burn"){
-            game.supply -= 10 * b.level;
-            if(game.supply < 1000) game.supply = 1000;
-        }
     }
 
-    // PASSIVE
-    game.engagement += game.promoters * 0.05;
-    game.engagement += game.holders * 0.0005;
+    // ================= TRADING SIMULATION (SEM PRESUNÚŤ) =================
 
-    // EDUCATION (SEM patrí)
-    if(game.education >= 100){
-        game.utility++;
-        game.education = 0;
-        log("🔷 New Utility Released");
+    game.lastPrice = game.price;
+
+    let buyers =
+        game.holders * 0.02 +
+        game.promoters * 0.5 +
+        game.engagement * 0.001;
+
+    let sellers =
+        (game.holders * 0.01) * (Math.random() * 2);
+
+    let volume = buyers + sellers;
+    game.volume = volume;
+
+    let fairPrice =
+        game.lp / (game.supply * 0.1);
+
+    game.price += (fairPrice - game.price) * 0.05;
+
+    if(game.price < 0.000001){
+        game.price = 0.000001;
     }
+
+    game.marketCap = game.price * game.supply;
+
+    ui();
 
 },1000);
    
