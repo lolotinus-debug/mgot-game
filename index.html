@@ -1616,7 +1616,94 @@ function drawMap(){
     }
 }
 // ================= BUILDINGS =================
-function drawBuildings(){
+// ================= GHOST BUILDING =================
+
+let hoverTileX = 0;
+let hoverTileY = 0;
+
+canvas.addEventListener("mousemove",(e)=>{
+
+const rect = canvas.getBoundingClientRect();
+
+const worldX =
+(e.clientX - rect.left)/zoom + cameraX;
+
+const worldY =
+(e.clientY - rect.top)/zoom + cameraY;
+
+hoverTileX =
+Math.floor(worldX / TILE);
+
+hoverTileY =
+Math.floor(worldY / TILE);
+
+});
+
+function drawGhostBuilding(){
+
+if(!selectedBuild) return;
+
+if(
+hoverTileX < 0 ||
+hoverTileY < 0 ||
+hoverTileX >= MAP_SIZE ||
+hoverTileY >= MAP_SIZE
+){
+return;
+}
+
+let px =
+hoverTileX*TILE - cameraX;
+
+let py =
+hoverTileY*TILE - cameraY;
+
+let valid = true;
+
+if(
+mapData[hoverTileX][hoverTileY] === "water"
+){
+valid = false;
+}
+
+if(
+buildings.some(
+b=>b.x===hoverTileX &&
+b.y===hoverTileY
+)
+){
+valid = false;
+}
+
+ctx.fillStyle =
+valid
+? "rgba(0,255,0,0.35)"
+: "rgba(255,0,0,0.35)";
+
+ctx.fillRect(
+px,
+py,
+TILE,
+TILE
+);
+
+ctx.strokeStyle =
+valid
+? "#00ff00"
+: "#ff0000";
+
+ctx.lineWidth = 2;
+
+ctx.strokeRect(
+px,
+py,
+TILE,
+TILE
+);
+
+}
+  
+  function drawBuildings(){
 
 for(let b of buildings){
 
