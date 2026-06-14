@@ -882,26 +882,6 @@ setInterval(()=>{
 
 },1000);
    
-   // ================= HUB HOLDER SYSTEM =================
-
-hubTimer++;
-
-let interval = 60;
-
-interval -= (hubLevel - 1) * 10;
-
-if(interval < 10){
-    interval = 10;
-}
-
-if(hubTimer >= interval){
-
-    game.holders += 1;
-
-    hubTimer = 0;
-
-    log("👥 +1 Holder (Hub Lv." + hubLevel + ")");
-}
 
     // ================= TRADING SIMULATION =================
 
