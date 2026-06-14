@@ -445,6 +445,8 @@ function selectBuild(t){
 let selected = null;
 let selectedBuild = null;
 
+ let walkers = []; 
+
 let particles = [];
 
 let game = {
@@ -1161,25 +1163,177 @@ function hasRoad(x,y){
         b.y===y
     );
 }
+setInterval(()=>{
 
+let roads = buildings.filter(
+b=>b.type==="road"
+);
+
+if(roads.length===0) return;
+
+let r =
+roads[
+Math.floor(
+Math.random()*roads.length
+)
+];
+
+walkers.push({
+
+x:r.x,
+y:r.y,
+
+px:r.x*TILE+24,
+py:r.y*TILE+24,
+
+speed:0.8,
+
+target:null
+
+});
+
+},3000);
+
+function updateWalkers(){
+
+for(let w of walkers){
+
+if(!w.target){
+
+let options=[];
+
+[
+[1,0],
+[-1,0],
+[0,1],
+[0,-1]
+].forEach(d=>{
+
+let nx=w.x+d[0];
+let ny=w.y+d[1];
+
+if(hasRoad(nx,ny)){
+options.push({
+x:nx,
+y:ny
+});
+}
+
+});
+
+if(options.length){
+
+w.target=
+options[
+Math.floor(
+Math.random()*options.length
+)
+];
+
+}
+
+}
+
+if(w.target){
+
+let tx =
+w.target.x*TILE+24;
+
+let ty =
+w.target.y*TILE+24;
+
+let dx=tx-w.px;
+let dy=ty-w.py;
+
+let dist =
+Math.hypot(dx,dy);
+
+if(dist<2){
+
+w.x=w.target.x;
+w.y=w.target.y;
+
+w.target=null;
+
+}else{
+
+w.px +=
+dx/dist*w.speed;
+
+w.py +=
+dy/dist*w.speed;
+
+}
+
+}
+
+}
+
+}  
+
+  function drawWalkers(){
+
+for(let w of walkers){
+
+let px =
+w.px-cameraX;
+
+let py =
+w.py-cameraY;
+
+ctx.fillStyle="#f5deb3";
+
+ctx.beginPath();
+ctx.arc(
+px,
+py-5,
+3,
+0,
+Math.PI*2
+);
+ctx.fill();
+
+ctx.strokeStyle="#ffffff";
+
+ctx.lineWidth=2;
+
+ctx.beginPath();
+ctx.moveTo(px,py-2);
+ctx.lineTo(px,py+5);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(px,py+1);
+ctx.lineTo(px-3,py+8);
+ctx.stroke();
+
+ctx.beginPath();
+ctx.moveTo(px,py+1);
+ctx.lineTo(px+3,py+8);
+ctx.stroke();
+
+}
+
+}
+  
 function drawRoads(){
 
 for(let r of buildings){
 
     if(r.type!=="road") continue;
 
-    let px = r.x*TILE-cameraX;
-    let py = r.y*TILE-cameraY;
+    let px = r.x * TILE - cameraX;
+    let py = r.y * TILE - cameraY;
 
-    let top    = hasRoad(r.x,r.y-1);
-    let bottom = hasRoad(r.x,r.y+1);
-    let left   = hasRoad(r.x-1,r.y);
-    let right  = hasRoad(r.x+1,r.y);
+    let top    = hasRoad(r.x, r.y-1);
+    let bottom = hasRoad(r.x, r.y+1);
+    let left   = hasRoad(r.x-1, r.y);
+    let right  = hasRoad(r.x+1, r.y);
 
-    // hlavná cesta
+    // ================= ZÁKLAD CESTY =================
+
     ctx.fillStyle="#7c6244";
 
-    // širší stred
     ctx.fillRect(px+4,py+4,40,40);
 
     if(top)
@@ -1194,45 +1348,76 @@ for(let r of buildings){
     if(right)
         ctx.fillRect(px+24,py+4,24,40);
 
-    // textúra cesty
-    ctx.fillStyle="#a7865e";
+    // ================= SVETLEJŠÍ STRED =================
+
+    ctx.fillStyle="#b8956a";
+
+    ctx.fillRect(px+8,py+8,32,32);
+
+    if(top)
+        ctx.fillRect(px+8,py,32,20);
+
+    if(bottom)
+        ctx.fillRect(px+8,py+28,32,20);
+
+    if(left)
+        ctx.fillRect(px,py+8,20,32);
+
+    if(right)
+        ctx.fillRect(px+28,py+8,20,32);
+
+    // ================= KAMENNÁ TEXTÚRA =================
+
+    ctx.fillStyle="#d6c2a3";
+
+    for(let i=0;i<10;i++){
+
+        let rx = px + 6 + ((i * 13) % 34);
+        let ry = py + 6 + ((i * 17) % 34);
+
+        ctx.fillRect(rx,ry,2,2);
+    }
+
+    ctx.fillStyle="#8f7352";
 
     for(let i=0;i<8;i++){
 
-        ctx.fillRect(
-            px+6+Math.random()*36,
-            py+6+Math.random()*36,
-            2,
-            2
-        );
+        let rx = px + 8 + ((i * 11) % 30);
+        let ry = py + 8 + ((i * 19) % 30);
+
+        ctx.fillRect(rx,ry,1,1);
     }
 
-    // svetlejší stred
-    ctx.fillStyle="#b8956a";
+    // ================= OKRAJE =================
 
-    ctx.fillRect(px+10,py+10,28,28);
-
-    if(top)
-        ctx.fillRect(px+10,py,28,18);
-
-    if(bottom)
-        ctx.fillRect(px+10,py+30,28,18);
-
-    if(left)
-        ctx.fillRect(px,py+10,18,28);
-
-    if(right)
-        ctx.fillRect(px+30,py+10,18,28);
-
-    // okraje
     ctx.strokeStyle="#5a4632";
     ctx.lineWidth=1;
 
-    ctx.strokeRect(px+4,py+4,40,40);
+    ctx.strokeRect(
+        px+4,
+        py+4,
+        40,
+        40
+    );
+
+    // ================= TIENE =================
+
+    ctx.strokeStyle="rgba(0,0,0,0.15)";
+
+    if(top)
+        ctx.strokeRect(px+4,py,40,24);
+
+    if(bottom)
+        ctx.strokeRect(px+4,py+24,40,24);
+
+    if(left)
+        ctx.strokeRect(px,py+4,24,40);
+
+    if(right)
+        ctx.strokeRect(px+24,py+4,24,40);
 }
 
 }
-
 
 // ================= MAP ZONES =================
 function drawMap(){
@@ -1989,6 +2174,12 @@ ctx.fillRect(
 
 drawMap();
 drawRoads();
+
+updateWalkers();
+drawWalkers();
+
+drawGhostBuilding();
+
 drawBuildings();
 drawParticles();
 
