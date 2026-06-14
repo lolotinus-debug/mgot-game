@@ -892,10 +892,9 @@ setInterval(()=>{
         }
     }
 
-    // ak nemáš Hub, nič nerastie
     if(hubLevel === 0){
         ui();
-        return;
+        return; // OK len vnútri setInterval
     }
 
    // ================= HUB HOLDER SYSTEM =================
