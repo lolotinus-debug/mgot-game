@@ -1365,14 +1365,15 @@ function drawMap(){
 }
 // ================= BUILDINGS =================
 function drawBuildings(){
-if(b.type==="road"){
-    continue;
-}
+
 for(let b of buildings){
 
-let px = b.x * TILE - cameraX;
-let py = b.y * TILE - cameraY;
+    if(b.type==="road"){
+        continue;
+    }
 
+    let px = b.x * TILE - cameraX;
+    let py = b.y * TILE - cameraY;
 // tieň
 ctx.fillStyle = "rgba(0,0,0,0.3)";
 ctx.beginPath();
