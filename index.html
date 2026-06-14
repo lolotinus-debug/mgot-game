@@ -359,6 +359,7 @@ font-size:9px;
 <div id="leftPanel">
 <h3>🏗 Buildings</h3>
 
+<button onclick="selectBuild('road')">🛣 Road (5)</button>  
 <button onclick="selectBuild('community')">🏘 Community Hub (100)</button>
 <button onclick="selectBuild('marketing')">📢 Marketing Center (120)</button>
 <button onclick="selectBuild('treasury')">🏦 Treasury Vault (150)</button>
@@ -471,23 +472,16 @@ level:1
 const B = {
 
 townhall:{cost:0,color:"#ffffff"},
-
+road:{cost:5,color:"#8b7355"},
 community:{cost:100,color:"#22c55e"},
-
 marketing:{cost:120,color:"#3b82f6"},
-
 treasury:{cost:150,color:"#f59e0b"},
-
 academy:{cost:200,color:"#a855f7"},
-
 utility:{cost:250,color:"#00d4ff"},
-
 influencer:{cost:300,color:"#ef4444"},
-
 burn:{cost:350,color:"#eab308"}
 
 };
-
 // ================= LOG =================
 function log(t){
 const d=document.createElement("div");
@@ -575,6 +569,10 @@ Upgrade cost: ${selected.level * 120}<br>
 // ================= UPGRADE =================
 
 function upgrade(){
+  if(selected.type==="road"){
+    log("❌ Roads cannot be upgraded");
+    return;
+}
 
     if(!selected) return;
 
@@ -724,6 +722,26 @@ if(game.treasury < cost){
 }
 
 game.treasury -= cost;
+
+if(selectedBuild==="road"){
+
+    let nearRoad =
+        buildings.some(b=>
+
+            (b.type==="road" ||
+             b.type==="townhall") &&
+
+            Math.abs(b.x-x)+
+            Math.abs(b.y-y)===1
+        );
+
+    if(buildings.filter(b=>b.type==="road").length>0
+       && !nearRoad){
+
+        log("❌ Road must connect");
+        return;
+    }
+}
 
 buildings.push({
     x:x,
@@ -1115,71 +1133,38 @@ generateMap();
 
 function drawRoads(){
 
-    if(buildings.length < 2){
-        return;
+for(let r of buildings){
+
+    if(r.type !== "road"){
+        continue;
     }
 
-    ctx.lineWidth = 10;
-    ctx.lineCap = "round";
-    ctx.strokeStyle = "#8b7355";
+    let px = r.x * TILE - cameraX;
+    let py = r.y * TILE - cameraY;
 
-    const townHall =
-        buildings.find(
-            b=>b.type==="townhall"
-        );
+    ctx.fillStyle = "#8b7355";
+    ctx.fillRect(px+4,py+18,40,12);
 
-    if(!townHall){
-        return;
+    ctx.fillStyle = "#b08968";
+    ctx.fillRect(px+4,py+22,40,4);
+
+    let top =
+        buildings.some(b=>b.type==="road" &&
+        b.x===r.x && b.y===r.y-1);
+
+    let bottom =
+        buildings.some(b=>b.type==="road" &&
+        b.x===r.x && b.y===r.y+1);
+
+    if(top || bottom){
+
+        ctx.fillStyle="#8b7355";
+        ctx.fillRect(px+18,py+4,12,40);
+
+        ctx.fillStyle="#b08968";
+        ctx.fillRect(px+22,py+4,4,40);
     }
-
-    for(let b of buildings){
-
-        if(b===townHall){
-            continue;
-        }
-
-        let x1=
-            townHall.x*TILE+
-            TILE/2-
-            cameraX;
-
-        let y1=
-            townHall.y*TILE+
-            TILE/2-
-            cameraY;
-
-        let x2=
-            b.x*TILE+
-            TILE/2-
-            cameraX;
-
-        let y2=
-            b.y*TILE+
-            TILE/2-
-            cameraY;
-
-        ctx.beginPath();
-
-        ctx.moveTo(x1,y1);
-
-        ctx.lineTo(x2,y2);
-
-        ctx.stroke();
-
-        ctx.strokeStyle="#b08968";
-        ctx.lineWidth=4;
-
-        ctx.beginPath();
-
-        ctx.moveTo(x1,y1);
-
-        ctx.lineTo(x2,y2);
-
-        ctx.stroke();
-
-        ctx.strokeStyle="#8b7355";
-        ctx.lineWidth=10;
-    }
+}
 }
 
 // ================= MAP ZONES =================
@@ -1380,7 +1365,9 @@ function drawMap(){
 }
 // ================= BUILDINGS =================
 function drawBuildings(){
-
+if(b.type==="road"){
+    continue;
+}
 for(let b of buildings){
 
 let px = b.x * TILE - cameraX;
