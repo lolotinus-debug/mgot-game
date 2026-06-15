@@ -449,9 +449,12 @@ function selectBuild(t){
   
 let selected = null;
 let selectedBuild = null;
-selectedBuild = "townhall";
- let walkers = []; 
 
+let townHallPlaced = false;
+
+selectedBuild = "townhall";
+
+let walkers = [];
 let particles = [];
 let gameTime = 1800; // 30 minút v sekundách
 let gameEnded = false;
@@ -763,7 +766,7 @@ if(buildings.some(b => b.x===x && b.y===y)){
 // iba jedna radnica za hru
 if(
     selectedBuild === "townhall" &&
-    buildings.some(b => b.type === "townhall")
+    townHallPlaced
 ){
     log("❌ Town Hall already exists");
     return;
@@ -833,6 +836,8 @@ buildings.push({
     cooldown:0
 });
 if(selectedBuild === "townhall"){
+
+    townHallPlaced = true;
 
     selectedBuild = null;
 
@@ -2578,33 +2583,31 @@ function newGame(){
 
 buildings = [];
 
+townHallPlaced = false;
+
 selected = null;
 selectedBuild = "townhall";
+walkers = [];
+particles = [];
 
-    walkers = [];
-    particles = [];
+hubTimer = 0;
+hubLevel = 0;
 
-    selected = null;
-    selectedBuild = null;
+cameraX = 0;
+cameraY = 0;
 
-    hubTimer = 0;
-    hubLevel = 0;
+generateMap();
 
-    cameraX = 0;
-    cameraY = 0;
+updateTimer();
+ui();
 
-    generateMap();
+document.getElementById("upgradeBtn").style.display = "none";
+document.getElementById("demolishBtn").style.display = "none";
 
-    updateTimer();
-    ui();
+document.getElementById("info").innerHTML =
+"🏛 Place your Town Hall";
 
-    document.getElementById("upgradeBtn").style.display = "none";
-    document.getElementById("demolishBtn").style.display = "none";
-
-    document.getElementById("info").innerHTML =
-    "Nothing selected";
-
-    log("🆕 New Game Started");
+log("🆕 New Game Started");
 }
 
 // START
