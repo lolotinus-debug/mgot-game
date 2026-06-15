@@ -449,7 +449,7 @@ function selectBuild(t){
   
 let selected = null;
 let selectedBuild = null;
-
+selectedBuild = "townhall";
  let walkers = []; 
 
 let particles = [];
@@ -473,13 +473,6 @@ let game = {
 };
 
 let buildings = [];
-
-buildings.push({
-x:10,
-y:10,
-type:"townhall",
-level:1
-});
 
 // ================= BUILD COSTS =================
 const B = {
@@ -735,6 +728,17 @@ if(!selectedBuild){
     return;
 }
 
+const hasTownHall =
+    buildings.some(b => b.type==="townhall");
+
+if(
+    selectedBuild !== "townhall" &&
+    !hasTownHall
+){
+    log("🏛 First build Town Hall");
+    return;
+}  
+  
 // mapa mimo rozsahu
 if(
     x < 0 ||
@@ -768,16 +772,48 @@ game.treasury -= cost;
 
 if(selectedBuild==="road"){
 
+    const hasTownHall =
+        buildings.some(
+            b=>b.type==="townhall"
+        );
+
+    if(!hasTownHall){
+        log("🏛 Build Town Hall first");
+        return;
+    }
+
     let nearRoad =
         buildings.some(b =>
             Math.abs(b.x-x)+
             Math.abs(b.y-y)===1
         );
 
-    if(buildings.filter(b=>b.type==="road").length>0
-       && !nearRoad){
+    let nearTownHall =
+        buildings.some(b =>
+            b.type==="townhall" &&
+            Math.abs(b.x-x)+
+            Math.abs(b.y-y)===1
+        );
 
+    if(
+        buildings.filter(
+            b=>b.type==="road"
+        ).length>0
+        &&
+        !nearRoad
+    ){
         log("❌ Road must connect");
+        return;
+    }
+
+    if(
+        buildings.filter(
+            b=>b.type==="road"
+        ).length===0
+        &&
+        !nearTownHall
+    ){
+        log("❌ First road must touch Town Hall");
         return;
     }
 }
@@ -2378,16 +2414,6 @@ if(data.gameEnded !== undefined){
 }
   
 // guarantee townhall exists
-let hasTownHall = buildings.some(b => b.type === "townhall");
-
-if(!hasTownHall){
-buildings.push({
-x:10,
-y:10,
-type:"townhall",
-level:1
-});
-}
 
 }catch(err){
 console.log("Save corrupted", err);
@@ -2531,12 +2557,9 @@ function newGame(){
         lastPrice: 0.001
     };
 
-    buildings = [{
-        x:10,
-        y:10,
-        type:"townhall",
-        level:1
-    }];
+    buildings = [];
+
+selectedBuild = "townhall";
 
     walkers = [];
     particles = [];
