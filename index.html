@@ -760,7 +760,14 @@ if(buildings.some(b => b.x===x && b.y===y)){
     log("❌ Tile occupied");
     return;
 }
-
+// iba jedna radnica za hru
+if(
+    selectedBuild === "townhall" &&
+    buildings.some(b => b.type === "townhall")
+){
+    log("❌ Town Hall already exists");
+    return;
+}
 let cost = B[selectedBuild].cost;
 
 if(game.treasury < cost){
@@ -825,7 +832,15 @@ buildings.push({
     level:1,
     cooldown:0
 });
+if(selectedBuild === "townhall"){
 
+    selectedBuild = null;
+
+    document.getElementById("info").innerHTML =
+    "🏛 Town Hall placed<br>Select a building.";
+
+    log("🏛 Town Hall founded");
+}
 explosion(
 x*TILE,
 y*TILE,
@@ -2401,6 +2416,10 @@ game = {
 };
 }
 
+if(data.mapData){
+    mapData = data.mapData;
+}  
+  
 if(data.buildings){
 buildings = data.buildings;
 }
@@ -2557,8 +2576,9 @@ function newGame(){
         lastPrice: 0.001
     };
 
-    buildings = [];
+buildings = [];
 
+selected = null;
 selectedBuild = "townhall";
 
     walkers = [];
