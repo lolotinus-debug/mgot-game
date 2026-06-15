@@ -1235,8 +1235,10 @@ function generateMap(){
     smoothTerrain(3);
 }
 
-generateMap();
-// ================= ROADS =================
+if(!localStorage.getItem("mgot_save")){
+    generateMap();
+}
+  // ================= ROADS =================
 
 function hasRoad(x,y){
 
@@ -2299,7 +2301,8 @@ JSON.stringify({
 game,
 buildings,
 gameTime,
-gameEnded
+gameEnded,
+mapData
 })
 );
 
@@ -2336,8 +2339,8 @@ game = {
 };
 }
 
-if(data.buildings){
-buildings = data.buildings;
+if(data.mapData){
+mapData = data.mapData;
 }
 
 if(data.gameTime !== undefined){
