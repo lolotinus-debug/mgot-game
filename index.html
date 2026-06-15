@@ -1235,8 +1235,34 @@ function generateMap(){
     smoothTerrain(3);
 }
 
-if(!localStorage.getItem("mgot_save")){
+if(localStorage.getItem("mgot_save")){
+
+    try{
+
+        const tmp =
+            JSON.parse(
+                localStorage.getItem("mgot_save")
+            );
+
+        if(
+            tmp.mapData &&
+            tmp.mapData.length === MAP_SIZE
+        ){
+            mapData = tmp.mapData;
+        }else{
+            generateMap();
+        }
+
+    }catch(e){
+
+        generateMap();
+
+    }
+
+}else{
+
     generateMap();
+
 }
   // ================= ROADS =================
 
@@ -2339,8 +2365,8 @@ game = {
 };
 }
 
-if(data.mapData){
-mapData = data.mapData;
+if(data.buildings){
+buildings = data.buildings;
 }
 
 if(data.gameTime !== undefined){
